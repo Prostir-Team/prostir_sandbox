@@ -6,19 +6,22 @@ CreateClientConVar("prsbox_lobby_fov", "80", true, false, "", 80, 110)
 local PLAYER_IN_LOBBY = false
 
 ---
---- Add Button for main menu
+--- Menu meta class
 ---
 
-local REGISTERED_BUTTONS = {}
+MENU = MENU or {}
 
-function RegisterButton(text, pos, callback)
+MENU.registeredButtons = {} -- Ця таблиця для реєстрації функціоналу кнопок в головному меню
+
+function MENU:RegisterButton(text, pos, callback, init)
     local button = {
         ["text"] = text,
         ["pos"] = pos,
-        ["callback"] = callback
+        ["callback"] = callback,
+        ["init"] = init
     }
     
-    table.insert(REGISTERED_BUTTONS, button)
+    table.insert(self.registeredButtons, button)
 end
 
 ---
@@ -46,7 +49,7 @@ do
                 local buttonTall = ScreenScale(20) 
 
                 self:SetX(marginLeft)
-                self:SetSize(buttonWide, #REGISTERED_BUTTONS * buttonTall)
+                self:SetSize(buttonWide, #MENU.registeredButtons * buttonTall)
 
                 self:CenterVertical()
             end
@@ -54,12 +57,33 @@ do
             function buttonPanel:Paint(w, h)
                 -- surface.SetDrawColor(Color(255, 0, 0))
                 -- surface.DrawRect(0, 0, w, h)
-            end
+            end 
         end
 
-        local infoPanel = nil-- vgui.Create("EditablePanel", self)
+        local infoPanel = vgui.Create("EditablePanel", self)
         if IsValid(infoPanel) then
             self.InfoPanel = infoPanel
+
+            infoPanel.MainMenu = self
+
+            local backButton = vgui.Create("PRSBOX.Lobby.Button", infoPanel)
+
+            if IsValid(backButton) then
+                infoPanel.BackButton = backButton
+
+                backButton:Text("Назад")
+                backButton:Dock(BOTTOM)
+
+                function backButton:DoClick()
+                    local parent = self:GetParent()
+                    if not IsValid(parent) then return end
+
+                    local mainMenu = parent.MainMenu
+                    if not IsValid(mainMenu) then return end
+
+                    mainMenu:CloseInfoMenu()
+                end
+            end
 
             function infoPanel:PerformLayout()
                 local buttonWide = ScreenScale(150)
@@ -74,30 +98,65 @@ do
             end
 
             function infoPanel:Paint(w, h)
-                surface.SetDrawColor(COLOR_RED)
-                surface.DrawRect(0, 0, w, h)
+                -- surface.SetDrawColor(COLOR_RED)
+                -- surface.DrawRect(0, 0, w, h)
             end
+
+            infoPanel:Hide()
         end
     end
 
-    function PANEL:OpenInfoMenu(name)
+    function PANEL:OpenInfoMenu(className)
         local buttonPanel = self.ButtonPanel
-        if not IsValid(buttonPanel) then return end
-
+        local infoPanel = self.InfoPanel
         
+        if not IsValid(buttonPanel) then return end
+        if not IsValid(infoPanel) then return end
+
+        local currentMenu = infoPanel.CurrentMenu
+
+        if IsValid(currentMenu) then
+            currentMenu:Remove()
+        end
+
+        local infoMenu = vgui.Create(className, infoPanel)
+        if not IsValid(infoMenu) then return end
+
+        infoMenu.MainPanel = self
+        infoMenu:Dock(FILL)
+        infoPanel.CurrentMenu = infoMenu
+
+        buttonPanel:Hide()
+        infoPanel:Show()
     end
 
     function PANEL:CloseInfoMenu()
+        local buttonPanel = self.ButtonPanel
+        local infoPanel = self.InfoPanel
+        
+        if not IsValid(buttonPanel) then return end
+        if not IsValid(infoPanel) then return end
+        
+        local currentMenu = infoPanel.CurrentMenu
+        if IsValid(currentMenu) then
+            currentMenu:Remove()
+        end
 
+        buttonPanel:Show()
+        infoPanel:Hide()
     end
 
     function PANEL:InitButtons()
         local buttonPanel = self.ButtonPanel
         if not IsValid(buttonPanel) then return end
-        
-        for k, buttonInfo in ipairs(REGISTERED_BUTTONS) do
+
+        for k, buttonInfo in SortedPairsByMemberValue(MENU.registeredButtons, "pos", false) do
             local button = vgui.Create("PRSBOX.Lobby.Button", buttonPanel)
             if not IsValid(button) then continue end
+
+            if buttonInfo["init"] ~= nil then
+                buttonInfo["init"](self, button)
+            end
 
             button:Text(buttonInfo["text"])
             button:Dock(TOP)
@@ -120,28 +179,31 @@ do
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
-RegisterButton("Почати гру", 1, function (menu, button)
+MENU:RegisterButton("Почати гру", 1, function (menu, button)
     print("Game has started")
     PLAYER_IN_LOBBY = false
     RunConsoleCommand("prsbox_lobby_start")
 
     menu:Remove()
+end, function (menu, button)
+    button.ButtonState = 2
+    button.debug = 1
 end)
 
-RegisterButton("Інформація", 1, function (menu, button)
+MENU:RegisterButton("Інформація", 2, function (menu, button)
+    menu:OpenInfoMenu("TEST.Button")
+end)
+
+MENU:RegisterButton("Налаштування", 3, function (menu, button)
 
 end)
 
-RegisterButton("Налаштування", 1, function (menu, button)
+MENU:RegisterButton("Оригінальне меню", 4, function (menu, button)
 
 end)
 
-RegisterButton("Оригінальне меню", 1, function (menu, button)
-
-end)
-
-RegisterButton("Вийти з серверу", 1, function (menu, button)
-    RunConsoleCommand("disconnect")
+MENU:RegisterButton("Покинути сервер", 5, function ()
+    
 end)
 
 if IsValid(MAIN_MENU) then

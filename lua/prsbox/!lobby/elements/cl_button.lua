@@ -1,5 +1,12 @@
 CreateClientConVar("presbox_lobby_button_speed", "10", true, false, "", 5, 100)
 
+--- Button colors
+
+local ButtonColors = {
+    [BUTTON_OPENED] = COLOR_BUTTON_TEXT,
+    [BUTTON_CLOSED] = COLOR_BUTTON_TEXT_LOCKED
+}
+
 ---
 --- Modern button for lobby menu
 ---
@@ -9,6 +16,9 @@ do
 
     function PANEL:Init()
         self:SetText("")
+        self.debug = false
+
+        self.ButtonState = BUTTON_OPENED
 
         self.TextColor = COLOR_WHITE
         self.BackgroundColor = COLOR_BUTTON_NONE
@@ -32,7 +42,7 @@ do
         
         if self:IsHovered() then
             self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
-            self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, COLOR_BUTTON_TEXT)
+            self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, ButtonColors[self.ButtonState])
             self.MarkWide = Lerp(FrameTime() * self.Speed, self.MarkWide, self.MarkWideMax)
         else
             self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, COLOR_WHITE)
@@ -43,8 +53,8 @@ do
         
         surface.SetDrawColor(self.BackgroundColor)
         surface.DrawRect(self.MarkWide, 0, w - self.MarkWide, h)
-        
-        surface.SetDrawColor(COLOR_BUTTON_TEXT)
+
+        surface.SetDrawColor(ButtonColors[self.ButtonState])
         surface.DrawRect(0, 0, self.MarkWide, h)
         
         if not self.Text then return end
@@ -53,4 +63,22 @@ do
     end
 
     vgui.Register("PRSBOX.Lobby.Button", PANEL, "DButton")
+end
+
+
+---
+--- TEST BUTTON
+---
+do
+    local PANEL = {}
+
+    function PANEL:Init()
+        self:SetText("Hello World")
+    end
+
+    function PANEL:DoClick()
+        print("Hello World")
+    end
+
+    vgui.Register("TEST.Button", PANEL, "DButton")
 end

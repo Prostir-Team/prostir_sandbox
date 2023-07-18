@@ -5,37 +5,57 @@ function bool_to_number(value)
 end
 
 if SERVER then
-    local function startSQLModules()
-        sql.Query("CREATE TABLEIF NOT EXISTS modules (name TEXT, enabled INTEGER);")
-    
-        print("SQL Database has been created.")
-    end
-    
-    function isModuleExists(name)
-        local data = sql.Query("SELECT * FROM modules WHERE name = " .. sql.SQLStr(name) .. ";")
-    
-        return data ~= nil and data
-    end
-    
-    function addSQLModule(name)
-        if isModuleExists(name) then return end
-    
-        local data = sql.Query("INSERT INTO modules (name, enabled) VALUES( " .. sql.SQLStr(name) .. ", 1 );")
+    local function startSaveModules()
+        if file.Exists("modules.dat", "DATA") then return end
+        
+        file.Write("modules.dat", "")
     end
     
     function getAllModules()
-        local data = sql.Query("SELECT * FROM modules;")
+        local f = file.Open("modules.dat", "r", "DATA")
+
+        local data = f:Read()
+
+        if file.Size("modules.dat", "DATA") == 0 then return end
+
+        local data = string.Split(data, "\n")
+        local out = {}
+
+        for k, line in ipairs(data) do
+            table.insert(out, string.Split(line, " "))
+        end
+        
+        return out
+    end
+
+    function isModuleExists(name)
+        local modules = getAllModules()
+        
+        if not modules then return end
+
+        for k, m in ipairs(modules) do
+            if m[1] == name then
+                return true 
+            end
+        end
+    end
     
-        return data
+    function addSaveModule(name)
+        if isModuleExists(name) then return end
+    
+        file.Append("modules.dat", name .. " 1\n")
     end
     
     function getModuleState(name)
         if not isModuleExists(name) then return end
     
-        local data = sql.Query("SELECT enabled FROM modules WHERE name = " .. sql.SQLStr(name) ..";")
-    
-        if data then
-            return data[1]["enabled"]
+        local data = getAllModules()
+        if not data then return end
+
+        for k, m in ipairs(data) do
+            if m[1] == name then
+                return m[2]
+            end
         end
     end
     
@@ -55,7 +75,7 @@ if SERVER then
         sql.Query("UPDATE modules SET enabled = " .. state .. " WHERE name = " .. sql.SQLStr(name) .. ";")
     end
 
-    startSQLModules()
+    startSaveModules()
 end
 
 
@@ -66,7 +86,7 @@ local function startModule()
         local path = "prsbox/" .. name .. "/main.lua"
 
         if SERVER then
-            addSQLModule(name)
+            addSaveModule(name)
             local state = getModuleState(name)
 
             print(name)
@@ -88,24 +108,26 @@ local function startModule()
     end
 end
 
-concommand.Add("prsbox_module_get", function (ply, cmd, args)
-    if not IsValid(ply) or not ply:IsSuperAdmin() then return end
-    
-    local modules = getAllModules()
-    for k, m in ipairs(modules) do
-        print(m["name"] .. " = " .. m["enabled"])
-    end
-end)
+if SERVER then
+    concommand.Add("prsbox_module_get", function (ply, cmd, args)
+        if not IsValid(ply) or not ply:IsSuperAdmin() then return end
+        
+        local modules = getAllModules()
+        -- for k, m in ipairs(modules) do
+        --     print(m[1] .. " = " .. m[2])
+        -- end
+    end)
 
-concommand.Add("prsbox_module_set", function (ply, cmd, args)
-    if not IsValid(ply) or not ply:IsSuperAdmin() then return end
-    if #args ~= 2 or not isstring(args[1]) or not isstring(args[2]) then return end
+    concommand.Add("prsbox_module_set", function (ply, cmd, args)
+        if not IsValid(ply) or not ply:IsSuperAdmin() then return end
+        if #args ~= 2 or not isstring(args[1]) or not isstring(args[2]) then return end
 
-    local name = args[1]
-    local state = tonumber(args[2])
-    
-    setModuleState(name, state)
-end)
+        local name = args[1]
+        local state = tonumber(args[2])
+        
+        setModuleState(name, state)
+    end)
+end
 
 startModule()
 
