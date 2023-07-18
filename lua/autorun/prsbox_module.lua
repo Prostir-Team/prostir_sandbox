@@ -59,11 +59,33 @@ if SERVER then
         end
     end
     
+    function modulesToString(modules)
+        local out = ""
+
+        for k, m in ipairs(modules) do
+            if m[1] == "" then continue end
+            
+            out = out .. m[1] .. " " .. m[2] .. "\n"
+        end
+
+        return out
+    end
+
     function setModuleState(name, state)
         if not isModuleExists(name) then return end
         if not isnumber(state) or state < 0 or state > 1 then return end 
-    
-        sql.Query("UPDATE modules SET enabled = " .. state .. " WHERE name = " .. sql.SQLStr(name) .. ";")
+        
+        local modules = getAllModules()
+
+        for k, m in ipairs(modules) do
+            if m[1] == name then
+                m[2] = state
+            end
+        end
+
+        if not file.Exists("modules.dat", "DATA") then return end
+
+        file.Write("modules.dat", modulesToString(modules))
     end
     
     function reverseModuleState(name)
@@ -72,7 +94,7 @@ if SERVER then
         local state = getModuleState(name)
         state = bool_to_number(not tobool(state))
     
-        sql.Query("UPDATE modules SET enabled = " .. state .. " WHERE name = " .. sql.SQLStr(name) .. ";")
+        setModuleState(name, state)
     end
 
     startSaveModules()
@@ -113,9 +135,11 @@ if SERVER then
         if not IsValid(ply) or not ply:IsSuperAdmin() then return end
         
         local modules = getAllModules()
-        -- for k, m in ipairs(modules) do
-        --     print(m[1] .. " = " .. m[2])
-        -- end
+        for k, m in ipairs(modules) do
+            if m[1] == "" then continue end
+            
+            print(m[1] .. " = " .. m[2])
+        end
     end)
 
     concommand.Add("prsbox_module_set", function (ply, cmd, args)

@@ -10,12 +10,14 @@ net.Receive("PRSBOX.Module.Send", function (len, ply)
     panel:MakePopup()
 
     for k, m in ipairs(modules) do
+        if m[1] == "" then return end
+        
         local button = vgui.Create("DButton", panel)
-        local moduleName = m["name"]
+        local moduleName = m[1]
 
         
         button:Dock(TOP)
-        button.State = m["enabled"]
+        button.State = m[2]
         button:SetText(moduleName .. " = " .. button.State)
 
         button.DoClick = function ()
