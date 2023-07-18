@@ -17,10 +17,15 @@ do
         self.BackgroundColor = COLOR_WHITE
         self.MarkTall = 0
         self.Speed = GetConVar("presbox_lobby_button_speed"):GetInt()
+
     end
 
     function PANEL:Text(text)
         self.Text = text
+    end
+
+    function PANEL:SetMenuClassName(className)
+        self.MenuClassName = className
     end
 
     function PANEL:PerformLayout()
@@ -36,6 +41,8 @@ do
         parent:ResetActiveButtons()
 
         self.Active = true 
+
+        parent:OpenMenu(self.MenuClassName)
     end
 
     function PANEL:Paint(w, h)
@@ -87,9 +94,14 @@ do
             if not IsValid(button) then continue end
 
             button:Text(buttonInfo["text"])
+            button:SetMenuClassName(buttonInfo["className"])
 
             table.insert(self.ButtonTabs, button)
         end
+
+        local firstButton = self.ButtonTabs[1]
+        firstButton.Active = true
+        self:OpenMenu(firstButton.MenuClassName)
     end
 
     function PANEL:SetupButtonSize(w)
@@ -111,8 +123,22 @@ do
         local tall = ScreenScale(20)
 
         self:SetTall(tall)
-
         self:SetupButtonSize(w)
+    end
+
+    function PANEL:OpenMenu(className)
+        if IsValid(self.CurrentMenu) then
+            self.CurrentMenu:Remove()
+        end
+        
+        local parent = self:GetParent()
+        if not IsValid(parent) then return end
+
+        local menuPanel = vgui.Create(className, parent)
+        if not IsValid(menuPanel) then return end
+        self.CurrentMenu = menuPanel
+
+        menuPanel:Dock(FILL)
     end
 
     function PANEL:Paint(w, h)
@@ -135,15 +161,26 @@ do
             self.TabMenu = tabMenu
 
             tabMenu:Dock(TOP)
-            tabMenu:AddTab("Hello World", "test")
-            tabMenu:AddTab("Hello World", "test")
-            tabMenu:AddTab("Hello World", "test")
-            tabMenu:AddTab("Hello World", "test")
-            tabMenu:AddTab("Hello World", "test")
+            for i=1, 5 do
+                tabMenu:AddTab("TEST " .. i, "TEST.TAB")
+            end
 
             tabMenu:InitButtons()
         end
     end
 
     vgui.Register("TEST.Button", PANEL, "EditablePanel")
+end
+
+---
+--- TEST TAB
+---
+do
+    local PANEL = {}
+
+    function PANEL:Init()
+        self:SetText("Hello World")
+    end
+
+    vgui.Register("TEST.TAB", PANEL, "DButton")
 end
