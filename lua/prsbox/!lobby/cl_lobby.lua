@@ -97,11 +97,6 @@ do
                 self:SetX(buttonMarginLeft)
             end
 
-            function infoPanel:Paint(w, h)
-                -- surface.SetDrawColor(COLOR_RED)
-                -- surface.DrawRect(0, 0, w, h)
-            end
-
             infoPanel:Hide()
         end
     end
@@ -170,10 +165,6 @@ do
     function PANEL:PerformLayout(w, h)
         local scrW, scrH = ScrW(), ScrH()
         self:SetSize(scrW, scrH)
-    end
-
-    function PANEL:Paint(w, h)
-
     end
 
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")

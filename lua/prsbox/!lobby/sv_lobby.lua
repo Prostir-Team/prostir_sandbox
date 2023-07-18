@@ -11,13 +11,14 @@ hook.Add("PlayerSpawn", "PRSBOX.Lobby.MakeSpectator", function (ply, trans)
     
     if inLobby then
         ply:CrosshairDisable()
-
+        ply:Freeze(true)
         net.Start("PRSBOX.Lobby.StartMenu")
         net.Send(ply)
 
         return true 
-
     end
+
+    ply:Freeze(false)
 end)
 
 concommand.Add("prsbox_lobby_test", function (ply, cmd, args)

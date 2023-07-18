@@ -23,10 +23,12 @@ surface.CreateFont("PRSBOX.Lobby.Font.Button", {
 COLOR_WHITE = Color(255, 255, 255)
 COLOR_RED = Color(255, 0, 0)
 COLOR_GREEN = Color(0, 255, 0)
-COLOR_BUTTON_NONE= Color(0, 0, 0, 0)
+COLOR_BUTTON_NONE = Color(0, 0, 0, 0)
+COLOR_BUTTON_WHITE_NONE = Color(255, 255, 255, 0)
 COLOR_BUTTON_BACKGROUND = Color(0, 0, 0, 200)
 COLOR_BUTTON_TEXT = Color(142, 255, 114)
 COLOR_BUTTON_TEXT_LOCKED = Color(255, 75, 75)
+
 
 ---
 --- Button states

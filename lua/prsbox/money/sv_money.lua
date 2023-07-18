@@ -407,7 +407,7 @@ local function Buyfunc( ply, class, catr )
         local money = ply:GetMoney()
         if cost <= money then
             ply:SubstractMoney(cost)
-            ply:PlayCLSound('buttons/weapon_confirm.wav')
+            -- ply:PlayCLSound('buttons/weapon_confirm.wav')
             return true
         else
             return false 

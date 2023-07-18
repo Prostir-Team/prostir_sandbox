@@ -64,21 +64,3 @@ do
 
     vgui.Register("PRSBOX.Lobby.Button", PANEL, "DButton")
 end
-
-
----
---- TEST BUTTON
----
-do
-    local PANEL = {}
-
-    function PANEL:Init()
-        self:SetText("Hello World")
-    end
-
-    function PANEL:DoClick()
-        print("Hello World")
-    end
-
-    vgui.Register("TEST.Button", PANEL, "DButton")
-end
