@@ -3,6 +3,14 @@
 ---
 
 CreateClientConVar("prsbox_lobby_fov", "80", true, false, "", 80, 110)
+CreateClientConVar("prsbox_lobby_camera_speed", "10", true, false, "", 5, 100)
+
+---
+--- Player client variables
+---
+
+local PLAYER_STATE = PLAYER_NONE
+local PLAYER_LAST_WEAPON = ""
 
 ---
 --- Menu meta class
@@ -176,25 +184,54 @@ do
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
-hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles)
+---
+--- Player camera view
+---
+
+local camPos = Vector()
+local camAng = Angle()
+local camFov = 0
+
+hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles, fov)
     if not IsValid(ply) then return end
-    local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
 
-    if plyState == PLAYER_NONE then return end
+    -- In know, this part of code is fucking shit (by Swanchick)
 
-    local fov = GetConVar("prsbox_lobby_fov"):GetInt()
+    local camSpeed = GetConVar("prsbox_lobby_camera_speed"):GetInt()
 
-    local camPos = angles:Forward() * 50 + angles:Right() * 10 - angles:Up() * 5
-    local camAng = Angle(0, 160, 0)
+    if PLAYER_STATE == PLAYER_NONE then
+        local endCamPos = Vector()
+        local endCamAng = Angle()
+        local endFov = fov
+
+        camPos = LerpVector(FrameTime() * camSpeed / 2, camPos, endCamPos)
+        camAng = LerpAngle(FrameTime() * camSpeed / 2, camAng, endCamAng)
+        camFov = Lerp(FrameTime() * camSpeed / 2, camFov, endFov)
+    else
+        local tr = util.TraceLine( {
+            start = ply:EyePos(),
+            endpos = ply:EyePos() + angles:Forward() * 60,
+        })
+
+        local fraction = PLAYER_STATE == PLAYER_LOBBY and 1 or tr.Fraction
+
+        local endCamPos = angles:Forward() * fraction * 50 + (PLAYER_STATE == PLAYER_LOBBY and angles:Right() * 10 or Vector()) - angles:Up() * 5
+        local endCamAng = Angle(0, 160, 0)
+        local endFov = GetConVar("prsbox_lobby_fov"):GetInt()
+
+        camPos = LerpVector(FrameTime() * camSpeed, camPos, endCamPos)
+        camAng = LerpAngle(FrameTime() * camSpeed, camAng, endCamAng)
+        camFov = Lerp(FrameTime() * camSpeed, camFov, endFov)
+    end
 
     local view = {
-		origin = pos + camPos,
-		angles = angles - camAng,
-		fov = fov,
-		drawviewer = true
-	}
+        ["origin"] = pos + camPos,
+        ["angles"] = angles - camAng,
+        ["fov"] = camFov,
+        ["drawviewer"] = PLAYER_STATE ~= PLAYER_NONE
+    }
 
-	return view
+    return view
 end)
 
 ---
@@ -205,7 +242,7 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
     
-    ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+    PLAYER_STATE = PLAYER_NONE
     
     RunConsoleCommand("prsbox_lobby_start")
 
@@ -219,7 +256,7 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
     
-    ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+    PLAYER_STATE = PLAYER_NONE
     menu:Remove()
 end)
 
@@ -237,19 +274,22 @@ end
 
 net.Receive("PRSBOX.Lobby.StartMenu", function (len)
     local ply = LocalPlayer()
-    
-    print("--------------------------------------------------------")
-    print("Lobby has been started!!!")
-    print("--------------------------------------------------------")
 
-    local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
-    if plyState == PLAYER_PAUSE then return end
+    if PLAYER_STATE == PLAYER_PAUSE then return end
 
-    ply:SetNWBool("PRSBOX.Lobby.State", PLAYER_LOBBY)
+    PLAYER_STATE = PLAYER_LOBBY
     
     MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
     MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
     MAIN_MENU:InitButtons()
+end)
+
+net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
+    if IsValid(MAIN_MENU) then
+        PLAYER_STATE = PLAYER_NONE
+        
+        MAIN_MENU:Remove()
+    end
 end)
 
 ---
@@ -261,23 +301,28 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
         local ply = LocalPlayer()
         gui.HideGameUI()
         if not IsValid(ply) or ply:InVehicle() then return end
-        
-        local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
-        if plyState == PLAYER_LOBBY then return end
+
+        if PLAYER_STATE == PLAYER_LOBBY then return end
         
         if IsValid(MAIN_MENU) then
-            ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+            PLAYER_STATE = PLAYER_NONE
             
             MAIN_MENU:Remove()
         else
             local plyAngles = ply:GetAngles()
-            
+
             ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
-            ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_PAUSE)
+            PLAYER_STATE = PLAYER_PAUSE
 
             MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
             MAIN_MENU:SetPlayerState(PLAYER_PAUSE)
             MAIN_MENU:InitButtons()
         end
+    end
+end)
+
+hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
+    if name == "CHudCrosshair" and PLAYER_STATE ~= PLAYER_NONE then
+        return false 
     end
 end)

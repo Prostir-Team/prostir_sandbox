@@ -28,6 +28,6 @@ do
     vgui.Register("PRSBOX.Infopanel.TabContent", PANEL, "EditablePanel")
 end
 
-MENU:RegisterButton("Cool Інформація", 2, function(menu, btn)
+MENU:RegisterButton("Cool Інформація", 2, PLAYER_NONE, function(menu, btn)
     menu:OpenInfoMenu("PRSBOX.Infopanel")
 end)

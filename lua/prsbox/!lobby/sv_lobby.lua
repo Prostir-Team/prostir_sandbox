@@ -1,4 +1,7 @@
 util.AddNetworkString("PRSBOX.Lobby.StartMenu")
+util.AddNetworkString("PRSBOX.Lobby.CheckDeath")
+
+local PLAYER_LAST_WEAPON = NULL 
 
 hook.Add("PlayerInitialSpawn", "PRSBOX.Lobby.InitSpawn", function (ply)
     ply:SetNWBool("PRSBOX.InLobby", true)
@@ -10,7 +13,6 @@ hook.Add("PlayerSpawn", "PRSBOX.Lobby.MakeSpectator", function (ply, trans)
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
     
     if inLobby then
-        ply:CrosshairDisable()
         ply:Freeze(true)
         net.Start("PRSBOX.Lobby.StartMenu")
         net.Send(ply)
@@ -33,4 +35,11 @@ concommand.Add("prsbox_lobby_start", function (ply, cmd, args)
 
     ply:SetNWBool("PRSBOX.InLobby", false)
     ply:Spawn()
+end)
+
+hook.Add("PostPlayerDeath", "PRSBOX.Lobby.CheckDeath", function (ply)
+    if not IsValid(ply) then return end
+
+    net.Start("PRSBOX.Lobby.CheckDeath")
+    net.Send(ply)
 end)
