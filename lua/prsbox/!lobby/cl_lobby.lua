@@ -215,6 +215,14 @@ end, function (menu, button)
     button.debug = 1
 end)
 
+MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (menu, button)
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    
+    ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+    menu:Remove()
+end)
+
 MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
     RunConsoleCommand("disconnect")
 end)
@@ -248,22 +256,19 @@ end)
 hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
     if input.IsKeyDown(KEY_ESCAPE) and gui.IsGameUIVisible() then
         local ply = LocalPlayer()
-        if not IsValid(ply) then return end
+        gui.HideGameUI()
+        if not IsValid(ply) or ply:InVehicle() then return end
         
         local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
         if plyState == PLAYER_LOBBY then return end
-
+        
         if IsValid(MAIN_MENU) then
-            gui.HideGameUI()
-            
             ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
             
             MAIN_MENU:Remove()
         else
             local plyAngles = ply:GetAngles()
             
-            gui.HideGameUI()
-
             ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
             ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_PAUSE)
 
