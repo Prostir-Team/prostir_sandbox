@@ -237,8 +237,11 @@ end
 
 net.Receive("PRSBOX.Lobby.StartMenu", function (len)
     local ply = LocalPlayer()
-    if not IsValid(ply) then return end
     
+    print("--------------------------------------------------------")
+    print("Lobby has been started!!!")
+    print("--------------------------------------------------------")
+
     local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
     if plyState == PLAYER_PAUSE then return end
 

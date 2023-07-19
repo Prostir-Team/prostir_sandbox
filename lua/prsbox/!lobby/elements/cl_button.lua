@@ -1,4 +1,4 @@
-CreateClientConVar("presbox_lobby_button_speed", "10", true, false, "", 5, 100)
+CreateClientConVar("prsbox_lobby_button_speed", "10", true, false, "", 5, 100)
 
 --- Button colors
 
@@ -24,7 +24,7 @@ do
         self.BackgroundColor = COLOR_BUTTON_NONE
         self.MarkWide = 0
         self.MarkWideMax = ScreenScale(5)
-        self.Speed = GetConVar("presbox_lobby_button_speed"):GetInt()
+        self.Speed = GetConVar("prsbox_lobby_button_speed"):GetInt()
     end
 
     function PANEL:Text(text)
