@@ -27,7 +27,7 @@ concommand.Add("prsbox_lobby_test", function (ply, cmd, args)
     if not IsValid(ply) then return end 
 
     ply:SetNWBool("PRSBOX.InLobby", true )
-    ply:KillSilent()
+    ply:Spawn()
 end)
 
 concommand.Add("prsbox_lobby_start", function (ply, cmd, args)

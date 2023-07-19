@@ -304,6 +304,11 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
 
         if PLAYER_STATE == PLAYER_LOBBY then return end
         
+        if not ply:Alive() then
+            RunConsoleCommand("prsbox_lobby_test")
+            return 
+        end
+
         if IsValid(MAIN_MENU) then
             PLAYER_STATE = PLAYER_NONE
             
