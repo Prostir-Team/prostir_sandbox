@@ -1,9 +1,8 @@
-CreateClientConVar("prsbox_lobby_fov", "80", true, false, "", 80, 110)
 ---
---- Player variables
+--- ConVars
 ---
 
-local PLAYER_IN_LOBBY = false
+CreateClientConVar("prsbox_lobby_fov", "80", true, false, "", 80, 110)
 
 ---
 --- Menu meta class
@@ -13,10 +12,11 @@ MENU = MENU or {}
 
 MENU.registeredButtons = {} -- Ця таблиця для реєстрації функціоналу кнопок в головному меню
 
-function MENU:RegisterButton(text, pos, callback, init)
+function MENU:RegisterButton(text, pos, playerState, callback, init)
     local button = {
         ["text"] = text,
         ["pos"] = pos,
+        ["playerState"] = playerState,
         ["callback"] = callback,
         ["init"] = init
     }
@@ -101,6 +101,10 @@ do
         end
     end
 
+    function PANEL:SetPlayerState(playerState)
+        self.PlayerState = playerState
+    end
+
     function PANEL:OpenInfoMenu(className)
         local buttonPanel = self.ButtonPanel
         local infoPanel = self.InfoPanel
@@ -146,9 +150,11 @@ do
         if not IsValid(buttonPanel) then return end
 
         for k, buttonInfo in SortedPairsByMemberValue(MENU.registeredButtons, "pos", false) do
+            if buttonInfo["playerState"] ~= self.PlayerState and buttonInfo["playerState"] ~= PLAYER_NONE then continue end
+            
             local button = vgui.Create("PRSBOX.Lobby.Button", buttonPanel)
             if not IsValid(button) then continue end
-
+            
             if buttonInfo["init"] ~= nil then
                 buttonInfo["init"](self, button)
             end
@@ -170,48 +176,11 @@ do
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
-MENU:RegisterButton("Почати гру", 1, function (menu, button)
-    print("Game has started")
-    PLAYER_IN_LOBBY = false
-    RunConsoleCommand("prsbox_lobby_start")
-
-    menu:Remove()
-end, function (menu, button)
-    button.ButtonState = 2
-    button.debug = 1
-end)
-
-MENU:RegisterButton("Інформація", 2, function (menu, button)
-    menu:OpenInfoMenu("TEST.Button")
-end)
-
-MENU:RegisterButton("Налаштування", 3, function (menu, button)
-
-end)
-
-MENU:RegisterButton("Оригінальне меню", 4, function (menu, button)
-
-end)
-
-MENU:RegisterButton("Покинути сервер", 5, function ()
-    
-end)
-
-if IsValid(MAIN_MENU) then
-    MAIN_MENU:Remove()
-end
-
-net.Receive("PRSBOX.Lobby.StartMenu", function (len)
-    PLAYER_IN_LOBBY = true 
-    
-    MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
-    MAIN_MENU:InitButtons()
-end)
-
 hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles)
     if not IsValid(ply) then return end
+    local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
 
-    if not PLAYER_IN_LOBBY then return end
+    if plyState == PLAYER_NONE then return end
 
     local fov = GetConVar("prsbox_lobby_fov"):GetInt()
 
@@ -221,9 +190,86 @@ hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles)
     local view = {
 		origin = pos + camPos,
 		angles = angles - camAng,
-		fov = 75,
+		fov = fov,
 		drawviewer = true
 	}
 
 	return view
+end)
+
+---
+--- Buttons
+---
+
+MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, button)
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    
+    ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+    
+    RunConsoleCommand("prsbox_lobby_start")
+
+    menu:Remove()
+end, function (menu, button)
+    button.ButtonState = 2
+    button.debug = 1
+end)
+
+MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
+    RunConsoleCommand("disconnect")
+end)
+
+---
+--- Open lobby
+---
+
+if IsValid(MAIN_MENU) then
+    MAIN_MENU:Remove()
+end
+
+net.Receive("PRSBOX.Lobby.StartMenu", function (len)
+    local ply = LocalPlayer()
+    if not IsValid(ply) then return end
+    
+    local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+    if plyState == PLAYER_PAUSE then return end
+
+    ply:SetNWBool("PRSBOX.Lobby.State", PLAYER_LOBBY)
+    
+    MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+    MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
+    MAIN_MENU:InitButtons()
+end)
+
+---
+--- Open escape lobby
+---
+
+hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
+    if input.IsKeyDown(KEY_ESCAPE) and gui.IsGameUIVisible() then
+        local ply = LocalPlayer()
+        if not IsValid(ply) then return end
+        
+        local plyState = ply:GetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+        if plyState == PLAYER_LOBBY then return end
+
+        if IsValid(MAIN_MENU) then
+            gui.HideGameUI()
+            
+            ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_NONE)
+            
+            MAIN_MENU:Remove()
+        else
+            local plyAngles = ply:GetAngles()
+            
+            gui.HideGameUI()
+
+            ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
+            ply:SetNWInt("PRSBOX.Lobby.State", PLAYER_PAUSE)
+
+            MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+            MAIN_MENU:SetPlayerState(PLAYER_PAUSE)
+            MAIN_MENU:InitButtons()
+        end
+    end
 end)
