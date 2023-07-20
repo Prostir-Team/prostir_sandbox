@@ -16,6 +16,13 @@ surface.CreateFont("PRSBOX.Lobby.Font.Button", {
     ["weight"] = 700
 })
 
+surface.CreateFont("PRSBOX.Lobby.Font.Info", {
+    ["font"] = "Roboto",
+    ["size"] = ScreenScale(10),
+    ["extended"] = true,
+    ["weight"] = 700
+})
+
 ---
 --- Colors
 ---
@@ -44,3 +51,10 @@ BUTTON_CLOSED = 2
 PLAYER_NONE = 0
 PLAYER_PAUSE = 1
 PLAYER_LOBBY = 2
+
+---
+--- Checkbox state
+---
+
+CHECKBOX_GOOD = COLOR_BUTTON_TEXT
+CHECKBOX_BAD = COLOR_BUTTON_TEXT_LOCKED

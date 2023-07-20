@@ -13,9 +13,12 @@ hook.Add("PlayerSpawn", "PRSBOX.Lobby.MakeSpectator", function (ply, trans)
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
     
     if inLobby then
-        ply:Freeze(true)
-        net.Start("PRSBOX.Lobby.StartMenu")
-        net.Send(ply)
+        timer.Simple(0.1, function ()
+            ply:Freeze(true)
+            ply:SetActiveWeapon(NULL)
+            net.Start("PRSBOX.Lobby.StartMenu")
+            net.Send(ply)
+        end)
 
         return true 
     end

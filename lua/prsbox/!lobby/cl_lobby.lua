@@ -213,8 +213,9 @@ hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles, fov)
         camFov = Lerp(FrameTime() * camSpeed / 2, camFov, endFov)
     else
         local tr = util.TraceLine( {
-            start = ply:EyePos(),
-            endpos = ply:EyePos() + angles:Forward() * 60,
+            ["start"] = ply:EyePos(),
+            ["endpos"] = ply:EyePos() + angles:Forward() * 60,
+            ["collisiongroup"] = COLLISION_GROUP_DEBRIS
         })
 
         local fraction = PLAYER_STATE == PLAYER_LOBBY and 1 or tr.Fraction
@@ -262,6 +263,30 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     
     PLAYER_STATE = PLAYER_NONE
     menu:Remove()
+end)
+
+MENU:RegisterButton("Тест", 2, PLAYER_NONE, function (menu, button)
+    if IsValid(menu.CheckBox) then return end
+    
+    local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
+    if not IsValid(checkbox) then return end
+    menu.CheckBox = checkbox
+
+    checkbox:SetTitle("Пройдіть рашист тестер")
+    checkbox:SetText("Вам потрібно пройти рашист тестер aksdhkajhs dhalsjhd jahsjd hlajkshd jkhalsjhd lasd hasjhd jas!!!")
+    checkbox:SetState(CHECKBOX_BAD)
+
+    function checkbox:OnYesClick()
+        print("yes")
+
+        self:Remove()
+    end
+
+    function checkbox:OnNoClick()
+        print("no")
+
+        self:Remove()
+    end
 end)
 
 MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
