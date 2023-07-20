@@ -44,6 +44,8 @@ do
 
         self.InfoMenuOpened = false 
 
+        self:SetZPos(1000)
+
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
             self.ButtonPanel = buttonPanel
@@ -196,6 +198,8 @@ hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles, fov)
     if not IsValid(ply) then return end
 
     -- In know, this part of code is fucking shit (by Swanchick)
+
+    if ply:InVehicle() then return end
 
     local camSpeed = GetConVar("prsbox_lobby_camera_speed"):GetInt()
 
