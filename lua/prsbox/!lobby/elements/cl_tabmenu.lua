@@ -16,7 +16,7 @@ do
         self.TextColor = COLOR_WHITE
         self.BackgroundColor = COLOR_WHITE
         self.MarkTall = 0
-        self.Speed = GetConVar("presbox_lobby_button_speed"):GetInt()
+        self.Speed = GetConVar("prsbox_lobby_button_speed"):GetInt()
 
     end
 
