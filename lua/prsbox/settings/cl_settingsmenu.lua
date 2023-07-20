@@ -1,4 +1,22 @@
 ---
+--- Global functions
+---
+
+SETTINGS = SETTINGS or {}
+
+SETTINGS.Settings = {}
+
+function SETTINGS:AddSetting(name, convar, type)
+    local s = {
+        ["name"] = name,
+        ["convar"] = convar,
+        ["type"] = type
+    }
+
+    table.insert(self.Settings, s)
+end
+
+---
 --- Settings panel
 ---
 
@@ -21,3 +39,7 @@ do
     
     vgui.Register("PRSBOX.Settings", PANEL, "EditablePanel")
 end
+
+MENU:RegisterButton("Налаштування", 3, PLAYER_NONE, function (menu, button)
+    menu:OpenInfoMenu("PRSBOX.Settings")
+end)
