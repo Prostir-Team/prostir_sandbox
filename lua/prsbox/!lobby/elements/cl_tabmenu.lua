@@ -21,7 +21,7 @@ do
     end
 
     function PANEL:Text(text)
-        self.Text = text
+        self.text = text
     end
 
     function PANEL:SetMenuClassName(className)
@@ -42,7 +42,7 @@ do
 
         self.Active = true 
 
-        parent:OpenMenu(self.MenuClassName)
+        parent:OpenMenu(self.Text, self.MenuClassName)
     end
 
     function PANEL:Paint(w, h)
@@ -59,9 +59,9 @@ do
         surface.SetDrawColor(self.BackgroundColor)
         surface.DrawRect(0, h - self.MarkTall, w, self.MarkTall)
         
-        if not self.Text then return end
+        if not self.text then return end
 
-        draw.DrawText(self.Text, "PRSBOX.Lobby.Font.Button", marginLeft, ScreenScale(2.3), self.TextColor, TEXT_ALIGN_LEFT)
+        draw.DrawText(self.text, "PRSBOX.Lobby.Font.Button", marginLeft, ScreenScale(2.3), self.TextColor, TEXT_ALIGN_LEFT)
     end
 
     vgui.Register("PRSBOX.Lobby.TabButton", PANEL, "DButton")
@@ -100,8 +100,10 @@ do
         end
 
         local firstButton = self.ButtonTabs[1]
+
         firstButton.Active = true
-        self:OpenMenu(firstButton.MenuClassName)
+        
+        self:OpenMenu(firstButton.text, firstButton.MenuClassName)
     end
 
     function PANEL:SetupButtonSize(w)
@@ -126,7 +128,10 @@ do
         self:SetupButtonSize(w)
     end
 
-    function PANEL:OpenMenu(className)
+    function PANEL:OnMenuOpen(buttonText, menu) 
+    end
+
+    function PANEL:OpenMenu(buttonText, className)
         if IsValid(self.CurrentMenu) then
             self.CurrentMenu:Remove()
         end
@@ -134,11 +139,15 @@ do
         local parent = self:GetParent()
         if not IsValid(parent) then return end
 
+        print(className)
+
         local menuPanel = vgui.Create(className, parent)
         if not IsValid(menuPanel) then return end
         self.CurrentMenu = menuPanel
 
         menuPanel:Dock(FILL)
+
+        self:OnMenuOpen(buttonText, menuPanel)
     end
 
     function PANEL:Paint(w, h)
