@@ -42,7 +42,7 @@ do
 
         self.Active = true 
 
-        parent:OpenMenu(self.Text, self.MenuClassName)
+        parent:OpenMenu(self.text, self.MenuClassName, self.callback)
     end
 
     function PANEL:Paint(w, h)
@@ -79,10 +79,11 @@ do
         self.ButtonTabs = {}
     end
 
-    function PANEL:AddTab(text, className)
+    function PANEL:AddTab(text, className, callback)
         local tab = {
             ["text"] = text,
-            ["className"] = className
+            ["className"] = className,
+            ["callback"] = callback
         }
         
         table.insert(self.Tabs, tab)
@@ -95,6 +96,7 @@ do
 
             button:Text(buttonInfo["text"])
             button:SetMenuClassName(buttonInfo["className"])
+            button.callback = buttonInfo["callback"]
 
             table.insert(self.ButtonTabs, button)
         end
@@ -103,7 +105,7 @@ do
 
         firstButton.Active = true
         
-        self:OpenMenu(firstButton.text, firstButton.MenuClassName)
+        self:OpenMenu(firstButton.text, firstButton.MenuClassName, firstButton.callback)
     end
 
     function PANEL:SetupButtonSize(w)
@@ -128,10 +130,11 @@ do
         self:SetupButtonSize(w)
     end
 
-    function PANEL:OnMenuOpen(buttonText, menu) 
+    function PANEL:OnMenuOpen(buttonText, menu)
+
     end
 
-    function PANEL:OpenMenu(buttonText, className)
+    function PANEL:OpenMenu(buttonText, className, callback)
         if IsValid(self.CurrentMenu) then
             self.CurrentMenu:Remove()
         end
@@ -147,7 +150,7 @@ do
 
         menuPanel:Dock(FILL)
 
-        self:OnMenuOpen(buttonText, menuPanel)
+        callback(buttonText, menuPanel)
     end
 
     function PANEL:Paint(w, h)
