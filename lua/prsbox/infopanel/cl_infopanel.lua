@@ -4,6 +4,23 @@ do
     local PANEL = {}
 
     function PANEL:Init()
+        local sbar = self:GetVBar()
+        if not IsValid(sbar) then return end
+        self.Sbar = sbar
+
+        sbar:DockPadding(sbar:GetWide(), 0, 0, 0)
+        sbar:SetHideButtons(true)
+
+        function sbar:Paint(w, h)
+            surface.SetDrawColor(COLOR_BUTTON_BACKGROUND)
+            surface.DrawRect(0, 0, w, h)
+        end
+        function sbar.btnUp:Paint(w, h) end
+        function sbar.btnDown:Paint(w, h) end
+        function sbar.btnGrip:Paint(w, h)
+            surface.SetDrawColor(COLOR_WHITE)
+            surface.DrawRect(0, 0, w, h)
+        end
     end
 
     function PANEL:LoadDocument(docName) -- md parser code lmao
