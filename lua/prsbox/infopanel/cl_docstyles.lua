@@ -6,6 +6,28 @@ surface.CreateFont("PrMarkdown.PlainText", {
     ["antialias"] = true
 })
 
+do -- baseclass
+    local PANEL = {}
+
+    function PANEL:Init()
+        self.font_size = ScreenScale(12)
+        self.margin_left = ScreenScale(5)
+        self.margin_top = 2
+        self.margin_right = 1
+        self.margin_bottom = 2
+        self:SetColor(COLOR_WHITE)
+        self:SetAutoStretchVertical(false)
+    end
+
+    function PANEL:PerformLayout(w, h)
+        local tall = math.Round(self:GetWide() * self.font_size / w)
+        self:SetTall(tall)
+        self:DockMargin(self.margin_left, self.margin_top, self.margin_right, self.margin_bottom)
+    end
+
+    vgui.Register("PrMarkdown.BaseClass", PANEL, "DLabel")
+end
+
 do -- heading 1 (# Heading)
     local element_name = "PrMarkdown.Heading1"
     local font_size = ScreenScale(20)
@@ -17,21 +39,19 @@ do -- heading 1 (# Heading)
         ["antialias"] = true
     })
 
-    do
-        local PANEL = {}
+    local PANEL = {}
 
-        function PANEL:Init()
-            self:SetFont(element_name)
-            self:SetColor(COLOR_WHITE)
-        end
-
-        function PANEL:PerformLayout(w, h)
-            self:SetTall(font_size)
-            self:DockMargin(5, 5, 5, 5)
-        end
-
-        vgui.Register(element_name, PANEL, "DLabel")
+    function PANEL:Init()
+        self.font_size = font_size
+        self.margin_top = 5
+        self.margin_right = 5
+        self.margin_bottom = 5
+        self:SetFont(element_name)
     end
+
+    vgui.Register(element_name, PANEL, "PrMarkdown.BaseClass")
+
+    PRMARKDOWN_HEADING1 = element_name
 end
 
 do -- heading 2 (## Heading)
@@ -45,21 +65,19 @@ do -- heading 2 (## Heading)
         ["antialias"] = true
     })
 
-    do
-        local PANEL = {}
+    local PANEL = {}
 
-        function PANEL:Init()
-            self:SetFont(element_name)
-            self:SetColor(COLOR_WHITE)
-        end
-
-        function PANEL:PerformLayout(w, h)
-            self:SetTall(font_size)
-            self:DockMargin(5, 5, 5, 5)
-        end
-
-        vgui.Register(element_name, PANEL, "DLabel")
+    function PANEL:Init()
+        self.font_size = font_size
+        self.margin_top = 5
+        self.margin_right = 5
+        self.margin_bottom = 5
+        self:SetFont(element_name)
     end
+
+    vgui.Register(element_name, PANEL, "PrMarkdown.BaseClass")
+
+    PRMARKDOWN_HEADING2 = element_name
 end
 
 do -- heading 3 (### Heading)
@@ -76,16 +94,16 @@ do -- heading 3 (### Heading)
     local PANEL = {}
 
     function PANEL:Init()
+        self.font_size = font_size
+        self.margin_top = 5
+        self.margin_right = 5
+        self.margin_bottom = 5
         self:SetFont(element_name)
-        self:SetColor(COLOR_WHITE)
     end
 
-    function PANEL:PerformLayout(w, h)
-        self:SetTall(font_size)
-        self:DockMargin(5, 5, 5, 5)
-    end
+    vgui.Register(element_name, PANEL, "PrMarkdown.BaseClass")
 
-    vgui.Register(element_name, PANEL, "DLabel")
+    PRMARKDOWN_HEADING3 = element_name
 end
 
 do
@@ -95,19 +113,17 @@ do
 
     function PANEL:Init()
         self:SetFont(element_name)
-        self:SetColor(COLOR_WHITE)
     end
 
-    function PANEL:PerformLayout(w, h)
-        self:SetTall(ScreenScale(12))
-        self:DockMargin(ScreenScale(5), 1, 1, 1)
-    end
+    vgui.Register(element_name, PANEL, "PrMarkdown.BaseClass")
 
-    vgui.Register(element_name, PANEL, "DLabel")
+    PRMARKDOWN_PLAIN = element_name
 end
 
 
 do -- unordered list item (- item)
+    local element_name = "PrMarkdown.UnorderedListItem"
+
     local PANEL = {}
 
     PANEL.SetText_Base = FindMetaTable( "Panel" ).SetText
@@ -115,6 +131,7 @@ do -- unordered list item (- item)
     function PANEL:Init()
         self:SetText_Base("")
         self:SetFont("PrMarkdown.PlainText")
+        self.font_size = ScreenScale(12)
     end
 
     function PANEL:SetText(text)
@@ -126,35 +143,43 @@ do -- unordered list item (- item)
     end
 
     function PANEL:PerformLayout(w, h)
-        self:SetTall(ScreenScale(12))
+        local tall = math.Round(self:GetWide() * self.font_size / w)
+        self:SetTall(tall)
         self:DockMargin(ScreenScale(8), 2, 1, 2)
     end
 
     function PANEL:Paint(w, h)
-	    local TextColor = COLOR_WHITE
+        local TextColor = COLOR_WHITE
 
-	    surface.SetFont( self:GetFont() or "default" )
-	    surface.SetTextColor( TextColor )
-	    surface.SetTextPos(0, 0)
-	    surface.DrawText( self:GetText() )
+        surface.SetFont( self:GetFont() or "default" )
+        surface.SetTextColor( TextColor )
+        surface.SetTextPos(0, 0)
+        surface.DrawText( self:GetText() )
     end
 
-    vgui.Register("PrMarkdown.UnorderedListItem", PANEL, "DLabel")
+    vgui.Register(element_name, PANEL, "DLabel") -- it's a special class coz i'm a lazy ass
+
+    PRMARKDOWN_UNORDERED = element_name
 end
 
 do -- ordered list item (1. item)
+    local element_name = "PrMarkdown.OrderedListItem"
     local PANEL = {}
 
     function PANEL:Init()
+        self.margin_left = ScreenScale(8)
         self:SetFont("PrMarkdown.PlainText")
-        self:SetColor(COLOR_WHITE)
     end
 
-    function PANEL:PerformLayout(w, h)
-        self:SetTall(ScreenScale(12))
-        self:DockMargin(ScreenScale(8), 2, 1, 2)
-    end
+    vgui.Register(element_name, PANEL, "PrMarkdown.BaseClass")
 
-    vgui.Register("PrMarkdown.OrderedListItem", PANEL, "DLabel")
+    PRMARKDOWN_ORDERED = element_name
 end
+
+PrMarkdown_Symbols = {
+    ["#"] = PRMARKDOWN_HEADING1,
+    ["##"] = PRMARKDOWN_HEADING2,
+    ["###"] = PRMARKDOWN_HEADING3,
+    ["-"] = PRMARKDOWN_UNORDERED
+}
 
