@@ -43,7 +43,7 @@ do
     end
 
     function PANEL:Paint(w, h)
-        surface.SetDrawColor(Color(0, 0, 0, 240))
+        surface.SetDrawColor(COLOR_BUTTON_BACKGROUND)
         surface.DrawRect(0, 0, w, h)
     end
 

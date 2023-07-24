@@ -20,6 +20,12 @@ MENU = MENU or {}
 
 MENU.registeredButtons = {} -- Ця таблиця для реєстрації функціоналу кнопок в головному меню
 
+function MENU:ButtonExist(text)
+    for k, info in ipairs(self.registeredButtons) do
+        if info["text"] == text then return true end
+    end
+end
+
 function MENU:RegisterButton(text, pos, playerState, callback, init)
     local button = {
         ["text"] = text,
