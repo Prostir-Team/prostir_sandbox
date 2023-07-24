@@ -49,7 +49,7 @@ do
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
             self.ButtonPanel = buttonPanel
-            
+
             function buttonPanel:PerformLayout()
                 local scrW, scrH = ScrW(), ScrH()
 
@@ -115,12 +115,21 @@ do
         self.PlayerState = playerState
     end
 
-    function PANEL:OpenInfoMenu(className)
+    function PANEL:OpenInfoMenu(className, createBackButton)
         local buttonPanel = self.ButtonPanel
         local infoPanel = self.InfoPanel
         
         if not IsValid(buttonPanel) then return end
         if not IsValid(infoPanel) then return end
+
+        local backButton = infoPanel.BackButton
+        if IsValid(backButton) then
+            if createBackButton == true or createBackButton == nil then
+                backButton:Show()
+            else 
+                backButton:Hide()
+            end
+        end
 
         local currentMenu = infoPanel.CurrentMenu
 
@@ -265,7 +274,7 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     menu:Remove()
 end)
 
-MENU:RegisterButton("Тест", 2, PLAYER_NONE, function (menu, button)
+MENU:RegisterButton("Тест", 2, PLAYER_LOBBY, function (menu, button)
     if IsValid(menu.CheckBox) then return end
     
     local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
@@ -276,10 +285,10 @@ MENU:RegisterButton("Тест", 2, PLAYER_NONE, function (menu, button)
     checkbox:SetText("Вам потрібно пройти рашист тестер aksdhkajhs dhalsjhd jahsjd hlajkshd jkhalsjhd lasd hasjhd jas!!!")
     checkbox:SetState(CHECKBOX_BAD)
 
-    function checkbox:OnYesClick()
-        print("yes")
-
-        self:Remove()
+    checkbox.OnYesClick = function ()
+        menu:OpenInfoMenu("PRSBOX.Rashist", true )
+        
+        checkbox:Remove()
     end
 
     function checkbox:OnNoClick()

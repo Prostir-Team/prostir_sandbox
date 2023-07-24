@@ -151,7 +151,9 @@ do
 
         menuPanel:Dock(FILL)
 
-        callback(buttonText, menuPanel)
+        if callback then
+            callback(buttonText, menuPanel)
+        end 
     end
 
     function PANEL:Paint(w, h)
