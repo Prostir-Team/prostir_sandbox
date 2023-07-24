@@ -1,5 +1,5 @@
-CreateClientConVar("prsbox_test", "10", true, false, "", 0, 10)
-
+CreateClientConVar("prsbox_test", "10", true, false, "", 0, 100)
+CreateClientConVar("prsbox_test2", "10", true, false, "", 0, 100)
 
 ---
 --- Setting types
@@ -45,108 +45,101 @@ do
     function PANEL:Init()
         self:Dock(RIGHT)
 
+        self:SetText("")
+    end
 
-        local label = vgui.Create("DLabel", self)
-        if IsValid(label) then
-            self.Label = label
+    function PANEL:OnMousePressed(key)
+        self.Clicked = true 
+    end
 
-            label:SetText("")
-            label:Dock(FILL)
-            label.text = ""
-
-            function label:Paint(w, h)
-                draw.DrawText(self.text, "PRSBOX.Lobby.Font.Info", w / 2, ScreenScale(5.5), COLOR_WHITE, TEXT_ALIGN_CENTER)
-            end
-        end
-        
-        local lowButton = vgui.Create("DButton", self)
-        if IsValid(lowButton) then
-            self.LowButton = lowButton
-
-            lowButton:SetText("<")
-            lowButton:Dock(LEFT)
-            lowButton:SetTextColor(COLOR_WHITE)
-            lowButton:SetFont("PRSBOX.Lobby.Font.Info")
-
-            function lowButton:DoClick()
-                local parent = self:GetParent()
-                if not IsValid(parent) then return end
-
-                parent:ChangeValue(-1)
-            end
-
-            function lowButton:Paint()
-            end
-        end
-
-        local highButton = vgui.Create("DButton", self)
-        if IsValid(highButton) then
-            self.HighButton = highButton
-
-            highButton:SetText(">")
-            highButton:Dock(RIGHT)
-            highButton:SetTextColor(COLOR_WHITE)
-            highButton:SetFont("PRSBOX.Lobby.Font.Info")
-
-            function highButton:DoClick()
-                local parent = self:GetParent()
-                if not IsValid(parent) then return end
-
-                parent:ChangeValue(1)
-            end
-
-            function highButton:Paint()
-            end
-        end
+    function PANEL:OnMouseReleased(key)
+        self.Clicked = false 
     end
 
     function PANEL:AddConvar(convarName)
-        if not ConVarExists(convarName) then return end
-
         local convar = GetConVar(convarName)
         self.Convar = convar
-        local value = convar:GetInt()
-        self.Value = value
-        local min = convar:GetMin()
-        self.Min = min
+
         local max = convar:GetMax()
         self.Max = max
 
-        local label = self.Label
-        if IsValid(label) then
-            label.text = value
-        end
-    end
+        local min = convar:GetMin()
+        self.Min = min
 
-    function PANEL:ChangeValue(value)
-        self.Value = self.Convar:GetInt()
-        
-        self.Value = self.Value + value
+        local value = convar:GetInt()
+        self.RealValue = value
+        self.Value = value - self.Min
 
-        if self.Value > self.Max or self.Value < self.Min then return end
-
-        self.Convar:SetInt(self.Value)
-
-        local label = self.Label
-        if IsValid(label) then
-            label.text = self.Value
-        end
+        self.DeltaMinMax = self.Max - self.Min
     end
 
     function PANEL:PerformLayout()
-        local wide = ScreenScale(58)
+        local wide = ScreenScale(90)
 
         self:SetWide(wide)
     end
 
+    function PANEL:GetLocalMax()
+        local min = ScreenScale(20)
+        local max = ScreenScale(5)
+        local wide = self:GetWide()
+        
+        return wide - max - min
+    end
     
+    function PANEL:TranslateToLocal(value)
+        local wide = self:GetLocalMax()
+        local valueLocal = value * wide / self.DeltaMinMax
+        
+        return valueLocal
+    end
+
+    function PANEL:OnValueChanged(value)
+        self.Convar:SetInt(value)
+    end
+
+    function PANEL:Think()
+        if not self.Convar then return end
+        
+        if not self.Clicked then return end
+        if not self:IsHovered() then 
+            self.Clicked = false 
+            return 
+        end
+
+        local wide = self:GetLocalMax()
+
+        local x, y = self:LocalToScreen(0, 0)
+        local localValue = math.abs(gui.MouseX() - x) - ScreenScale(20)
+
+        local value = math.Round(localValue * self.DeltaMinMax / wide)
+
+        if self.Value == value then return end
+
+        local realValue = value + self.Min
+
+        if realValue > self.Max or realValue < self.Min then return end
+        self.Value = value
+        self.RealValue = realValue
+
+        self:OnValueChanged(self.RealValue)
+    end
 
     function PANEL:Paint(w, h)
         -- surface.SetDrawColor(COLOR_RED)
         -- surface.DrawRect(0, 0, w, h)
+
+        if not self.Value then return end
+
+        local min = ScreenScale(20)
+
+        draw.DrawText(self.RealValue, "PRSBOX.Lobby.Font.Info", 0, ScreenScale(5), COLOR_WHITE, TEXT_ALIGN_LEFT)
+
+        surface.SetDrawColor(COLOR_WHITE)
+        surface.DrawRect(min, ScreenScale(15) / 2, self:TranslateToLocal(self.Value), h - ScreenScale(15))
     end 
 
-    vgui.Register("PRSBOX.Settings.Slider", PANEL, "EditablePanel")
+    vgui.Register("PRSBOX.Settings.Slider", PANEL, "DButton")
 end 
 
 ---
@@ -199,7 +192,7 @@ do
     function PANEL:Paint(w, h)
         local marginLeft = ScreenScale(3)
         
-        if self:IsHovered() or self.Active then
+        if self:IsHovered() or self.Active or self.Slider:IsHovered() then
             self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
         else
             self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
@@ -293,6 +286,6 @@ local s = {"hud", "jmod", "simphys", "admin", "you mom"}
 
 for k, v in ipairs(s) do
     for i=1, 10 do
-        SETTINGS:AddSetting("Option " .. i, v, "prsbox_test", SETTINGS_INT)
+        SETTINGS:AddSetting("Option " .. i, v, "prsbox_test2", SETTINGS_INT)
     end
 end
