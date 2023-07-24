@@ -102,6 +102,7 @@ do
         end
 
         local firstButton = self.ButtonTabs[1]
+        if not IsValid(firstButton) then return end
 
         firstButton.Active = true
         

@@ -1,13 +1,11 @@
-CreateClientConVar("prsbox_test", "10", true, false, "", 0, 100)
-CreateClientConVar("prsbox_test2", "10", true, false, "", 0, 100)
+CreateClientConVar("prsbox_test3", "1", true, false, "", 0, 1)
 
 ---
 --- Setting types
 ---
 
-SETTINGS_BUTTON = 1 
-SETTINGS_BOOL = 2
-SETTINGS_INT = 3
+SETTINGS_BOOL = "PRSBOX.Settings.Bool"
+SETTINGS_INT = "PRSBOX.Settings.Slider"
 
 ---
 --- Global functions
@@ -36,6 +34,51 @@ function SETTINGS:AddSetting(name, category, convar, type)
 end
 
 ---
+--- Settings bool
+--- 
+
+do
+    local PANEL = {}
+
+    function PANEL:Init()
+        self:Dock(RIGHT)
+        self:SetText("")
+    end
+
+    function PANEL:GetState()
+        
+        
+        return self.State and "Активовано" or "Деактивовано"
+    end
+
+    function PANEL:SetConvar(convarName)
+        local convar = GetConVar(convarName)
+        self.Convar = convar
+        self.State = convar:GetBool()
+    end
+
+    function PANEL:DoClick()
+        self.State = not self.State
+
+        self.Convar:SetBool(self.State)
+    end
+
+    function PANEL:PerformLayout()
+        local wide = ScreenScale(60)
+
+        self:SetWide(wide)
+    end
+
+    function PANEL:Paint(w, h)
+        if not self.Convar then return end
+
+        draw.DrawText(self:GetState(), "PRSBOX.Lobby.Font.Info", w / 2, ScreenScale(5), COLOR_WHITE, TEXT_ALIGN_CENTER)
+    end
+
+    vgui.Register("PRSBOX.Settings.Bool", PANEL, "DButton")
+end
+
+---
 --- Settings slider number
 ---
 
@@ -49,22 +92,23 @@ do
     end
 
     function PANEL:OnMousePressed(key)
+        if key ~= MOUSE_LEFT then return end
+        
         self.Clicked = true 
     end
 
     function PANEL:OnMouseReleased(key)
+        if key ~= MOUSE_LEFT then return end
+        
         self.Clicked = false 
     end
 
-    function PANEL:AddConvar(convarName)
+    function PANEL:SetConvar(convarName)
         local convar = GetConVar(convarName)
         self.Convar = convar
 
-        local max = convar:GetMax()
-        self.Max = max
-
-        local min = convar:GetMin()
-        self.Min = min
+        self.Max = convar:GetMax()
+        self.Min = convar:GetMin()
 
         local value = convar:GetInt()
         self.RealValue = value
@@ -126,8 +170,7 @@ do
     end
 
     function PANEL:Paint(w, h)
-        -- surface.SetDrawColor(COLOR_RED)
-        -- surface.DrawRect(0, 0, w, h)
+        
 
         if not self.Value then return end
 
@@ -176,11 +219,11 @@ do
     end
 
     function PANEL:Start()
-        local slider = vgui.Create("PRSBOX.Settings.Slider", self)
-        if not IsValid(slider) then return end
-        self.Slider = slider
+        local element = vgui.Create(self.Type, self)
+        if not IsValid(element) then return end
+        self.Element = element
 
-        slider:AddConvar(self.Convar)
+        element:SetConvar(self.Convar)
     end
 
     function PANEL:PerformLayout()
@@ -192,7 +235,7 @@ do
     function PANEL:Paint(w, h)
         local marginLeft = ScreenScale(3)
         
-        if self:IsHovered() or self.Active or self.Slider:IsHovered() then
+        if self:IsHovered() or self.Active or self.Element:IsHovered() then
             self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
         else
             self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
@@ -230,6 +273,8 @@ do
         local buttonInfos = SETTINGS.Settings[self.Category]
 
         for k, info in ipairs(buttonInfos) do
+            if not ConVarExists(info["convar"]) then return end
+            
             local button = vgui.Create("PRSBOX.Settings.Button", self)
             if not IsValid(button) then continue end
 
@@ -281,11 +326,3 @@ end
 MENU:RegisterButton("Налаштування", 3, PLAYER_NONE, function (menu, button)
     menu:OpenInfoMenu("PRSBOX.Settings")
 end)
-
-local s = {"hud", "jmod", "simphys", "admin", "you mom"}
-
-for k, v in ipairs(s) do
-    for i=1, 10 do
-        SETTINGS:AddSetting("Option " .. i, v, "prsbox_test2", SETTINGS_INT)
-    end
-end
