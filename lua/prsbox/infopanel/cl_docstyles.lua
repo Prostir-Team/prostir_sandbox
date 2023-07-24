@@ -12,15 +12,16 @@ do -- baseclass
     function PANEL:Init()
         self.font_size = ScreenScale(12)
         self.margin_left = ScreenScale(5)
-        self.margin_top = 2
+        self.margin_top = 0
         self.margin_right = 1
-        self.margin_bottom = 2
+        self.margin_bottom = 0
         self:SetColor(COLOR_WHITE)
         self:SetAutoStretchVertical(false)
+        self:SetWrap(true)
     end
 
     function PANEL:PerformLayout(w, h)
-        local tall = math.Round(self:GetWide() * self.font_size / w)
+        local tall = math.Clamp(math.ceil(surface.GetTextSize(self:GetText()) / w), 1, 100) * self.font_size
         self:SetTall(tall)
         self:DockMargin(self.margin_left, self.margin_top, self.margin_right, self.margin_bottom)
     end
@@ -143,7 +144,7 @@ do -- unordered list item (- item)
     end
 
     function PANEL:PerformLayout(w, h)
-        local tall = math.Round(self:GetWide() * self.font_size / w)
+        local tall = math.Clamp(math.ceil(surface.GetTextSize(self:GetText()) / w), 1, 100) * self.font_size
         self:SetTall(tall)
         self:DockMargin(ScreenScale(8), 2, 1, 2)
     end
@@ -168,6 +169,8 @@ do -- ordered list item (1. item)
 
     function PANEL:Init()
         self.margin_left = ScreenScale(8)
+        self.margin_top = 2
+        self.margin_bottom = 2
         self:SetFont("PrMarkdown.PlainText")
     end
 
