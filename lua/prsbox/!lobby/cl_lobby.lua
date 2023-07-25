@@ -9,7 +9,7 @@ CreateClientConVar("prsbox_lobby_camera_speed", "10", true, false, "", 5, 100)
 --- Player client variables
 ---
 
-local PLAYER_STATE = PLAYER_NONE
+PLAYER_STATE = PLAYER_NONE
 local PLAYER_LAST_WEAPON = ""
 
 ---
@@ -50,8 +50,11 @@ do
 
         self.InfoMenuOpened = false 
 
-        self:SetZPos(1000)
+        self:SetZPos(10)
 
+        self:SetAlpha(0)
+        self:AlphaTo(255, 0.5, 0)
+        
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
             self.ButtonPanel = buttonPanel
@@ -193,6 +196,12 @@ do
         end
     end
 
+    function PANEL:CloseMenu()
+        self:AlphaTo(0, 0.5, 0, function ()
+            self:Remove()
+        end)
+    end
+
     function PANEL:PerformLayout(w, h)
         local scrW, scrH = ScrW(), ScrH()
         self:SetSize(scrW, scrH)
@@ -266,7 +275,7 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     
     RunConsoleCommand("prsbox_lobby_start")
 
-    menu:Remove()
+    menu:CloseMenu()
 end, function (menu, button)
     button.ButtonState = 2
     button.debug = 1
@@ -277,7 +286,7 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     if not IsValid(ply) then return end
     
     PLAYER_STATE = PLAYER_NONE
-    menu:Remove()
+    menu:CloseMenu()
 end)
 
 MENU:RegisterButton("Тест", 2, PLAYER_LOBBY, function (menu, button)

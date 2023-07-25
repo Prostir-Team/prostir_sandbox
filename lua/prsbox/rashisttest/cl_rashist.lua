@@ -1,4 +1,15 @@
 ---
+--- Fonts
+---
+
+surface.CreateFont("PRSBOX.Settings.Font.Question", {
+    ["font"] = "Roboto",
+    ["size"] = ScreenScale(13),
+    ["extended"] = true,
+    ["weight"] = 1000
+})
+
+---
 --- Global variables
 ---
 
@@ -93,7 +104,7 @@ do
         if IsValid(label) then
             self.Label = label
 
-            label:SetFont("PRSBOX.Lobby.Font.Info")
+            label:SetFont("PRSBOX.Settings.Font.Question")
             label:SetTextColor(COLOR_BUTTON_TEXT)
             label:Dock(TOP)
 
@@ -157,7 +168,7 @@ do
 
         if not self.Data then return end
         
-        self:SetTall((#table.GetKeys(self.Data) + 1) * tall)
+        self:SetTall(#table.GetKeys(self.Data) * tall + ScreenScale(14))
     end
 
     function PANEL:Paint(w, h)
@@ -210,6 +221,9 @@ do
         
         scroll:Dock(FILL)
 
+        scroll:SetAlpha(0)
+        scroll:AlphaTo(255, 0.5, 0)
+
         local sbar = scroll:GetVBar()
         if not IsValid(sbar) then return end
         self.Sbar = sbar
@@ -258,7 +272,55 @@ do
     end
 
     function PANEL:EndTest()
-        self.Scroll:Remove()
+        local scroll = self.Scroll
+        if IsValid(scroll) then
+            scroll:Remove()
+        end
+        
+        local panel = vgui.Create("EditablePanel", self)
+        if not IsValid(panel) then return end
+        self.EndPanel = panel
+
+        panel:SetAlpha(0)
+
+        panel:AlphaTo(255, 0.5, 0)
+
+        local startButton = vgui.Create("PRSBOX.Lobby.TabButton", panel)
+        if IsValid(startButton) then
+            self.StartButton = startButton
+            
+            startButton:Text("Почати гру на сервері!")
+            startButton:Dock(BOTTOM)
+            function startButton:PerformLayout()
+                local tall = ScreenScale(20)
+
+                self:SetTall(tall)
+            end
+
+            function startButton:DoClick()
+                local ply = LocalPlayer()
+                if not IsValid(ply) then return end
+                
+                PLAYER_STATE = PLAYER_NONE
+                
+                RunConsoleCommand("prsbox_lobby_start")
+                MAIN_MENU:Remove()
+            end
+        end
+
+        function panel:PerformLayout()
+            local wide, tall = ScreenScale(137), ScreenScale(100)
+            
+            self:SetSize(wide, tall)
+            self:Center()
+        end
+
+        function panel:Paint(w, h)
+            -- surface.SetDrawColor(COLOR_RED)
+            -- surface.DrawRect(0, 0, w, h)
+
+            draw.DrawText("Ви успішно\nпройшли тест!", "PRSBOX.Lobby.Font.Big", w / 2, 0, COLOR_BUTTON_TEXT, TEXT_ALIGN_CENTER)
+        end
     end
 
     function PANEL:Paint(w, h)
@@ -279,6 +341,7 @@ net.Receive("PRSBOX.Net.StartTester", function(len, ply)
     local data = net.ReadTable()
 
     RASHIST_TEST:StartTest(data)
+    -- RASHIST_TEST:EndTest()
 end)
 
 net.Receive("PRSBOX.Net.EndTester", function (len, ply)
