@@ -205,7 +205,9 @@ do
                 local parent = self:GetParent()
                 if not IsValid(parent) then return end
 
-                RunConsoleCommand("prostir_tester_start")
+                net.Start("PRSBOX.Client.Rahist.Start")
+                net.SendToServer()
+
                 self:Remove()
             end
         end
@@ -319,7 +321,50 @@ do
             -- surface.SetDrawColor(COLOR_RED)
             -- surface.DrawRect(0, 0, w, h)
 
-            draw.DrawText("Ви успішно\nпройшли тест!", "PRSBOX.Lobby.Font.Big", w / 2, 0, COLOR_BUTTON_TEXT, TEXT_ALIGN_CENTER)
+            draw.DrawText("Ви успішно\nпройшли тест!\nПриємної гри!", "PRSBOX.Lobby.Font.Big", w / 2, 0, COLOR_BUTTON_TEXT, TEXT_ALIGN_CENTER)
+        end
+    end
+
+    function PANEL:Bad()
+        local scroll = self.Scroll
+        if IsValid(scroll) then
+            scroll:Remove()
+        end
+        
+        local panel = vgui.Create("EditablePanel", self)
+        if not IsValid(panel) then return end
+        self.EndPanel = panel
+
+        panel:SetAlpha(0)
+
+        panel:AlphaTo(255, 0.5, 0)
+
+        local startButton = vgui.Create("PRSBOX.Lobby.TabButton", panel)
+        if IsValid(startButton) then
+            self.StartButton = startButton
+            
+            startButton:Text("Вийти")
+            startButton:Dock(BOTTOM)
+            function startButton:PerformLayout()
+                local tall = ScreenScale(20)
+
+                self:SetTall(tall)
+            end
+
+            function startButton:DoClick()
+                RunConsoleCommand("disconnect")
+            end
+        end
+
+        function panel:PerformLayout()
+            local wide, tall = ScreenScale(137), ScreenScale(100)
+            
+            self:SetSize(wide, tall)
+            self:Center()
+        end
+
+        function panel:Paint(w, h)
+            draw.DrawText("Ви, на жаль,\nпровалили тест!", "PRSBOX.Lobby.Font.Big", w / 2, 0, COLOR_BUTTON_TEXT_LOCKED, TEXT_ALIGN_CENTER)
         end
     end
 
@@ -348,4 +393,10 @@ net.Receive("PRSBOX.Net.EndTester", function (len, ply)
     if not IsValid(RASHIST_TEST) then return end
 
     RASHIST_TEST:EndTest()
+end)
+
+net.Receive("PRSBOX.Net.EndBadTester", function (len, ply)
+    if not IsValid(RASHIST_TEST) then return end
+
+    RASHIST_TEST:Bad()
 end)

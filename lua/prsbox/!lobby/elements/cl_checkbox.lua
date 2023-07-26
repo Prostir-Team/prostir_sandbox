@@ -68,6 +68,9 @@ do
 
         self.State = CHECKBOX_GOOD
 
+        self:SetAlpha(0)
+        self:AlphaTo(255, 0.1, 0)
+
         local titleLabel = vgui.Create("DLabel", self)
         if IsValid(titleLabel) then
             self.TitleLabel = titleLabel
@@ -180,6 +183,26 @@ do
             noButton:SetSize(textSize, buttonTall)
             noButton:SetPos(wide - margin - textSize * 2, tall - buttonTall)
         end
+    end
+
+    function PANEL:SetYes(text)
+        local yesButton = self.YesButton
+        if IsValid(yesButton) then
+            yesButton:Text(text)
+        end
+    end
+
+    function PANEL:SetNo(text)
+        local noButton = self.NoButton
+        if IsValid(noButton) then
+            noButton:Text(text)
+        end
+    end
+
+    function PANEL:CloseMenu()
+        self:AlphaTo(0, 0.1, 0, function ()
+            self:Remove()
+        end)
     end
 
     function PANEL:Paint(w, h)

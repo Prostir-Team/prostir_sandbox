@@ -2,6 +2,8 @@ util.AddNetworkString("PRSBOX.Net.StartTester")
 util.AddNetworkString("PRSBOX.Net.ConfirmTester")
 util.AddNetworkString("PRSBOX.Net.CheckTester")
 util.AddNetworkString("PRSBOX.Net.EndTester")
+util.AddNetworkString("PRSBOX.Net.EndBadTester")
+util.AddNetworkString("PRSBOX.Client.Rahist.Start")
 
 local defaultFilename = "cfg/uk_tester.json"
 
@@ -56,15 +58,26 @@ local function addPlayerToFile(ply)
 	file.Append("complete_test.dat", steamid .. "\n")
 end
 
+---
+--- Hooks 
+---
+
 hook.Add("Initialize", "PRSBOX.Tester.CreateFile", function ()
 	if file.Exists("complete_test.dat", "DATA") then return end
 
 	file.Write("complete_test.dat", "")
 end)
 
-concommand.Add("test_check", function ()
-	print(checkPlayer("STEAM_0:0:35902724"))
+hook.Add("PlayerInitialSpawn", "PRSBOX.Rashist.SetPlayer", function (ply, tr)
+	local completeRashist = checkPlayer(ply)
+	
+	ply:SetNWBool("PRSBOX.Net.CompleteRashist", completeRashist)
 end)
+
+
+---
+--- Net methods 
+---
 
 net.Receive("PRSBOX.Net.ConfirmTester", function (len, ply)
 	if not IsValid(ply) then return end
@@ -97,18 +110,22 @@ net.Receive("PRSBOX.Net.CheckTester", function (len, ply)
 	if rightAnswers >= #questions - canDoMistakes then
 		addPlayerToFile(ply)
 		
+		ply:SetNWBool("PRSBOX.Net.CompleteRashist", true)
 		net.Start("PRSBOX.Net.EndTester")
 		net.Send(ply)
 	else
-		RunConsoleCommand("ulx", "ban", ply:Nick("На жаль ви не пройшли тестування!\nЯкщо ви з чимось не згодні, будь ласка, завітайте до діскорд серверу, та поставте запитання модераторам або Сванчіку.\nhttps://discord.gg/stV4JswQ9Q "))
+		local steamId = ply:SteamID()
+		
+		net.Start("PRSBOX.Net.EndBadTester")
+		net.Send(ply)
+
+		timer.Simple(10, function ()
+			RunConsoleCommand("ulx", "banid", steamId, "На жаль ви не пройшли тестування!\nЯкщо ви з чимось не згодні, будь ласка, завітайте до діскорд серверу, та поставте запитання модераторам або Сванчіку.\nhttps://discord.gg/stV4JswQ9Q")
+		end)
 	end
 end)
 
-concommand.Add("prostir_tester_test", function (ply, cmd, args)
-    
-end)
-
-concommand.Add("prostir_tester_start", function (ply, cmd, args)
+net.Receive("PRSBOX.Client.Rahist.Start", function (len, ply)
 	if not IsValid(ply) then return end
 	if checkPlayer(ply) then return end
 

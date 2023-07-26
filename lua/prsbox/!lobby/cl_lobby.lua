@@ -271,14 +271,39 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
     
-    PLAYER_STATE = PLAYER_NONE
-    
-    RunConsoleCommand("prsbox_lobby_start")
+    local completeRahist = ply:GetNWBool("PRSBOX.Net.CompleteRashist", false)
 
-    menu:CloseMenu()
-end, function (menu, button)
-    button.ButtonState = 2
-    button.debug = 1
+    
+
+    if completeRahist then
+        PLAYER_STATE = PLAYER_NONE
+        RunConsoleCommand("prsbox_lobby_start")
+        menu:CloseMenu()
+
+        return
+    end
+    
+    if IsValid(menu.CheckBox) then return end
+    
+    local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
+    if not IsValid(checkbox) then return end
+    menu.CheckBox = checkbox
+
+    checkbox:SetTitle("Пройдіть рашист тест!")
+    checkbox:SetText("Вам необхідно пройти рашсит тест, щоб почати гру на сервері! Це було зроблено за для того, щоб русня не змогла завадити грі звичайним українцям, які мирно грають на \"Простір Sandbox!\".")
+    checkbox:SetYes("Пройти")
+    checkbox:SetState(CHECKBOX_BAD)
+
+    checkbox.OnYesClick = function ()
+        menu:OpenInfoMenu("PRSBOX.Rashist", true )
+        
+        checkbox:CloseMenu()
+    end
+
+    function checkbox:OnNoClick()
+        self:CloseMenu()
+    end
+
 end)
 
 MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (menu, button)
@@ -287,30 +312,6 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     
     PLAYER_STATE = PLAYER_NONE
     menu:CloseMenu()
-end)
-
-MENU:RegisterButton("Тест", 2, PLAYER_LOBBY, function (menu, button)
-    if IsValid(menu.CheckBox) then return end
-    
-    local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
-    if not IsValid(checkbox) then return end
-    menu.CheckBox = checkbox
-
-    checkbox:SetTitle("Пройдіть рашист тестер")
-    checkbox:SetText("Вам потрібно пройти рашист тестер aksdhkajhs dhalsjhd jahsjd hlajkshd jkhalsjhd lasd hasjhd jas!!!")
-    checkbox:SetState(CHECKBOX_BAD)
-
-    checkbox.OnYesClick = function ()
-        menu:OpenInfoMenu("PRSBOX.Rashist", true )
-        
-        checkbox:Remove()
-    end
-
-    function checkbox:OnNoClick()
-        print("no")
-
-        self:Remove()
-    end
 end)
 
 MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
