@@ -295,7 +295,7 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     checkbox:SetState(CHECKBOX_BAD)
 
     checkbox.OnYesClick = function ()
-        menu:OpenInfoMenu("PRSBOX.Rashist", true )
+        menu:OpenInfoMenu("PRSBOX.Rashist", false )
         
         checkbox:CloseMenu()
     end
