@@ -703,3 +703,9 @@ concommand.Add( "GetPoor", function( ply, cmd, args )
     if !ply:IsSuperAdmin() then return end
     ply:SetMoney(0)
 end )
+
+concommand.Add("prsbox_money_add", function (ply, cmd, args)
+    if not IsValid(ply) then return end
+
+    ply:AddMoney(10000)
+end)

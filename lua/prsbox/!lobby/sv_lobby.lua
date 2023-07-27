@@ -7,23 +7,26 @@ hook.Add("PlayerInitialSpawn", "PRSBOX.Lobby.InitSpawn", function (ply)
     ply:SetNWBool("PRSBOX.InLobby", true)
 end)
 
-hook.Add("PlayerSpawn", "PRSBOX.Lobby.MakeSpectator", function (ply, trans)
+hook.Add("PlayerPostSpawn", "PRSBOX.Lobby.StartMenu", function (ply, tr)
     if not IsValid(ply) then return end
     
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
     
+    print("=================================================")
+    print("Hello World 2")
+    print("=================================================")
+
+
     if inLobby then
-        timer.Simple(0.1, function ()
-            ply:Freeze(true)
-            ply:SetActiveWeapon(NULL)
-            net.Start("PRSBOX.Lobby.StartMenu")
-            net.Send(ply)
-        end)
+        ply:Freeze(true)
+        ply:SetActiveWeapon(NULL)
+        net.Start("PRSBOX.Lobby.StartMenu")
+        net.Send(ply)
 
-        return true 
+        -- return false 
+    else
+        ply:Freeze(false)
     end
-
-    ply:Freeze(false)
 end)
 
 concommand.Add("prsbox_lobby_test", function (ply, cmd, args)
