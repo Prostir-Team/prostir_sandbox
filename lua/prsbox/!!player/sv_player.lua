@@ -20,8 +20,7 @@ hook.Add("PlayerSpawn", "!!!PRSBOX.SetModel", function (ply, tr)
     end
 
     timer.Simple(0.1, function ()
-        ply:SetModel(playerModel)
-        ply:SetupHands()
+        ply:SetProstirModel(playerModel)
         
         hook.Run("PlayerPostSpawn", ply, tr)
     end)

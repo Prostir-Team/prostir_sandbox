@@ -11,10 +11,6 @@ hook.Add("PlayerPostSpawn", "PRSBOX.Lobby.StartMenu", function (ply, tr)
     if not IsValid(ply) then return end
     
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
-    
-    print("=================================================")
-    print("Hello World 2")
-    print("=================================================")
 
 
     if inLobby then
