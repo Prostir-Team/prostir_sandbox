@@ -11,6 +11,7 @@ CreateClientConVar("prsbox_lobby_camera_speed", "10", true, false, "", 5, 100)
 
 PLAYER_STATE = PLAYER_NONE
 local PLAYER_LAST_WEAPON = ""
+local PLAYER_VIEW = false 
 
 ---
 --- Menu meta class
@@ -53,7 +54,7 @@ do
         self:SetZPos(10)
 
         self:SetAlpha(0)
-        self:AlphaTo(255, 0.5, 0)
+        self:AlphaTo(255, 0.1, 0)
         
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
@@ -177,6 +178,8 @@ do
         local buttonPanel = self.ButtonPanel
         if not IsValid(buttonPanel) then return end
 
+        hook.Run("OnMenuOpen", self, self.PlayerState)
+
         for k, buttonInfo in SortedPairsByMemberValue(MENU.registeredButtons, "pos", false) do
             if buttonInfo["playerState"] ~= self.PlayerState and buttonInfo["playerState"] ~= PLAYER_NONE then continue end
             
@@ -197,7 +200,9 @@ do
     end
 
     function PANEL:CloseMenu()
-        self:AlphaTo(0, 0.5, 0, function ()
+        self:AlphaTo(0, 0.1, 0, function ()
+            hook.Run("OnMenuClose", self)
+
             self:Remove()
         end)
     end
@@ -260,7 +265,9 @@ hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles, fov)
         ["drawviewer"] = PLAYER_STATE ~= PLAYER_NONE
     }
 
-    return view
+    if PLAYER_VIEW then
+        return view
+    end
 end)
 
 ---
@@ -366,8 +373,10 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
         if IsValid(MAIN_MENU) then
             PLAYER_STATE = PLAYER_NONE
             
-            MAIN_MENU:Remove()
+            MAIN_MENU:CloseMenu()
         else
+            if PLAYER_VIEW then return end
+            
             local plyAngles = ply:GetAngles()
 
             ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
@@ -384,4 +393,14 @@ hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
     if name == "CHudCrosshair" and PLAYER_STATE ~= PLAYER_NONE then
         return false 
     end
+end)
+
+hook.Add("OnMenuOpen", "PRSBOX.Lobby.ViewStart", function (menu, playerState)
+    PLAYER_VIEW = true 
+end)
+
+hook.Add("OnMenuClose", "PRSBOX.Lobby.ViewEnd", function (menu)
+    timer.Simple(0.9, function ()
+        PLAYER_VIEW = false  
+    end)
 end)
