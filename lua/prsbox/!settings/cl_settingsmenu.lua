@@ -326,3 +326,6 @@ end
 MENU:RegisterButton("Налаштування", 3, PLAYER_NONE, function (menu, button)
     menu:OpenInfoMenu("PRSBOX.Settings")
 end)
+
+SETTINGS:AddSetting("Позиція імені гравця X", "HUD", "prsbox_hud_x", SETTINGS_INT)
+SETTINGS:AddSetting("Позиція імені гравця Y", "HUD", "prsbox_hud_y", SETTINGS_INT)

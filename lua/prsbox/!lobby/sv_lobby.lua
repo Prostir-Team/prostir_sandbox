@@ -9,7 +9,8 @@ end)
 
 hook.Add("PlayerPostSpawn", "PRSBOX.Lobby.StartMenu", function (ply, tr)
     if not IsValid(ply) then return end
-    
+    if ply:IsBot() then return end
+
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
 
 
@@ -18,8 +19,6 @@ hook.Add("PlayerPostSpawn", "PRSBOX.Lobby.StartMenu", function (ply, tr)
         ply:SetActiveWeapon(NULL)
         net.Start("PRSBOX.Lobby.StartMenu")
         net.Send(ply)
-
-        -- return false 
     else
         ply:Freeze(false)
     end
