@@ -1,164 +1,48 @@
 local MONEYCVAR = CreateConVar("prsbox_economy", "1", FCVAR_ARCHIVE)
 if !MONEYCVAR:GetBool() then print("Server economy disabled!!!") return end
 
-print("Hello World from server money!!!")
-
 util.AddNetworkString("PRSTR.Net.KillMoney")
 util.AddNetworkString("PRSTR.Net.SendByTable")
 
 local PLAYER = FindMetaTable("Player")
 
-COSTTABLE = {
-    -- CW 2.0
-    ["cw_ak74"]             = 170,
-    ["cw_akm_official"]     = 160,
-    ["cw_ar15"]             = 165,
-    ["cw_famasg2_official"] = 124,
-    ["cw_scarh"]            = 129,
-    ["cw_g3a3"]             = 128,
-    ["cw_g36c"]             = 120,
-    ["cw_mp5"]              = 100,
-    ["cw_mp7_official"]     = 125,
-    ["cw_deagle"]           = 70,
-    ["cw_l115"]             = 200,
-    ["cw_l85a2"]            = 115,
-    ["cw_m249_official"]    = 200,
-    ["cw_m3super90"]        = 130,
-    ["cw_xm1014_official"]  = 150,
-    ["cw_mr96"]             = 50,
-    ["cw_toz34"]            = 80,
-    ["cw_rpg7"]             = 300,
-    ["cw_saiga12k_official"] = 96,
-    ["cw_svd_official"]     = 210,
-    ["cw_vss"]              = 115,
-    ["cw_mac11"]            = 125,
-    ["cw_shorty"]           = 40,
-    ["cw_mp9_official"]     = 100,
-    ["cw_m14"]              = 110,
-    ["cw_ump45"]            = 75,
+COSTTABLE = {}
 
-    ["cw_k98k"]             = 95,
-    ["cw_enfield"]          = 89,
-    ["cw_m1garand"]         = 94,
-    ["cw_m1918a2"]          = 102, --BAR
-    ["cw_m1919a6"]          = 203,
-    ["cw_m1928a1"]          = 99,
-    ["cw_mg42"]             = 260,
-    ["cw_mp40"]             = 72,
+local function loadPrices()
+    table.Empty(COSTTABLE)
+    local f = file.Read("cfg/money/prices.cfg", "GAME")
+    if f == nil then
+        print("[money] failed to read \"cfg/money/prices.cfg\"")
+        return
+    end
+    local item_tbl = string.Explode("\n", f)
+    for _, item in ipairs(item_tbl) do
+        local price = string.Explode("=", item)
+        table.Add(COSTTABLE, { [price[1]] = tonumber(price[2]) } )
+    end
+end
+loadPrices()
 
-    ["cw_acr"]              = 120,
-    ["cw_hk416"]            = 110,
-    ["cw_swat556"]          = 70,
-    ["cw_b196"]             = 230,
+local UNREFUNDABLE = {}
 
-    ["cw_tr09_mk18"]        = 140,
-    ["cw_tr09_tar21"]       = 125,
-    ["cw_tr09_qbz97"]       = 135,
-    ["cw_tr09_auga3"]       = 130,
+local function loadUnrefundableItems()
+    table.Empty(UNREFUNDABLE)
+    local f = file.Read("cfg/money/unrefundable.cfg", "GAME")
+    if f == nil then
+        print("[money] failed to read \"cfg/money/unrefundable.cfg\"")
+        return
+    end
+    local item_tbl = string.Explode("\n", f)
+    for _, item in ipairs(item_tbl) do
+        table.Add(UNREFUNDABLE, { [item] = true } )
+    end
+end
+loadUnrefundableItems()
 
-    ["cw_ammo_40mm"] = 120,
-    ["cw_ammo_fraggrenades"] = 40,
-
-    ["npc_manned_emplacement"] = 20,
-/*
-    ["tfa_ins2_thanez_cobra"] = 50,
-    ["tfa_ins2_deagle"] = 80,
-    ["tfa_ins2_ump45"] = 100,
-    ["tfa_ins2_mp5k"] = 110,
-    ["tfa_ins2_mp7"] = 120,
-    ["tfa_ins2_m500"] = 150,
-    ["tfa_ins2_l85a2"] = 135,
-    ["tfa_ins2_moe_akm"] = 160,
-    ["tfa_ins2_mk18"] = 140,
-    ["tfa_ins2_famas"] = 170,
-    ["tfa_ins2_sks"] = 180,
-    ["tfa_ins2_remington_m24_sws"] = 210,
-    ["tfa_ins2_rpg7_scoped"] = 500,
-*/
-    ["weapon_lfsmissilelauncher"] = 310,
-    ["weapon_medkit"] = 70,
-    ["weapon_simmines"] = 60,
-
-    ["weapon_slam"] = 30,
-    ["weapon_frag"] = 25,
-    ["weapon_357"] = 50,
-    ["weapon_smg1"] = 60,
-
-    ["parachute_box"] = 30,
-
-    -- LFS
-    ["lunasflightschool_bf109"] = 325,
-    ["lunasflightschool_spitfire"] = 310,
-    ["lunasflightschool_combineheli"] = 290,
-    ["lunasflightschool_p47d"] = 280,
-
-    -- LVS
-    ["lvs_plane_bf109"] = 220,
-    ["lvs_plane_zero"] = 220,
-
-    ["lvs_plane_p47"] = 250,
-    ["lvs_plane_p51"] = 135,
-
-    ["lvs_plane_spitfire"] = 100,
-    ["lvs_plane_stuka"] = 120,
-
-    ["lvs_helicopter_combine"] = 820,
-    ["lvs_helicopter_combinegunship"] = 740,
-    ["lvs_helicopter_cod_ah6"] = 780,
-
-    -- Транспорт
-    ["sim_fphys_chaos126p"] = 680,
-    ["sim_fphys_hedgehog"] = 700,
-    ["sim_fphys_ratmobile"] = 690,
-
-    ["sim_fphys_conscriptapc"] = 80,
-
-    ["sim_fphys_tank4"] = 1500,
-    ["sim_fphys_tank3"] = 1200,
-    ["sim_fphys_conscriptapc_armed"] = 500,
-    ["sim_fphys_combineapc_armed"] = 300,
-    ["sim_fphys_tank"] = 950,
-    ["sim_fphys_tank2"] = 900,
-    --[[
-    ["sim_fphys_valentine_at"] = 900,
-    ["sim_fphys_valentine_at_rp"] = 700,
-    ["sim_fphys_valentine_mk_i"] = 950,
-    ["sim_fphys_valentine_mk_i_rp"] = 750,
-    ["sim_fphys_tank_churchill_mk_vii"] = 1100,
-    ["sim_fphys_tank_churchill_mk_vii_rp"] = 900,
-    ]]--
-
-    ["sim_fphys_jeep_armed2"] = 120,
-    ["sim_fphys_v8elite_armed2"] = 120,
-
-    ["sim_fphys_jeep_armed"] = 100,
-    ["sim_fphys_v8elite_armed"] = 100,
-    ["avx_technical_mlrs"]      = 350,
-
-    ["lunasflightschool_bayraktartb2"] = 700,
-    ["merydianlfs_ah1z"] = 300 * 3,
-    ["merydianlfs_z10w"] = 350 * 3,
-    ["merydianlfs_fa18f"] = 500 * 3,
-    ["merydianlfs_mi28n"] = 400 * 3,
-    ["merydianlfs_su35"] = 550 * 1.5,
-
-    -- gaysrich tanks
-    ["gred_simfphys_flammpanzeriii"] = 700,
-    ["gred_simfphys_m56"] = 450,
-    ["gred_simfphys_panzeriiim"] = 500,
-    ["gred_simfphys_panzerivd"] = 500,
-    ["gred_simfphys_panzerivf1"] = 470,
-    ["gred_simfphys_panzerivf2"] = 600,
-    ["gred_simfphys_flakpanzeriv_wirbelwind"] = 220,
-    ["gred_simfphys_flakpanzeriv_ostwind_2"] = 250,
-    ["gred_simfphys_flakpanzeriv_ostwind"] = 230,
-    ["gred_simfphys_flakpanzer38t"] = 150
-}
-
-local UNREFUNDABLE = {
-    ["cw_ammo_fraggrenades"] = true,
-    ["cw_ammo_40mm"] = true
-}
+concommand.Add("prsbox_sv_money_reloadcfg", function()
+    loadPrices()
+    loadUnrefundableItems()
+end)
 
 for class, val in pairs(COSTTABLE) do
     COSTTABLE[class] = math.ceil( val )
@@ -585,6 +469,7 @@ hook.Add("PostEntityTakeDamage", "PRSBOX.Money.DMG", TakeDmg)
 
 hook.Add("DoPlayerDeath", "PRSBOX.GM.PlayerDeathMoney", function (ply, attacker, dmginfo)
     if not IsValid(attacker) or not attacker:IsPlayer() then return end
+    if IsValid(ply) then return end
     if ply == attacker then return end
 
     if ( ply.jail ) then return end
