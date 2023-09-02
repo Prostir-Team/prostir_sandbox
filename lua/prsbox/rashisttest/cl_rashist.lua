@@ -393,6 +393,9 @@ net.Receive("PRSBOX.Net.EndTester", function (len, ply)
     if not IsValid(RASHIST_TEST) then return end
 
     RASHIST_TEST:EndTest()
+
+    hook.Run("OnMenuClose", MENU_PANEL)
+    hook.Run("PRSBOX.RahistTestEnd", ply)
 end)
 
 net.Receive("PRSBOX.Net.EndBadTester", function (len, ply)

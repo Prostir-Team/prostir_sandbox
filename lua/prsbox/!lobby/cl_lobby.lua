@@ -280,8 +280,6 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     
     local completeRahist = ply:GetNWBool("PRSBOX.Net.CompleteRashist", false)
 
-    
-
     if completeRahist then
         PLAYER_STATE = PLAYER_NONE
         RunConsoleCommand("prsbox_lobby_start")
@@ -311,6 +309,17 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
         self:CloseMenu()
     end
 
+end)
+
+hook.Add("PRSBOX.RahistTestEnd", "PRSBOX.SetPlayerNone", function ()
+    print("Hello World")
+    
+    PLAYER_STATE = PLAYER_NONE
+end)
+
+concommand.Add("test123", function ()
+    print("PLAYER_STATE" .. PLAYER_STATE)
+    print("PLAYER_VIEW " .. tostring(PLAYER_VIEW))
 end)
 
 MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (menu, button)
@@ -361,7 +370,7 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
     if input.IsKeyDown(KEY_ESCAPE) and gui.IsGameUIVisible() then
         local ply = LocalPlayer()
         gui.HideGameUI()
-        if not IsValid(ply) or ply:InVehicle() then return end
+        if not IsValid(ply) then return end
 
         if PLAYER_STATE == PLAYER_LOBBY then return end
         
