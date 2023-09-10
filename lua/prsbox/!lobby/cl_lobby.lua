@@ -10,8 +10,7 @@ CreateClientConVar("prsbox_lobby_camera_speed", "10", true, false, "", 5, 100)
 ---
 
 PLAYER_STATE = PLAYER_NONE
-local PLAYER_LAST_WEAPON = ""
-local PLAYER_VIEW = false 
+local PLAYER_VIEW = false
 
 ---
 --- Menu meta class
@@ -35,7 +34,7 @@ function MENU:RegisterButton(text, pos, playerState, callback, init)
         ["callback"] = callback,
         ["init"] = init
     }
-    
+
     table.insert(self.registeredButtons, button)
 end
 
@@ -49,35 +48,31 @@ do
     function PANEL:Init()
         self:MakePopup()
 
-        self.InfoMenuOpened = false 
+        self.InfoMenuOpened = false
+
+        self.Logo = Material("prostir/prsbox_menu.png")
 
         self:SetZPos(10)
 
         self:SetAlpha(0)
         self:AlphaTo(255, 0.1, 0)
-        
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
             self.ButtonPanel = buttonPanel
 
             function buttonPanel:PerformLayout()
-                local scrW, scrH = ScrW(), ScrH()
+                -- local scrW, scrH = ScrW(), ScrH()
 
                 local buttonWide = ScreenScale(150)
-                local marginTopBottom = ScreenScale(100)
+                -- local marginTopBottom = ScreenScale(100)
                 local marginLeft = ScreenScale(25)
-                local buttonTall = ScreenScale(20) 
+                local buttonTall = ScreenScale(20)
 
                 self:SetX(marginLeft)
                 self:SetSize(buttonWide, #MENU.registeredButtons * buttonTall)
 
                 self:CenterVertical()
             end
-
-            function buttonPanel:Paint(w, h)
-                -- surface.SetDrawColor(Color(255, 0, 0))
-                -- surface.DrawRect(0, 0, w, h)
-            end 
         end
 
         local infoPanel = vgui.Create("EditablePanel", self)
@@ -106,9 +101,9 @@ do
             end
 
             function infoPanel:PerformLayout()
-                local buttonWide = ScreenScale(150)
-                local buttonMarginLeft = ScreenScale(25) 
-                local marginLeft = ScreenScale(5)
+                -- local buttonWide = ScreenScale(150)
+                local buttonMarginLeft = ScreenScale(25)
+                -- local marginLeft = ScreenScale(5)
 
                 local wide, tall = ScreenScale(380), ScreenScale(300)
 
@@ -128,7 +123,7 @@ do
     function PANEL:OpenInfoMenu(className, createBackButton)
         local buttonPanel = self.ButtonPanel
         local infoPanel = self.InfoPanel
-        
+
         if not IsValid(buttonPanel) then return end
         if not IsValid(infoPanel) then return end
 
@@ -136,7 +131,7 @@ do
         if IsValid(backButton) then
             if createBackButton == true or createBackButton == nil then
                 backButton:Show()
-            else 
+            else
                 backButton:Hide()
             end
         end
@@ -161,10 +156,10 @@ do
     function PANEL:CloseInfoMenu()
         local buttonPanel = self.ButtonPanel
         local infoPanel = self.InfoPanel
-        
+
         if not IsValid(buttonPanel) then return end
         if not IsValid(infoPanel) then return end
-        
+
         local currentMenu = infoPanel.CurrentMenu
         if IsValid(currentMenu) then
             currentMenu:Remove()
@@ -182,10 +177,10 @@ do
 
         for k, buttonInfo in SortedPairsByMemberValue(MENU.registeredButtons, "pos", false) do
             if buttonInfo["playerState"] ~= self.PlayerState and buttonInfo["playerState"] ~= PLAYER_NONE then continue end
-            
+
             local button = vgui.Create("PRSBOX.Lobby.Button", buttonPanel)
             if not IsValid(button) then continue end
-            
+
             if buttonInfo["init"] ~= nil then
                 buttonInfo["init"](self, button)
             end
@@ -212,6 +207,26 @@ do
         self:SetSize(scrW, scrH)
     end
 
+    function PANEL:Paint(w, h)
+        local wide = ScreenScale(400)
+
+        draw.SimpleLinearGradient(0, 0, wide, h, Color(0, 0, 0, 255), Color(0, 0, 0, 0), true)
+
+        local logoWide = ScreenScale(160)
+        local logoTall = ScreenScale(75)
+
+        local buttonPanel = self.ButtonPanel
+        if not IsValid(buttonPanel) then return end
+
+        local logoX = ScreenScale(25)
+        local logoYMargin = ScreenScale(5)
+
+        if not buttonPanel:IsVisible() then return end
+
+        surface.SetMaterial(self.Logo)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.DrawTexturedRect(logoX, buttonPanel:GetY() - logoTall - logoYMargin, logoWide, logoTall)
+    end
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
@@ -277,7 +292,7 @@ end)
 MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, button)
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
-    
+
     local completeRahist = ply:GetNWBool("PRSBOX.Net.CompleteRashist", false)
 
     if completeRahist then
@@ -287,9 +302,9 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
 
         return
     end
-    
+
     if IsValid(menu.CheckBox) then return end
-    
+
     local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
     if not IsValid(checkbox) then return end
     menu.CheckBox = checkbox
@@ -300,8 +315,8 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     checkbox:SetState(CHECKBOX_BAD)
 
     checkbox.OnYesClick = function ()
-        menu:OpenInfoMenu("PRSBOX.Rashist", false )
-        
+        menu:OpenInfoMenu("PRSBOX.Rashist", false)
+
         checkbox:CloseMenu()
     end
 
@@ -312,20 +327,13 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
 end)
 
 hook.Add("PRSBOX.RahistTestEnd", "PRSBOX.SetPlayerNone", function ()
-    print("Hello World")
-    
     PLAYER_STATE = PLAYER_NONE
-end)
-
-concommand.Add("test123", function ()
-    print("PLAYER_STATE" .. PLAYER_STATE)
-    print("PLAYER_VIEW " .. tostring(PLAYER_VIEW))
 end)
 
 MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (menu, button)
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
-    
+
     PLAYER_STATE = PLAYER_NONE
     menu:CloseMenu()
 end)
@@ -343,12 +351,10 @@ if IsValid(MAIN_MENU) then
 end
 
 net.Receive("PRSBOX.Lobby.StartMenu", function (len)
-    local ply = LocalPlayer()
-
     if PLAYER_STATE == PLAYER_PAUSE then return end
 
     PLAYER_STATE = PLAYER_LOBBY
-    
+
     MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
     MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
     MAIN_MENU:InitButtons()
@@ -357,7 +363,7 @@ end)
 net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
     if IsValid(MAIN_MENU) then
         PLAYER_STATE = PLAYER_NONE
-        
+
         MAIN_MENU:Remove()
     end
 end)
@@ -373,19 +379,19 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
         if not IsValid(ply) then return end
 
         if PLAYER_STATE == PLAYER_LOBBY then return end
-        
+
         if not ply:Alive() then
             RunConsoleCommand("prsbox_lobby_test")
-            return 
+            return
         end
 
         if IsValid(MAIN_MENU) then
             PLAYER_STATE = PLAYER_NONE
-            
+
             MAIN_MENU:CloseMenu()
         else
             if PLAYER_VIEW then return end
-            
+
             local plyAngles = ply:GetAngles()
 
             ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
@@ -400,16 +406,16 @@ end)
 
 hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
     if name == "CHudCrosshair" and PLAYER_STATE ~= PLAYER_NONE then
-        return false 
+        return false
     end
 end)
 
 hook.Add("OnMenuOpen", "PRSBOX.Lobby.ViewStart", function (menu, playerState)
-    PLAYER_VIEW = true 
+    PLAYER_VIEW = true
 end)
 
 hook.Add("OnMenuClose", "PRSBOX.Lobby.ViewEnd", function (menu)
     timer.Simple(0.9, function ()
-        PLAYER_VIEW = false  
+        PLAYER_VIEW = false
     end)
 end)

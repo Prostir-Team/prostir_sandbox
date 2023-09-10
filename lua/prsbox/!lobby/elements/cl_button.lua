@@ -33,30 +33,33 @@ do
 
     function PANEL:PerformLayout()
         local tall = ScreenScale(20)
-        
+
         self:SetTall(tall)
     end
 
     function PANEL:Paint(w, h)
         local marginLeft = ScreenScale(3)
-        
+
         if self:IsHovered() then
-            self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
+            -- self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
             self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, ButtonColors[self.ButtonState])
             self.MarkWide = Lerp(FrameTime() * self.Speed, self.MarkWide, self.MarkWideMax)
         else
             self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, COLOR_WHITE)
-            self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
+            -- self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
 
             self.MarkWide = Lerp(FrameTime() * self.Speed, self.MarkWide, 0)
         end
-        
+
+        -- draw.Blur(4, self, 0, 0, w, h, 200)
+
         surface.SetDrawColor(self.BackgroundColor)
         surface.DrawRect(self.MarkWide, 0, w - self.MarkWide, h)
 
         surface.SetDrawColor(ButtonColors[self.ButtonState])
         surface.DrawRect(0, 0, self.MarkWide, h)
-        
+
+
         if not self.Text then return end
 
         draw.DrawText(self.Text, "PRSBOX.Lobby.Font.Button", marginLeft + self.MarkWide, ScreenScale(2.3), self.TextColor, TEXT_ALIGN_LEFT)
