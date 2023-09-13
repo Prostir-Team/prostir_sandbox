@@ -42,9 +42,12 @@ if SERVER then
     end 
     
     function PLAYER:MovementSetup()
-        self:SetWalkSpeed(300)
-        
-        self:SetRunSpeed(400)
+        -- HL2 Speeds
+        self:SetWalkSpeed(190)
+        self:SetRunSpeed(320)
+        self:SetSlowWalkSpeed(150)
+        self:SetCrouchedWalkSpeed(0.3333)
+        self:SetJumpHeight(150)
     end
 
     function PLAYER:WeaponSetup()
