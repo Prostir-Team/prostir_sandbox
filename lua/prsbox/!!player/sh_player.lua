@@ -47,7 +47,7 @@ if SERVER then
         self:SetRunSpeed(320)
         self:SetSlowWalkSpeed(150)
         self:SetCrouchedWalkSpeed(0.3333)
-        self:SetJumpHeight(150)
+        self:SetJumpPower(150)
     end
 
     function PLAYER:WeaponSetup()
