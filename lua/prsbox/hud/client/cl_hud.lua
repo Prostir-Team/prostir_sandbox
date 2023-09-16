@@ -21,6 +21,12 @@ local IgnoreWeapon = {
     ["wep_jack_gmod_hands"] = true,
     ["none"] = true,
     ["weapon_physgun"] = true,
+    ["weapon_rpg"] = true,
+}
+
+local ChargesWeapons = {
+    ["weapon_slam"] = true,
+    ["weapon_frag"] = true,
 }
 
 local PRSBOX_HUD_HOOK_NAME = "Prsbox_Hud_"
@@ -32,7 +38,8 @@ local MATERIALS_Shield = Material("armor-placeholder")
 local CACHED_HEALTH = 0
 local CACHED_SUIT = 0
 
-local HP_PANEL_POS_X = PRSBOX_HUD_RES_H*0.025
+/*
+local HP_PANEL_POS_X = PRSBOX_HUD_RES_W*0.02
 local HP_PANEL_POS_Y = PRSBOX_HUD_RES_H*0.9
 local HP_PANEL_SIZE_X = PRSBOX_HUD_RES_H*0.075
 local HP_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
@@ -41,10 +48,27 @@ local HP_PANEL_ICON_SIZE = PRSBOX_HUD_RES_H*0.05
 local HP_PANEL_TEXT_X_OFFSET = PRSBOX_HUD_RES_H*0.075
 local HP_PANEL_GAP = PRSBOX_HUD_RES_W*0.05
 
-local AMMO_PANEL_POS_X = PRSBOX_HUD_RES_H*1
-local AMMO_PANEL_POS_Y = PRSBOX_HUD_RES_H*0.9
-local AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.1
+local AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.85
+local AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.15
 local AMMO_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
+*/
+
+local function updateStaticValues()
+    HP_PANEL_POS_X = PRSBOX_HUD_RES_W*0.02
+    HP_PANEL_POS_Y = PRSBOX_HUD_RES_H*0.9
+    HP_PANEL_SIZE_X = PRSBOX_HUD_RES_H*0.075
+    HP_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
+    HP_PANEL_ICON_OFFSET = PRSBOX_HUD_RES_H*0.0125
+    HP_PANEL_ICON_SIZE = PRSBOX_HUD_RES_H*0.05
+    HP_PANEL_TEXT_X_OFFSET = PRSBOX_HUD_RES_H*0.075
+    HP_PANEL_GAP = PRSBOX_HUD_RES_W*0.05
+
+    AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.8625
+    AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.125
+    AMMO_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
+end
+
+updateStaticValues()
 
 ----------=================[Main Functions]=================----------
 local function UpdateHUD()
@@ -68,6 +92,7 @@ local function UpdateHUD()
     
     
     draw.DrawText(HealthString, "PRSBOX_HUD_FONT_HEALTH", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+
 -- Suit
     if( Local_Player:Armor()>0 && Local_Player:Alive() ) then
         local SuitString = tostring( Local_Player:Armor() ).." "
@@ -84,9 +109,16 @@ local function UpdateHUD()
 
 -- Ammo
     local tempWeapon = Local_Player:GetActiveWeapon()
-    if IsValid(tempWeapon) then
-        if( not IgnoreWeapon[tempWeapon:GetClass()] ) then
-            draw.RoundedBox(8, AMMO_PANEL_POS_X, AMMO_PANEL_POS_Y, AMMO_PANEL_SIZE_X, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
+    if( IsValid(tempWeapon) and not IgnoreWeapon[tempWeapon:GetClass()] ) then
+        if( tempWeapon:Clip2()!=-1 and not ChargesWeapons[tempWeapon:GetClass()] )then
+            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X*0.5, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
+            draw.DrawText(tempWeapon:Clip2(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+         
+            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
+            draw.DrawText(tempWeapon:Clip1(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+        else
+            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
+            draw.DrawText(tempWeapon:Clip1(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
         end
     end
 
@@ -129,5 +161,7 @@ hook.Add("HUDPaint", PRSBOX_HUD_HOOK_NAME.."HUDPaint", function()
 
     UpdateHUD()
 end )
+
+hook.Add( "OnScreenSizeChanged", PRSBOX_HUD_HOOK_NAME.."OnScreenSizeChanged", updateStaticValues )
 
 net.Receive("PRSBOX_HUD_DamageNotify", drawDamageNotify)

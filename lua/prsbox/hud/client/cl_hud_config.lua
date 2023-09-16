@@ -29,3 +29,8 @@ surface.CreateFont( "PRSBOX_HUD_FONT_HEALTH", {
 	additive = false,
 	outline = false,
 } )
+
+hook.Add( "OnScreenSizeChanged", "Prsbox_Hud_OnScreenSizeChanged", function( oldWidth, oldHeight )
+	PRSBOX_HUD_RES_W = ScrW()
+	PRSBOX_HUD_RES_H = ScrH()
+end )
