@@ -1,6 +1,4 @@
-//BoxRocket
-
--- Init default values
+// Hides this default hud elements:
 local hide = {
     ["CHudHealth"] = true,
     ["CHudBattery"] = true,
@@ -11,6 +9,7 @@ local hide = {
     //["CHudWeaponSelectionItem"] = true,
 }
 
+// Doesn't draw ammo hud element for those weapons:
 local IgnoreWeapon = {
     ["weapon_bugbait"] = true,
     ["weapon_crowbar"] = true,
@@ -24,6 +23,7 @@ local IgnoreWeapon = {
     ["weapon_rpg"] = true,
 }
 
+// Changes ammo hud elements for this weapons:
 local ChargesWeapons = {
     ["weapon_slam"] = true,
     ["weapon_frag"] = true,
@@ -38,21 +38,7 @@ local MATERIALS_Shield = Material("armor-placeholder")
 local CACHED_HEALTH = 0
 local CACHED_SUIT = 0
 
-/*
-local HP_PANEL_POS_X = PRSBOX_HUD_RES_W*0.02
-local HP_PANEL_POS_Y = PRSBOX_HUD_RES_H*0.9
-local HP_PANEL_SIZE_X = PRSBOX_HUD_RES_H*0.075
-local HP_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
-local HP_PANEL_ICON_OFFSET = PRSBOX_HUD_RES_H*0.0125
-local HP_PANEL_ICON_SIZE = PRSBOX_HUD_RES_H*0.05
-local HP_PANEL_TEXT_X_OFFSET = PRSBOX_HUD_RES_H*0.075
-local HP_PANEL_GAP = PRSBOX_HUD_RES_W*0.05
-
-local AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.85
-local AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.15
-local AMMO_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
-*/
-
+// In function so can be updated on screen resolution changed hook
 local function updateStaticValues()
     HP_PANEL_POS_X = PRSBOX_HUD_RES_W*0.02
     HP_PANEL_POS_Y = PRSBOX_HUD_RES_H*0.9
@@ -63,9 +49,9 @@ local function updateStaticValues()
     HP_PANEL_TEXT_X_OFFSET = PRSBOX_HUD_RES_H*0.075
     HP_PANEL_GAP = PRSBOX_HUD_RES_W*0.05
 
-    AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.8625
+    AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.98
     AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.125
-    AMMO_PANEL_SIZE_Y = PRSBOX_HUD_RES_H*0.075
+    //AMMO_TEXT_MAINTEXT_OFFET_X = PRSBOX_HUD_RES_W*0.04
 end
 
 updateStaticValues()
@@ -81,7 +67,8 @@ local function UpdateHUD()
         HealthString = "KIA "
     end
 
-    surface.SetFont("PRSBOX_HUD_FONT_HEALTH")
+    // To make panel bigger/smaller depending on amount of hp to demonstrate
+    surface.SetFont("PRSBOX_HUD_FONT_DEFAULT")
     local HealthTextSize = surface.GetTextSize(HealthString)
 
     draw.RoundedBox(8, HP_PANEL_POS_X, HP_PANEL_POS_Y, HP_PANEL_SIZE_X+HealthTextSize, HP_PANEL_SIZE_Y, PANELS_COLOR)
@@ -90,36 +77,49 @@ local function UpdateHUD()
     surface.SetMaterial(MATERIALS_Health)
     surface.DrawRect(HP_PANEL_POS_X+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET, HP_PANEL_ICON_SIZE, HP_PANEL_ICON_SIZE)
     
-    
-    draw.DrawText(HealthString, "PRSBOX_HUD_FONT_HEALTH", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+    draw.DrawText(HealthString, "PRSBOX_HUD_FONT_DEFAULT", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
 
 -- Suit
     if( Local_Player:Armor()>0 && Local_Player:Alive() ) then
         local SuitString = tostring( Local_Player:Armor() ).." "
         local SuitTextSize = surface.GetTextSize(SuitString)
         local Suit_X_Offset = HP_PANEL_POS_X+HP_PANEL_GAP+HealthTextSize
+
         draw.RoundedBox(8, Suit_X_Offset, HP_PANEL_POS_Y, HP_PANEL_SIZE_X+SuitTextSize, HP_PANEL_SIZE_Y, PANELS_COLOR)
         
         surface.SetDrawColor(MAIN_COLOR)
         surface.SetMaterial(MATERIALS_Shield)
         surface.DrawRect(Suit_X_Offset+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET,HP_PANEL_ICON_SIZE,HP_PANEL_ICON_SIZE)
-
-        draw.DrawText(SuitString, "PRSBOX_HUD_FONT_HEALTH", Suit_X_Offset+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+            
+        draw.DrawText(SuitString, "PRSBOX_HUD_FONT_DEFAULT", Suit_X_Offset+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
     end
 
 -- Ammo
     local tempWeapon = Local_Player:GetActiveWeapon()
+
     if( IsValid(tempWeapon) and not IgnoreWeapon[tempWeapon:GetClass()] ) then
-        if( tempWeapon:Clip2()!=-1 and not ChargesWeapons[tempWeapon:GetClass()] )then
-            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X*0.5, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
-            draw.DrawText(tempWeapon:Clip2(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
-         
-            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
-            draw.DrawText(tempWeapon:Clip1(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
-        else
-            draw.RoundedBox(8, AMMO_PANEL_POS_X, HP_PANEL_POS_Y, AMMO_PANEL_SIZE_X, AMMO_PANEL_SIZE_Y, PANELS_COLOR)
-            draw.DrawText(tempWeapon:Clip1(), "PRSBOX_HUD_FONT_HEALTH", AMMO_PANEL_POS_X, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.25, MAIN_COLOR, TEXT_ALIGN_LEFT)
+        local AmmoStringClip1 = tostring( tempWeapon:Clip1() ).." "
+        local AmmoStringAmmoLeft = tostring( Local_Player:GetAmmoCount( tempWeapon:GetPrimaryAmmoType() ))
+
+        if(string.len(AmmoStringAmmoLeft)<3)then AmmoStringAmmoLeft = AmmoStringAmmoLeft.." " end -- "Kostyl". Idk why, but this makes HUD look nicer on different amount of ammo
+
+        local AmmoStringAltLeft = ""
+        local AmmoBlock1TextSize = surface.GetTextSize(AmmoStringClip1)+surface.GetTextSize(AmmoStringAmmoLeft)
+        
+        local Ammo_X_Offset = AMMO_PANEL_POS_X-(AmmoBlock1TextSize+HP_PANEL_ICON_SIZE) -- Offsets ammo panel on specified amount (left align basically).
+
+        if( ChargesWeapons[tempWeapon:GetClass()] )then -- weapons with charges (granades, slam, etc. Specified at ChargesWeapons list at the start of this file)
+        
+        else -- default weapons
+            draw.RoundedBox(8, Ammo_X_Offset, HP_PANEL_POS_Y, AmmoBlock1TextSize+HP_PANEL_ICON_SIZE+HP_PANEL_ICON_OFFSET, HP_PANEL_SIZE_Y, PANELS_COLOR)
+            
+            draw.DrawText(AmmoStringClip1, "PRSBOX_HUD_FONT_DEFAULT", Ammo_X_Offset+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
+            draw.DrawText(AmmoStringAmmoLeft, "PRSBOX_HUD_FONT_AMMO", Ammo_X_Offset+HP_PANEL_TEXT_X_OFFSET+surface.GetTextSize(AmmoStringClip1), HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.35, MAIN_COLOR, TEXT_ALIGN_LEFT)
         end
+
+        surface.SetDrawColor(MAIN_COLOR)
+        surface.SetMaterial(MATERIALS_Shield)
+        surface.DrawRect(Ammo_X_Offset+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET,HP_PANEL_ICON_SIZE,HP_PANEL_ICON_SIZE)
     end
 
 -- Elements
