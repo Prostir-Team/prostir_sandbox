@@ -6,7 +6,7 @@ PRSBOX_HUD_RES_H = ScrH()
 
 PRSBOX_HUD_COLOR_R = CreateClientConVar("prsbox_hud_color_r", "255", true, false, "Міняє червону компоненту кольору HUD'а", 0, 255)
 PRSBOX_HUD_COLOR_G = CreateClientConVar("prsbox_hud_color_g", "255", true, false, "Міняє зелену компоненту кольору HUD'а", 0, 255)
-PRSBOX_HUD_COLOR_B = CreateClientConVar("prsbox_hud_color_b", "0", true, false, "Міняє синю компоненту кольору HUD'а", 0, 25)
+PRSBOX_HUD_COLOR_B = CreateClientConVar("prsbox_hud_color_b", "0", true, false, "Міняє синю компоненту кольору HUD'а", 0, 255)
 
 PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE = CreateClientConVar("prsbox_hud_elements_compass_active", "1", true, false, "Вмикає/Вимикає компасс", 0, 1)
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_ACTIVE = CreateClientConVar("prsbox_hud_elements_crosshair_active", "1", true, false, "Вмикає/Вимикає користувацький приціл", 0, 1)
