@@ -21,6 +21,8 @@ local IgnoreWeapon = {
     ["none"] = true,
     ["weapon_physgun"] = true,
     ["weapon_rpg"] = true,
+    ["ent_jack_gmod_eztoolbox"] = true,
+    ["ent_jack_gmod_eztoolbox"] = true,
 }
 
 // Changes ammo hud elements for this weapons:
