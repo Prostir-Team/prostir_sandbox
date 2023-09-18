@@ -101,7 +101,7 @@ function ChangePlayerModel(ply, oldModel, newModel)
 
     local model = GetModelByModelPath(newModel)
 
-    local hookReturn = hook.Run("PRSBOX.Player.ChangedModel", ply, model["settings"], oldModel, newModel)
+    local hookReturn = hook.Run("PRSBOX.Player.ChangedModel", ply, model, oldModel, newModel)
     if not hookReturn and hookReturn ~= nil then return end
     
     if not PlayerHasModel(ply, model["modelName"]) then

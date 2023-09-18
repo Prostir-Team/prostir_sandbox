@@ -184,7 +184,7 @@ concommand.Add("death_notice", function ()
 end)
 
 hook.Add("PRSBOX:AddDeathNoctice", "PRSBOX.CustomDeathNotice", function (Attacker, team1, Inflictor, Victim, team2)
-    -- addNewDeath(Attacker, Inflictor, Victim)
+    addNewDeath(Attacker, Inflictor, Victim)
 
     return true
 end)

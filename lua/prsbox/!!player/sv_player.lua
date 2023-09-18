@@ -6,7 +6,7 @@ hook.Add("PlayerSpawn", "!!!PRSBOX.SetModel", function (ply, tr)
     if not IsValid(ply) then return end
 
     local playerModel = ply:GetInfo("prsbox_playermodel")
-    
+
     ply:SetProstirModel(playerModel)
     ply:WeaponSetup()
     ply:MovementSetup()
