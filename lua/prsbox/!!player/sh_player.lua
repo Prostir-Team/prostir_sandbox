@@ -11,17 +11,23 @@ local DEFAULT_MODEL = "models/player/kleiner.mdl"
 local PLAYER = FindMetaTable("Player")
 
 if SERVER then
-    function PLAYER:SetProstirModel(modelName)
+    function PLAYER:SetProstirModel(modelPath)
+        
+        if not modelPath or modelPath == "" then
+            modelPath = DEFAULT_MODEL
+        end
+        
+        local modelName = GetModelByModelPath(playerModel)
+
         if not modelName or modelName == "" then
-            modelName = DEFAULT_MODEL
+            modelPath = DEFAULT_MODEL
         end
-        
+
         if not PlayerHasModel(self, modelName) then 
-            modelName = DEFAULT_MODEL
+            modelPath = DEFAULT_MODEL
         end
         
-        
-        self:SetModel(modelName)
+        self:SetModel(modelPath)
         self:SetupHands()
     end
 
