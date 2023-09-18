@@ -16,9 +16,9 @@ if SERVER then
             modelName = DEFAULT_MODEL
         end
         
-        -- if not PlayerHasModel(self, modelName) then 
-        --     modelName = DEFAULT_MODEL
-        -- end
+        if not PlayerHasModel(self, modelName) then 
+            modelName = DEFAULT_MODEL
+        end
         
         
         self:SetModel(modelName)
