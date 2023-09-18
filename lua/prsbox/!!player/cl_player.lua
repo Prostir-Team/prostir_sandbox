@@ -172,12 +172,23 @@ local function addNewDeath(Attacker, Inflictor, Victim)
     end
 end
 
+cvars.AddChangeCallback("prsbox_playermodel", function (convar, old, new)
+    net.Start("PRSBOX.Net.PlayerChangeModel")
+        net.WriteString(old)
+        net.WriteString(new)
+    net.SendToServer()
+end)
+
 concommand.Add("death_notice", function ()
     addNewDeath("TEST", "suicide", "TEST2")
 end)
 
 hook.Add("PRSBOX:AddDeathNoctice", "PRSBOX.CustomDeathNotice", function (Attacker, team1, Inflictor, Victim, team2)
-    addNewDeath(Attacker, Inflictor, Victim)
+    -- addNewDeath(Attacker, Inflictor, Victim)
 
     return true
+end)
+
+hook.Add("PRSBOX.ContentIcon.Paint", "TESTPAINT", function (panel, w, h)
+    -- draw.DrawText("Hello World", "DermaLarge", 0, 0, COLOR_WHITE, TEXT_ALIGN_LEFT)
 end)

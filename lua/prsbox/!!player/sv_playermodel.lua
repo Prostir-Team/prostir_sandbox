@@ -1,17 +1,14 @@
 ---
+--- NET
+---
+
+util.AddNetworkString("PRSBOX.Net.PlayerChangeModel")
+
+---
 --- Table that saving all player models
 ---
 
-local PLAYER_MODELS = {}
-
----
---- Types for all player models
----
-
-MODEL_FREE = 1
-MODEL_BUY = 2
-MODEL_ACHIVEMENT = 3
-MODEL_SUBSCRIBE = 4
+PLAYER_MODELS = PLAYER_MODELS or {}
 
 ---
 --- Functions 
@@ -22,26 +19,51 @@ function CreateModelsTable()
 	sql.Query("CREATE TABLE IF NOT EXISTS player_models (SteamID TEXT, ModelName TEXT)")
 end 
 
-function IsModelExist(modelName)
+function GetAllModels()
+    return PLAYER_MODELS
+end
+
+function IsModelExist(modelPath)
+    local playerModels = GetAllModels()
+
+    for k, v in ipairs(playerModels) do
+        if v["modelPath"] == modelPath then
+            return true
+        end
+    end
+
     return false 
 end 
 
-function RegistPlayerModel(modelName, modelPath, type, settings)
+concommand.Add("test_player", function ()
+    print(IsModelExist("models/player/p2_chell.mdl"))
+end)
+
+function RegistPlayerModel(modelName, modelPath, settings)
     if not isstring(modelName) then return end
     if not isstring(modelName) then return end
-    if not isnumber(type) then return end
     if not istable(settings) then return end
+    if IsModelExist(modelPath) then return end
 
     local playerModel = {
         ["modelName"] = modelName,
         ["modelPath"] = modelPath,
-        ["type"] = type,
         ["settings"] = settings
     }
 
     table.insert(PLAYER_MODELS, playerModel)
 
     print("Player model \"" .. modelName .. "\" (" .. modelPath .. ") successfully has been saved!")
+end
+
+function GetModelByModelPath(modelPath)
+    local playerModels = GetAllModels()
+    
+    for k, v in ipairs(playerModels) do
+        if v["modelPath"] == modelPath then
+            return v
+        end
+    end
 end
 
 function PlayerGetModels(ply)
@@ -74,9 +96,37 @@ function AddPlayerModel(ply, modelName)
     sql.Query( "INSERT INTO player_models (SteamID, ModelName) VALUES(" .. sql.SQLStr(steamid) .. ", " .. sql.SQLStr(modelName) .. " )" )
 end
 
-function GetAllModels()
-    return PLAYER_MODELS
+function ChangePlayerModel(ply, oldModel, newModel)
+    if not IsModelExist(oldModel) and not IsModelExist(newModel) then return end
+
+    local model = GetModelByModelPath(newModel)
+
+    local hookReturn = hook.Run("PRSBOX.Player.ChangedModel", ply, model["settings"], oldModel, newModel)
+    if not hookReturn and hookReturn ~= nil then return end
+    
+    if not PlayerHasModel(ply, model["modelName"]) then
+        print("=============")
+        print("Model has been added to player database")
+        
+        AddPlayerModel(ply, model["modelName"])
+    end
+
+    ply:SetProstirModel(newModel)
 end
+
+concommand.Add("test_change", function (ply)
+    local old = "models/player/p2_chell.mdl"
+    local new = "models/player/kleiner.mdl"
+
+    ChangePlayerModel(ply, old, new)
+end)
+
+net.Receive("PRSBOX.Net.PlayerChangeModel", function (len, ply)
+    local oldModel = net.ReadString()
+    local newModel = net.ReadString()
+
+    ChangePlayerModel(ply, oldModel, newModel)
+end)
 
 CreateModelsTable()
 

@@ -686,7 +686,7 @@ local function killfunc( animData, panel )
 end
 
 concommand.Add("prsbox_chat_clear", function()
-	if !PRSBOX_CHAT then return end
+	if not PRSBOX_CHAT then return end
 	for _, pnl in ipairs(PRSBOX_CHAT.History.Messages) do
 		pnl:AlphaTo(0, 0.1, 0, killfunc)
 	end

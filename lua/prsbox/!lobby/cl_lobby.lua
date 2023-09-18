@@ -12,6 +12,14 @@ CreateClientConVar("prsbox_lobby_camera_speed", "10", true, false, "", 5, 100)
 PLAYER_STATE = PLAYER_NONE
 local PLAYER_VIEW = false
 
+
+---
+--- Materials
+---
+
+local logoBackground = Material("prostir/prostir_background.png")
+local logo = Material("prostir/prostir_logo.png")
+
 ---
 --- Menu meta class
 ---
@@ -49,8 +57,6 @@ do
         self:MakePopup()
 
         self.InfoMenuOpened = false
-
-        self.Logo = Material("prostir/prsbox_menu.png")
 
         self:SetZPos(10)
 
@@ -212,20 +218,29 @@ do
 
         draw.SimpleLinearGradient(0, 0, wide, h, Color(0, 0, 0, 255), Color(0, 0, 0, 0), true)
 
-        local logoWide = ScreenScale(160)
-        local logoTall = ScreenScale(75)
+        local logoBackWide = ScreenScale(170)
+        local logoBackTall = ScreenScale(47)
+
+        local logoSize = ScreenScale(60)
 
         local buttonPanel = self.ButtonPanel
         if not IsValid(buttonPanel) then return end
 
         local logoX = ScreenScale(25)
-        local logoYMargin = ScreenScale(5)
+        local logoXMargin = ScreenScale(10)
+        local logoYMargin = ScreenScale(20)
 
         if not buttonPanel:IsVisible() then return end
 
-        surface.SetMaterial(self.Logo)
+        local y = buttonPanel:GetY() - logoBackTall - logoYMargin
+
+        surface.SetMaterial(logoBackground)
         surface.SetDrawColor(255, 255, 255, 255)
-        surface.DrawTexturedRect(logoX, buttonPanel:GetY() - logoTall - logoYMargin, logoWide, logoTall)
+        surface.DrawTexturedRect(logoX, y, logoBackWide, logoBackTall)
+
+        surface.SetMaterial(logo)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.DrawTexturedRect(logoX + logoXMargin, buttonPanel:GetY() - logoYMargin - logoSize / 2 - logoBackTall / 2, logoSize, logoSize)
     end
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
