@@ -44,18 +44,18 @@ hook.Add("HUDDrawTargetID", "PRSBOX.ID", function()
     
     
     local ply = LocalPlayer()
-    if not IsValid(ply) then return end
+    if not IsValid(ply) then return false end
 
     local trace = ply:GetEyeTrace()
     local otherPlayer = trace.Entity
 
-    if not IsValid(otherPlayer) and not otherPlayer:IsPlayer() then 
+    if not IsValid(otherPlayer) or not otherPlayer:IsPlayer() then 
         alphaTo = 0
 
-        return 
+        return false 
     end
-    lastPlayer = otherPlayer
 
+    lastPlayer = otherPlayer
     alphaTo = 1000
 
     return false
@@ -191,4 +191,32 @@ end)
 
 hook.Add("PRSBOX.ContentIcon.Paint", "TESTPAINT", function (panel, w, h)
     -- draw.DrawText("Hello World", "DermaLarge", 0, 0, COLOR_WHITE, TEXT_ALIGN_LEFT)
+end)
+
+---
+--- New crosshair
+---
+
+hook.Add("HUDPaint", "PRSBOX.HUD.Crosshair", function ()
+    local scrW, scrH = ScrW(), ScrH()
+    local crosshairSize = 12
+    local crosshairSizeSmall = 2
+    local crosshairMaring = 2
+
+    local crosshairMargined = (crosshairSize + crosshairMaring)
+    local crosshairSmallMargined = (crosshairSizeSmall + crosshairMaring)
+
+    surface.SetDrawColor(COLOR_BLACK)
+    surface.DrawRect(scrW / 2 - crosshairSmallMargined / 2, scrH / 2 - crosshairMargined / 2, crosshairSmallMargined, crosshairMargined)
+    surface.DrawRect(scrW / 2 - crosshairMargined / 2, scrH / 2 - crosshairSmallMargined / 2, crosshairMargined, crosshairSmallMargined)
+
+    surface.SetDrawColor(COLOR_WHITE)
+    surface.DrawRect(scrW / 2 - crosshairSizeSmall / 2, scrH / 2 - crosshairSize / 2, crosshairSizeSmall, crosshairSize)
+    surface.DrawRect(scrW / 2 - crosshairSize / 2, scrH / 2 - crosshairSizeSmall / 2, crosshairSize, crosshairSizeSmall)
+end)
+
+hook.Add("HUDShouldDraw", "PRSBOX.Hud.DisableHL2Crosshair", function (name)
+    if (name == "CHudCrosshair") then
+        return false 
+    end
 end)

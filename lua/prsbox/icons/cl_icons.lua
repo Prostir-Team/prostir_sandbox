@@ -8,10 +8,7 @@ local PLAYERS_ICONS = {
 
 local testIcon = Material("icon16/wrench.png")
 
-local function ExistPlayerIcon(ply, iconPath)
-    if not IsValid(ply) or not ply:IsPlayer() then return false end
-    
-    local steamid = ply:SteamID()
+local function ExistPlayerIcon(steamid, iconPath)    
     local icon = string.Split(iconPath, ".")[1]
     local icons = table.Copy(PLAYERS_ICONS[steamid])
 
@@ -28,10 +25,7 @@ local function ExistPlayerIcon(ply, iconPath)
     return false
 end
 
-local function AddPlayerIcon(ply, iconPath)
-    if not IsValid(ply) or not ply:IsPlayer() then return end
-
-    local steamid = ply:SteamID()
+local function AddPlayerIcon(steamid, iconPath)
     local icon = string.Split(iconPath, ".")[1]
     
     if not table.HasValue(table.GetKeys(PLAYERS_ICONS), steamid) then
@@ -44,10 +38,7 @@ local function AddPlayerIcon(ply, iconPath)
     table.insert(PLAYERS_ICONS[steamid], iconMaterial)
 end 
 
-local function RemovePlayerIcon(ply, iconPath)
-    if not IsValid(ply) or not ply:IsPlayer() then return false end
-    
-    local steamid = ply:SteamID()
+local function RemovePlayerIcon(steamid, iconPath)
     local icon = string.Split(iconPath, ".")[1]
     local icons = table.Copy(PLAYERS_ICONS[steamid])
 

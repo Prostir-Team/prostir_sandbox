@@ -28,6 +28,7 @@ surface.CreateFont("PRSBOX.Lobby.Font.Info", {
 ---
 
 COLOR_WHITE = Color(255, 255, 255)
+COLOR_BLACK = Color(0, 0, 0)
 COLOR_RED = Color(255, 0, 0)
 COLOR_GREEN = Color(0, 255, 0)
 COLOR_BUTTON_NONE = Color(0, 0, 0, 0)
