@@ -1,0 +1,82 @@
+{
+    "Explosives": [
+        "ent_jack_gmod_ezbigbomb",
+        "ent_jack_gmod_ezbomb",
+        "ent_jack_gmod_ezclusterbomb",
+        "ent_jack_gmod_ezclusterbuster",
+        "ent_jack_gmod_ezclusterminebomb",
+        "ent_jack_gmod_ezdetpack",
+        "ent_jack_gmod_ezdynamite",
+        "ent_jack_gmod_ezfougasse",
+        "ent_jack_gmod_ezfragnade",
+        "ent_jack_gmod_ezsticknadebundle",
+        "ent_jack_gmod_ezherocket",
+        "ent_jack_gmod_ezheatrocket",
+        "ent_jack_gmod_ezimpactnade",
+        "ent_jack_gmod_ezincendiarybomb",
+        "ent_jack_gmod_ezfirenade",
+        "ent_jack_gmod_ezlandmine",
+        "ent_jack_gmod_ezmoab",
+        "ent_jack_gmod_eznuke",
+        "ent_jack_gmod_ezboundingmine",
+        "ent_jack_gmod_ezminimore",
+        "ent_jack_gmod_eznavalmine",
+        "ent_jack_gmod_eznuke_small",
+        "ent_jack_gmod_ezpowderkeg",
+        "ent_jack_gmod_ezsatchelcharge",
+        "ent_jack_gmod_ezslam",
+        "ent_jack_gmod_ezsmallbomb",
+        "ent_jack_gmod_ezsticknade",
+        "ent_jack_gmod_ezstickynade",
+        "ent_jack_gmod_ezthermobaricbomb",
+        "ent_jack_gmod_eznuke_big",
+        "ent_jack_gmod_ezhebomb",
+        "ent_jack_gmod_eztimebomb",
+        "ent_jack_gmod_eztnt",
+        "ent_jack_gmod_ezatmine",
+        "ent_jack_gmod_ezwarmine",
+        "ent_jack_gmod_eznade_impact",
+        "ent_jack_gmod_eznade_proximity",
+        "ent_jack_gmod_eznade_remote",
+        "ent_jack_gmod_eznade_timed"
+    ],
+    "tasks": [
+        {
+            "id": 1,
+            "type": "Craft",
+            "flag": "nil",
+            "description": "Створіть * вибухівок",
+            "linked entities": "Explosives",
+            "quota": {
+                "min": 5,
+                "max" : 25
+            },
+            "rewardMultiplier": 15
+        },
+        {
+            "id": 2,
+            "type": "Kill",
+            "flag": "nil",
+            "description": "Вбийте * гравців",
+            "linked entities": "nil",
+            "quota": {
+                "min": 5,
+                "max" : 25
+            },
+            "rewardMultiplier": 15
+        },
+        {
+            "id": 4,
+            "type": "Kill",
+            "flag": "Weapon",
+            "description": "Вбийте * гравців використовуючи *",
+            "linked entities": "Weapons",
+            "quota": {
+                "min": 5,
+                "max" : 10
+            },
+            "rewardMultiplier": 17.5
+        }
+    ]
+}
+  

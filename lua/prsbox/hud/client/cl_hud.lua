@@ -34,8 +34,8 @@ local ChargesWeapons = {
 local PRSBOX_HUD_HOOK_NAME = "Prsbox_Hud_"
 local MAIN_COLOR = Color(PRSBOX_HUD_COLOR_R:GetInt(), PRSBOX_HUD_COLOR_G:GetInt(), PRSBOX_HUD_COLOR_B:GetInt(), PRSBOX_HUD_ALPHA:GetInt())
 local PANELS_COLOR = Color(0,0,0,105)
-local MATERIALS_Health = Material("health-placeholder")
-local MATERIALS_Shield = Material("armor-placeholder")
+local MATERIALS_Health = Material("Icon_Health.png")
+local MATERIALS_Shield = Material("Icon_Suit_Charge.png")
 
 local CACHED_HEALTH = 0
 local CACHED_SUIT = 0
@@ -54,6 +54,10 @@ local function updateStaticValues()
     AMMO_PANEL_POS_X = PRSBOX_HUD_RES_W*0.98
     AMMO_PANEL_SIZE_X = PRSBOX_HUD_RES_W*0.125
     //AMMO_TEXT_MAINTEXT_OFFET_X = PRSBOX_HUD_RES_W*0.04
+end
+
+function PRSBOX_HUD_UpdateColor()
+    MAIN_COLOR = Color(PRSBOX_HUD_COLOR_R:GetInt(), PRSBOX_HUD_COLOR_G:GetInt(), PRSBOX_HUD_COLOR_B:GetInt(), PRSBOX_HUD_ALPHA:GetInt())
 end
 
 updateStaticValues()
@@ -76,8 +80,9 @@ local function UpdateHUD()
     draw.RoundedBox(8, HP_PANEL_POS_X, HP_PANEL_POS_Y, HP_PANEL_SIZE_X+HealthTextSize, HP_PANEL_SIZE_Y, PANELS_COLOR)
     
     surface.SetDrawColor(MAIN_COLOR)
+
     surface.SetMaterial(MATERIALS_Health)
-    surface.DrawRect(HP_PANEL_POS_X+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET, HP_PANEL_ICON_SIZE, HP_PANEL_ICON_SIZE)
+    surface.DrawTexturedRect(HP_PANEL_POS_X+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET, HP_PANEL_ICON_SIZE, HP_PANEL_ICON_SIZE)
     
     draw.DrawText(HealthString, "PRSBOX_HUD_FONT_DEFAULT", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
 
@@ -91,7 +96,7 @@ local function UpdateHUD()
         
         surface.SetDrawColor(MAIN_COLOR)
         surface.SetMaterial(MATERIALS_Shield)
-        surface.DrawRect(Suit_X_Offset+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET,HP_PANEL_ICON_SIZE,HP_PANEL_ICON_SIZE)
+        surface.DrawTexturedRect(Suit_X_Offset+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET,HP_PANEL_ICON_SIZE,HP_PANEL_ICON_SIZE)
             
         draw.DrawText(SuitString, "PRSBOX_HUD_FONT_DEFAULT", Suit_X_Offset+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
     end
@@ -130,6 +135,10 @@ local function UpdateHUD()
     end
     if( PRSBOX_HUD_ELEMENTS_CROSSHAIR_ACTIVE:GetBool() )then
         drawCrosshair()
+    end
+
+    if(_G["QuestsPanel_drawQuests"]!=nil)then
+        QuestsPanel_drawQuests(0, PRSBOX_HUD_RES_H*0.175) 
     end
 end
 

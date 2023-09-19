@@ -65,7 +65,13 @@ surface.CreateFont( "PRSBOX_HUD_FONT_AMMO", {
 	outline = false,
 } )
 
+cvars.AddChangeCallback( "prsbox_hud_color_r", PRSBOX_HUD_UpdateColor )
+cvars.AddChangeCallback( "prsbox_hud_color_g", PRSBOX_HUD_UpdateColor )
+cvars.AddChangeCallback( "prsbox_hud_color_b", PRSBOX_HUD_UpdateColor )
+cvars.AddChangeCallback( "prsbox_hud_alpha", PRSBOX_HUD_UpdateColor )
+
 hook.Add( "OnScreenSizeChanged", "Prsbox_Hud_OnScreenSizeChanged", function( oldWidth, oldHeight )
 	PRSBOX_HUD_RES_W = ScrW()
 	PRSBOX_HUD_RES_H = ScrH()
 end )
+
