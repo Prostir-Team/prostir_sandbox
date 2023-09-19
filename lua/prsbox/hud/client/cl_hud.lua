@@ -23,6 +23,12 @@ local IgnoreWeapon = {
     ["weapon_rpg"] = true,
     ["ent_jack_gmod_eztoolbox"] = true,
     ["ent_jack_gmod_eztoolbox"] = true,
+    ["remotecontroller"] = true,
+    ["laserpointer"] = true,
+    ["weapon_simmines"] = true,
+    ["weapon_simremote"] = true,
+    ["weapon_simrepair"] = true,
+    ["weapon_medkit"] = true,
 }
 
 // Changes ammo hud elements for this weapons:
@@ -87,7 +93,7 @@ local function UpdateHUD()
     draw.DrawText(HealthString, "PRSBOX_HUD_FONT_DEFAULT", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
 
 -- Suit
-    if( Local_Player:Armor()>0 && Local_Player:Alive() ) then
+    if( Local_Player:Armor()>0 and Local_Player:Alive() ) then
         local SuitString = tostring( Local_Player:Armor() ).." "
         local SuitTextSize = surface.GetTextSize(SuitString)
         local Suit_X_Offset = HP_PANEL_POS_X+HP_PANEL_GAP+HealthTextSize
@@ -108,7 +114,7 @@ local function UpdateHUD()
         local AmmoStringClip1 = tostring( tempWeapon:Clip1() ).." "
         local AmmoStringAmmoLeft = tostring( Local_Player:GetAmmoCount( tempWeapon:GetPrimaryAmmoType() ))
 
-        if(string.len(AmmoStringAmmoLeft)<3)then AmmoStringAmmoLeft = AmmoStringAmmoLeft.." " end -- "Kostyl". Idk why, but this makes HUD look nicer on different amount of ammo
+        if( string.len(AmmoStringAmmoLeft)<3 )then AmmoStringAmmoLeft = AmmoStringAmmoLeft.." " end -- "Kostyl". Idk why, but this makes HUD look nicer on different amount of ammo
 
         local AmmoStringAltLeft = ""
         local AmmoBlock1TextSize = surface.GetTextSize(AmmoStringClip1)+surface.GetTextSize(AmmoStringAmmoLeft)
