@@ -160,7 +160,7 @@ function PANEL:Paint( w, h )
 		surface.DrawTexturedRect( w - self.Border - 24, self.Border + 8, 16, 16 )
 	end
 	self:ScanForNPCWeapons()
-
+	
     hook.Run("PRSBOX.ContentIcon.Paint", self, w, h)
 end
 
