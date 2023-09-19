@@ -40,7 +40,7 @@
         "ent_jack_gmod_eznade_remote",
         "ent_jack_gmod_eznade_timed"
     ],
-    "tasks": [
+    "Tasks": [
         {
             "id": 1,
             "type": "Craft",
@@ -66,7 +66,7 @@
             "rewardMultiplier": 15
         },
         {
-            "id": 4,
+            "id": 3,
             "type": "Kill",
             "flag": "Weapon",
             "description": "Вбийте * гравців використовуючи *",
@@ -76,6 +76,18 @@
                 "max" : 10
             },
             "rewardMultiplier": 17.5
+        },
+        {
+            "id": 4,
+            "type": "Kill",
+            "flag": "nil",
+            "description": "Вбийте * гравців зброєю ближнього бою",
+            "linked entities": "Weapons.Melee",
+            "quota": {
+                "min": 5,
+                "max" : 25
+            },
+            "rewardMultiplier": 20
         }
     ]
 }
