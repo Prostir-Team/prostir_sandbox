@@ -1,5 +1,3 @@
-print("Icons cl")
-
 local PLAYERS_ICONS = {}
 
 local testIcon = Material("icon16/wrench.png")
@@ -105,8 +103,6 @@ net.Receive("PRSBOX.Icons", function (len, ply)
     local materialIcon = net.ReadString()
 
     local addremove = net.ReadBool()
-
-    print("Icon ping")
 
     if addremove then
         AddPlayerIcon(steamid, materialIcon) -- Add an icon
