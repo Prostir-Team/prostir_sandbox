@@ -80,9 +80,13 @@ do
 
         self.CurTime = CurTime()
 
-        surface.SetFont("PRSBOX.HUD.Player")
-        self.AttackerWide = surface.GetTextSize(self.Attacker)
+        self.AttackerWide = 0
 
+        if Attacker then
+            surface.SetFont("PRSBOX.HUD.Player")
+            self.AttackerWide = surface.GetTextSize(self.Attacker)
+        end
+        
         surface.SetFont("PRSBOX.HUD.Player")
         self.VictimWide = surface.GetTextSize(self.Victim)
 
@@ -101,6 +105,8 @@ do
 
             self.DoRemove = true
         end
+
+        if not self.MoveY then return end
 
         local y = self:GetY()
         self:SetY(Lerp(FrameTime() * 10, y, self.MoveY + self.CurrentState * self.AddY))
@@ -122,7 +128,7 @@ do
         local marginVertical = ScreenScale(10)
         local margin = ScreenScale(3)
 
-        local realWide = self.AttackerWide + self.VictimWide + wide
+        realWide = self.AttackerWide + self.VictimWide + wide
 
         self.AddY = tall + margin
 
@@ -138,7 +144,10 @@ do
         -- surface.SetDrawColor(Color(255, 0, 0))
         -- surface.DrawRect(0, 0, w, h)
 
-        drawTextShadow(self.Attacker, "PRSBOX.HUD.Player", 0, ScreenScale(4), Color(255, 255, 255), TEXT_ALIGN_LEFT)
+        if self.Attacker then
+            drawTextShadow(self.Attacker, "PRSBOX.HUD.Player", 0, ScreenScale(4), Color(255, 255, 255), TEXT_ALIGN_LEFT)
+        end
+        
         drawTextShadow(self.Victim, "PRSBOX.HUD.Player", w, ScreenScale(4), Color(255, 255, 255), TEXT_ALIGN_RIGHT)
 
         killicon.Draw(self.AttackerWide + ScreenScale(40) / 2, ScreenScale(6), self.Inflictor, 255)

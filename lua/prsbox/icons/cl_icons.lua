@@ -1,5 +1,3 @@
-print("Icons cl")
-
 local PLAYERS_ICONS = {}
 
 local testIcon = Material("icon16/wrench.png")
@@ -62,6 +60,7 @@ hook.Add("PostDrawOpaqueRenderables", "PRSBOX.Icon.Draw", function ()
 
     for _, ply in ipairs(players) do
         if not IsValid(ply) then continue end
+        if LocalPlayer() == ply then return end
         if not ply:Alive() then continue end
 
         local steamid = ply:SteamID()
@@ -105,8 +104,6 @@ net.Receive("PRSBOX.Icons", function (len, ply)
     local materialIcon = net.ReadString()
 
     local addremove = net.ReadBool()
-
-    print("Icon ping")
 
     if addremove then
         AddPlayerIcon(steamid, materialIcon) -- Add an icon
