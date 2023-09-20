@@ -69,7 +69,7 @@
             "id": 3,
             "type": "Kill",
             "flag": "Weapon",
-            "description": "Вбийте * гравців використовуючи *",
+            "description": "Вбийте * гравців вогнепальною зброєю",
             "linked entities": "Weapons",
             "quota": {
                 "min": 5,
