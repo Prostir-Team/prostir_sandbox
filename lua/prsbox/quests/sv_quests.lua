@@ -3,6 +3,8 @@ util.AddNetworkString("PRSBOX_QUESTS_Update")
 
 local QuestsTable = {}
 local PlayersQuestsTable = {}
+local Quests_ID_Craft = {1}
+local Quests_ID_Kill = {2, 3, 4}
 
 -- Loads quests/linked entity names/etc. from daily_quests_list.json file
 local function updateQuestsTable()
@@ -38,9 +40,11 @@ local function generateQuestsFor(ply)
 
         local TaskStr = "Task" .. tostring(CurrentTask)
         PlayersQuestsTable[ply:Name()] = PlayersQuestsTable[ply:Name()] or {}
+        PlayersQuestsTable[ply:Name()][TaskStr .. "_id"] = QuestsTable.Tasks[TaskID].id
         PlayersQuestsTable[ply:Name()][TaskStr .. "_desc"] = QuestsTable.Tasks[TaskID].description
         PlayersQuestsTable[ply:Name()][TaskStr .. "_isDone"] = false
-        PlayersQuestsTable[ply:Name()][TaskStr .. "_CurrentProgress"] = 0
+        PlayersQuestsTable[ply:Name()][TaskStr .. "_progress"] = 0
+        PlayersQuestsTable[ply:Name()][TaskStr .. "_quota"] = math.random( QuestsTable.Tasks[TaskID].quota.min, QuestsTable.Tasks[TaskID].quota.max )
 
         -- Store the generated task IDs to prevent duplicates
         if CurrentTask == 1 then
@@ -85,9 +89,12 @@ local function sendQuestsTableUpdate(ply)
     local TempTable = getQuestsTableFor(ply)
 
     for i = 1, 3 do
-        local taskID = "Task" .. i
+        local taskID = "Task"..i
 
-        net.WriteString(TempTable[taskID .. "_desc"])
+        local TempStrArray = string.Explode("*", TempTable[taskID .. "_desc"])
+        local TempString = TempStrArray[1] .. "(" .. TempTable[taskID .. "_progress"] .. "/" .. TempTable[taskID .. "_quota"]..")"..TempStrArray[2]
+
+        net.WriteString(TempString)
         net.WriteBool(TempTable[taskID .. "_isDone"])
     end
 
@@ -101,6 +108,27 @@ end)
 hook.Add("PlayerConnect", "PRSBOX_QUESTS_SV_PlayerConnect", function(name, ip)
     -- Add any additional functionality when a player connects
 end)
+
+-- Adds a hook that updates attacker's quests if they have kill quests.
+hook.Add( "PlayerDeath", "GlobalDeathMessage", function( victim, inflictor, attacker )
+    if ( victim == attacker or !attacker:IsPlayer()) then return end
+
+    local TempTable = getQuestsTableFor( attacker )
+    for i = 1, 3 do
+        local taskID = "Task"..i
+
+        if( TempTable[taskID .. "_isDone"] or not table.HasValue(Quests_ID_Kill, TempTable[taskID .. "_id"]) ) then continue end
+
+        TempTable[taskID .. "_progress"] = TempTable[taskID .. "_progress"]+1
+
+        if( TempTable[taskID .. "_progress"]>=TempTable[taskID .. "_quota"] )then 
+            TempTable[taskID .. "_isDone"] = true
+            attacker:EmitSound("garrysmod/save_load1.wav")
+        end
+    end
+
+    sendQuestsTableUpdate(attacker)
+end )
 
 
 /*util.AddNetworkString("PRSBOX_QUESTS_requestUpdate")

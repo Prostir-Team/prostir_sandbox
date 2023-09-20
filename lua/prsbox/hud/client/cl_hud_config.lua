@@ -22,7 +22,6 @@ PRSBOX_HUD_ELEMENTS_CROSSHAIR_IsOutline = CreateClientConVar("prsbox_hud_element
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_R = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_r", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_G = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_g", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_B = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_b", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
-
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_Length = CreateClientConVar("prsbox_hud_elements_crosshair_length", "1", true, false, "Міняє довжину ліній прицілу", 0, nil)
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_LineGap = CreateClientConVar("prsbox_hud_elements_crosshair_lineGap", "1", true, false, "Міняє відстань ліній прицілу від центру", 0, nil)
 PRSBOX_HUD_ELEMENTS_CROSSHAIR_IsDot = CreateClientConVar("prsbox_hud_elements_crosshair_isDot", "1", true, false, "Вмикає/Вимикає крапку по центру", 0, nil)
