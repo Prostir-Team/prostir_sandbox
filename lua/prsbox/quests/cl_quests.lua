@@ -165,6 +165,7 @@ local function requestUpdateQuests()
     net.SendToServer()
 end
 
+
 concommand.Add( "prsbox_quests_update", requestUpdateQuests, nil, "Reloads list of your quests", 0 )
 concommand.Add( "prsbox_quests_open", QuestsPanel_Open, nil, "Opens list of your quests", 0 )
 concommand.Add( "prsbox_quests_close", QuestsPanel_Close, nil, "Closes list of your quests", 0 )
