@@ -1,12 +1,12 @@
 print("Icons cl")
 
-local PLAYERS_ICONS = {
-    ["BOT"] = {
-        Material("icon16/wrench.png"),
-    }
-}
+local PLAYERS_ICONS = {}
 
 local testIcon = Material("icon16/wrench.png")
+
+local function ExistPlayerTable(steamid)
+    return table.HasValue(table.GetKeys(PLAYERS_ICONS), steamid)
+end 
 
 local function ExistPlayerIcon(steamid, iconPath)    
     local icon = string.Split(iconPath, ".")[1]
@@ -32,7 +32,7 @@ local function AddPlayerIcon(steamid, iconPath)
         PLAYERS_ICONS[steamid] = {}
     end
 
-    if ExistPlayerIcon(ply, iconPath) then return end
+    if ExistPlayerIcon(steamid, iconPath) then return end
 
     local iconMaterial = Material(iconPath)
     table.insert(PLAYERS_ICONS[steamid], iconMaterial)
@@ -42,7 +42,7 @@ local function RemovePlayerIcon(steamid, iconPath)
     local icon = string.Split(iconPath, ".")[1]
     local icons = table.Copy(PLAYERS_ICONS[steamid])
 
-    if not ExistPlayerIcon(ply, iconPath) then return end
+    if not ExistPlayerIcon(steamid, iconPath) then return end
 
     for k, v in ipairs(icons) do
         if isnumber(v) then continue end
@@ -56,28 +56,27 @@ local function RemovePlayerIcon(steamid, iconPath)
 end
 
 hook.Add("PostDrawOpaqueRenderables", "PRSBOX.Icon.Draw", function ()
-    if not localPlayer then
-        localPlayer = LocalPlayer()
-        
-        return
-    end
+    if not IsValid(LocalPlayer()) then return end
     
     local players = player.GetAll()
 
     for _, ply in ipairs(players) do
-        if not IsValid(ply) then return end
-        if not ply:IsBot() then continue end
+        if not IsValid(ply) then continue end
+        if not ply:Alive() then continue end
+
+        local steamid = ply:SteamID()
+        if not ExistPlayerTable(steamid) then continue end
+        
 
         local bone = ply:LookupBone('ValveBiped.Bip01_Head1')
         local pos = bone and ply:GetBonePosition(bone) or ply:LocalToWorld(Vector(0,0,55))
-        local steamid = ply:SteamID()
         local icon_length = #PLAYERS_ICONS[steamid] * 10
 
 
         local angle = Angle(
             0,
-            localPlayer:EyeAngles().y,
-            localPlayer:EyeAngles().z
+            LocalPlayer():EyeAngles().y,
+            LocalPlayer():EyeAngles().z
         )
 
         cam.Start3D2D(pos + Vector(0, 0, 40), angle + Angle(0, -90, 90), 1)
@@ -101,30 +100,17 @@ hook.Add("PostDrawOpaqueRenderables", "PRSBOX.Icon.Draw", function ()
     end
 end)
 
+net.Receive("PRSBOX.Icons", function (len, ply)
+    local steamid = net.ReadString()
+    local materialIcon = net.ReadString()
 
-concommand.Add("icon_remove", function (ply)
-    print("Removing icons")
+    local addremove = net.ReadBool()
 
-    local icon = "icon16/controller.png"
+    print("Icon ping")
 
-    for k, v in ipairs(player.GetAll()) do
-        if not v:IsBot() then continue end
-
-        RemovePlayerIcon(v, icon)
-
-        print(ExistPlayerIcon(v, icon))
-    end
-    
-end)
-
-concommand.Add("icon_add", function (ply)
-    local icons = PLAYERS_ICONS["BOT"]
-
-    local icon = "icon16/controller.png"
-
-    for k, v in ipairs(player.GetAll()) do
-        if not v:IsBot() then continue end
-
-        AddPlayerIcon(v, icon)
+    if addremove then
+        AddPlayerIcon(steamid, materialIcon) -- Add an icon
+    else
+        RemovePlayerIcon(steamid, materialIcon) -- Remove an icon
     end
 end)

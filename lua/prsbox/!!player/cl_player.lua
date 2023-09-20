@@ -197,7 +197,11 @@ end)
 --- New crosshair
 ---
 
+local DrawCrosshair = false
+
 hook.Add("HUDPaint", "PRSBOX.HUD.Crosshair", function ()
+    if not DrawCrosshair then return end
+    
     local scrW, scrH = ScrW(), ScrH()
     local crosshairSize = 12
     local crosshairSizeSmall = 2
@@ -216,7 +220,7 @@ hook.Add("HUDPaint", "PRSBOX.HUD.Crosshair", function ()
 end)
 
 hook.Add("HUDShouldDraw", "PRSBOX.Hud.DisableHL2Crosshair", function (name)
-    if (name == "CHudCrosshair") then
+    if name == "CHudCrosshair" and DrawCrosshair then
         return false 
     end
 end)
