@@ -1,4 +1,5 @@
 PRSBOX_HUD_ACTIVE = CreateClientConVar("prsbox_hud_active", "1", true, false, "Вмикає/Вимикає HUD", 0, 1)
+PRSBOX_HUD_ANIMATION_ACTIVE = CreateClientConVar("prsbox_hud_animation_active", "1", true, false, "Вмикає/Вимикає HUD", 0, 1)
 PRSBOX_HUD_ALPHA = CreateClientConVar("prsbox_hud_alpha", "255", true, false, "Контролює прозорість HUD'а", 0, 255)
 
 PRSBOX_HUD_RES_W = ScrW()
