@@ -24,6 +24,7 @@ local function enterBuildMode(ply)
     if playerInBuildmode(ply) then return end
 
     ply:AddIcon("icon16/wrench.png")
+    ply:GodEnable()
 
     table.insert(PLAYERS_IN_BUILDMODE, steamid)
 end
@@ -37,6 +38,7 @@ local function enterPvpMode(ply)
     if not playerInBuildmode(ply) then return end
 
     ply:RemoveIcon("icon16/wrench.png")
+    ply:GodDisable()
 
     table.RemoveByValue(PLAYERS_IN_BUILDMODE, steamid)
 end
