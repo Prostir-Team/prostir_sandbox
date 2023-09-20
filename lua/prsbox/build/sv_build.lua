@@ -73,13 +73,3 @@ end)
 
 hook.Add("PRSBOX.EnterBuildMode", "PRSBOX.Override.EnterBuildMode", enterBuildMode)
 hook.Add("PRSBOX.EnterPvpMode", "PRSBOX.Override.EnterPvpMode", enterPvpMode)
-
-concommand.Add("test_build", function (ply)
-    local players = player.GetAll()
-
-    for k, v in ipairs(players) do
-        if not v:IsBot() then continue end
-
-        enterBuildMode(v)
-    end
-end)
