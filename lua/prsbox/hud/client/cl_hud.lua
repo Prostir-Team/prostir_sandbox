@@ -100,25 +100,32 @@ local function UpdateHUD()
         end
     end
 
-    local HealthString = ""
-    if( Local_Player:Alive() )then
-        HealthString = tostring( Local_Player:Health() ).." "
-    else
-        HealthString = "KIA "
+    local HealthString = hook.Run("PRSBOX.HUD.HealthString")
+    if not HealthString then
+        if( Local_Player:Alive() )then
+            HealthString = tostring( Local_Player:Health() ).." "
+        else
+            HealthString = "KIA "
+        end
     end
 
+    local HealthColor = hook.Run("PRSBOX.HUD.HealthColor")
+    if not HealthColor then
+        HealthColor = MAIN_COLOR
+    end
+    
     -- To make panel bigger/smaller depending on amount of hp to demonstrate
     surface.SetFont("PRSBOX_HUD_FONT_DEFAULT")
     local HealthTextSize = surface.GetTextSize(HealthString)
 
     draw.RoundedBox(8, HP_PANEL_POS_X, HP_PANEL_POS_Y, HP_PANEL_SIZE_X+HealthTextSize, HP_PANEL_SIZE_Y, PanelColor)
     
-    surface.SetDrawColor(MAIN_COLOR)
+    surface.SetDrawColor(HealthColor)
 
     surface.SetMaterial(MATERIALS_Health)
     surface.DrawTexturedRect(HP_PANEL_POS_X+HP_PANEL_ICON_OFFSET, HP_PANEL_POS_Y+HP_PANEL_ICON_OFFSET, HP_PANEL_ICON_SIZE, HP_PANEL_ICON_SIZE)
     
-    draw.DrawText(HealthString, "PRSBOX_HUD_FONT_DEFAULT", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, MAIN_COLOR, TEXT_ALIGN_LEFT)
+    draw.DrawText(HealthString, "PRSBOX_HUD_FONT_DEFAULT", HP_PANEL_POS_X+HP_PANEL_TEXT_X_OFFSET, HP_PANEL_POS_Y+HP_PANEL_SIZE_Y*0.15, HealthColor, TEXT_ALIGN_LEFT)
 
 -- Suit
     PanelColor = PANELS_COLOR

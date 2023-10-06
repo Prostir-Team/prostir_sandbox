@@ -1,4 +1,4 @@
-print("Hello World")
+util.AddNetworkString("PRSBOX.Net.BuildMode")
 
 local PLAYERS_IN_BUILDMODE = {}
 
@@ -27,6 +27,10 @@ local function enterBuildMode(ply)
     ply:GodEnable()
 
     table.insert(PLAYERS_IN_BUILDMODE, steamid)
+
+    net.Start("PRSBOX.Net.BuildMode")
+        net.WriteBool(true) -- State of build mode
+    net.Send(ply)
 end
 
 local function enterPvpMode(ply)
@@ -41,6 +45,13 @@ local function enterPvpMode(ply)
     ply:GodDisable()
 
     table.RemoveByValue(PLAYERS_IN_BUILDMODE, steamid)
+
+    ply:KillSilent()
+    ply:Spawn()
+
+    net.Start("PRSBOX.Net.BuildMode")
+        net.WriteBool(false) -- State of build mode
+    net.Send(ply)
 end
 
 ---
