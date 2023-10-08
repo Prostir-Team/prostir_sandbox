@@ -1,3 +1,6 @@
+-- локалізація функцій
+local sysTime = SysTime
+
 local cfg = {}
 cfg.maxUnderwaterTime = 5 -- (max: 30, default: 5) скільки гравець може пожити під водою до того, як почне задихатись
 cfg.damageInfo = DamageInfo()
@@ -8,7 +11,7 @@ cfg.damageInfo:SetDamageType(DMG_DROWN)
 -- службові змінні
 local underwater_time = 0
 local was_underwater = false
-local drown_time = 0
+local nextdrowndmg_time = 0
 
 util.AddNetworkString("PlayerPreSuffocationMsg")
 
@@ -16,19 +19,20 @@ hook.Add("PlayerTick", "PRSBOX.Underwater.AirLimit", function(ply, mv)
     if (ply:WaterLevel() != 3) then
         was_underwater = false
         underwater_time = 0
+        nextdrowndmg_time = 0
         return
     end
 
     if not was_underwater then
-        underwater_time = SysTime() + cfg.maxUnderwaterTime
+        underwater_time = sysTime() + cfg.maxUnderwaterTime
         was_underwater = true
         net.Start("PlayerPreSuffocationMsg")
         net.WriteUInt(cfg.maxUnderwaterTime, 5)
         net.Send(ply)
     end
 
-    if (underwater_time <= SysTime()) and (drown_time <= SysTime()) then
-        drown_time = SysTime() + cfg.damageInfoTime
+    if (underwater_time <= sysTime()) and (nextdrowndmg_time <= sysTime() and ply:Alive()) then
+        nextdrowndmg_time = sysTime() + cfg.damageInfoTime
         ply:TakeDamageInfo(cfg.damageInfo)
         ply:ViewPunch(Angle(1, 0, 0))
     end
