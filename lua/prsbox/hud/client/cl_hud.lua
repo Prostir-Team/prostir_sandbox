@@ -86,6 +86,7 @@ local function UpdateHUD()
     local CurTimeVar = CurTime()
 
 -- Health
+    -- If animation cvar is 1 - then decides should the animation start
     if( PRSBOX_HUD_ANIMATION_ACTIVE:GetBool() )then
         if( math.abs((Local_Player:Health()-CACHED_HEALTH))>2 )then
             ANIM_STATE_Health = ANIM_PLAYING
@@ -94,12 +95,14 @@ local function UpdateHUD()
 
         CACHED_HEALTH = Local_Player:Health()
 
+        -- Animation
         if( ANIM_STATE_Health==ANIM_PLAYING )then
             PanelColor = LerpColor((CurTimeVar-ANIM_StartedTime_Health)/ANIM_Delay, MAIN_COLOR, PANELS_COLOR)
             if( (CurTimeVar-ANIM_StartedTime_Health)/ANIM_Delay>=1 )then ANIM_STATE_Health = ANIM_IDLE end
         end
     end
 
+    -- " " needed here to make resizing correct.
     local HealthString = hook.Run("PRSBOX.HUD.HealthString")
     if not HealthString then
         if( Local_Player:Alive() )then
@@ -212,10 +215,10 @@ local function UpdateHUD()
     if( PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE:GetBool() )then
         drawCompass()
     end
-    if( PRSBOX_HUD_ELEMENTS_CROSSHAIR_ACTIVE:GetBool() )then
-        drawCrosshair()
-    end
 
+    AirIndicator()
+
+    -- if QuestsPanel_drawQuests exists then call it.
     if(_G["QuestsPanel_drawQuests"]!=nil)then
         QuestsPanel_drawQuests(0, PRSBOX_HUD_RES_H*0.175) 
     end
@@ -259,3 +262,5 @@ hook.Add( "OnScreenSizeChanged", PRSBOX_HUD_HOOK_NAME.."OnScreenSizeChanged", up
 
 -- Network receive hook for damage notifications
 net.Receive("PRSBOX_HUD_DamageNotify", drawDamageNotify)
+
+net.Receive("PlayerPreSuffocationMsg", PRSBOX_HUD_ServerAirNotificationHandler)

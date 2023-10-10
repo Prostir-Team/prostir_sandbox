@@ -10,24 +10,7 @@ PRSBOX_HUD_COLOR_G = CreateClientConVar("prsbox_hud_color_g", "255", true, false
 PRSBOX_HUD_COLOR_B = CreateClientConVar("prsbox_hud_color_b", "0", true, false, "Міняє синю компоненту кольору HUD'а", 0, 255)
 
 PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE = CreateClientConVar("prsbox_hud_elements_compass_active", "1", true, false, "Вмикає/Вимикає компасс", 0, 1)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_ACTIVE = CreateClientConVar("prsbox_hud_elements_crosshair_active", "1", true, false, "Вмикає/Вимикає користувацький приціл", 0, 1)
 PRSBOX_HUD_ELEMENTS_DAMAGENOTIFY_ACTIVE = CreateClientConVar("prsbox_hud_elements_damagenotify_active", "1", true, false, "Вмикає/Вимикає оповіщення про джерело шкоди", 0, 1)
-
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_IsDynamic = CreateClientConVar("prsbox_hud_elements_crosshair_isDynamic", "1", true, false, "Вмикає/Вимикає розкид прицілу", 0, 1)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_DynamicSpread = CreateClientConVar("prsbox_hud_elements_crosshair_dynamicSpread", "0.5", true, false, "Контролює розкид прицілу", 0, nil)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_COLOR_R = CreateClientConVar("prsbox_hud_elements_crosshair_color_r", "255", true, false, "Міняє червону компоненту кольору прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_COLOR_G = CreateClientConVar("prsbox_hud_elements_crosshair_color_g", "255", true, false, "Міняє зелену компоненту кольору прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_COLOR_B = CreateClientConVar("prsbox_hud_elements_crosshair_color_b", "255", true, false, "Міняє синю компоненту кольору прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_Thickness = CreateClientConVar("prsbox_hud_elements_crosshair_thickness", "1", true, false, "Міняє жирність ліній прицілу", 0, nil)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_IsOutline = CreateClientConVar("prsbox_hud_elements_crosshair_outline", "1", true, false, "Вмикає/Вимикає обмальовку ліній прицілу", 0, 1)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_R = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_r", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_G = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_g", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_OUTLINE_COLOR_B = CreateClientConVar("prsbox_hud_elements_crosshair_outline_color_b", "0", true, false, "Міняє червону компоненту кольору обмальовки прицілу", 0, 255)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_Length = CreateClientConVar("prsbox_hud_elements_crosshair_length", "1", true, false, "Міняє довжину ліній прицілу", 0, nil)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_LineGap = CreateClientConVar("prsbox_hud_elements_crosshair_lineGap", "1", true, false, "Міняє відстань ліній прицілу від центру", 0, nil)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_IsDot = CreateClientConVar("prsbox_hud_elements_crosshair_isDot", "1", true, false, "Вмикає/Вимикає крапку по центру", 0, nil)
-PRSBOX_HUD_ELEMENTS_CROSSHAIR_Alpha = CreateClientConVar("prsbox_hud_elements_crosshair_alpha", "255", true, false, "Міняє прозорість прицілу", 0, 255)
-
 
 surface.CreateFont( "PRSBOX_HUD_FONT_DEFAULT", {
 	font = "HudDefault",
