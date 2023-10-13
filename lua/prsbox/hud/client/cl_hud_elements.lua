@@ -1,5 +1,4 @@
 local COMPASS_CachedAng = 0
-local 
 
 -- Draws compass if active
 function drawCompass()
