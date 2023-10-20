@@ -1,10 +1,19 @@
 if SERVER then
+    -- Money main files
+    
     include("prsbox/money/sv_money.lua")
     AddCSLuaFile("prsbox/money/cl_money.lua")
+
+    -- Connect money to spawn menu
+
+    include("prsbox/money/sv_spawnmenu.lua")
+    AddCSLuaFile("prsbox/money/cl_spawnmenu.lua")
 end
 
 if CLIENT then
     include("prsbox/money/cl_money.lua")
+    
+    include("prsbox/money/cl_spawnmenu.lua")
 end
 
 local PLAYER = FindMetaTable("Player")
