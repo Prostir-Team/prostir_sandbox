@@ -1,5 +1,5 @@
 -- локалізація функцій
-local sysTime = SysTime
+local curTime = CurTime
 
 local cfg = {}
 cfg.maxUnderwaterTime = 5 -- (max: 30, default: 5) скільки гравець може пожити під водою до того, як почне задихатись
@@ -24,15 +24,15 @@ hook.Add("PlayerTick", "PRSBOX.Underwater.AirLimit", function(ply, mv)
     end
 
     if not was_underwater then
-        underwater_time = sysTime() + cfg.maxUnderwaterTime
+        underwater_time = curTime() + cfg.maxUnderwaterTime
         was_underwater = true
         net.Start("PlayerPreSuffocationMsg")
         net.WriteUInt(cfg.maxUnderwaterTime, 5)
         net.Send(ply)
     end
 
-    if (underwater_time <= sysTime()) and (nextdrowndmg_time <= sysTime() and ply:Alive()) then
-        nextdrowndmg_time = sysTime() + cfg.damageInfoTime
+    if (underwater_time <= curTime()) and (nextdrowndmg_time <= curTime() and ply:Alive()) then
+        nextdrowndmg_time = curTime() + cfg.damageInfoTime
         ply:TakeDamageInfo(cfg.damageInfo)
         ply:ViewPunch(Angle(1, 0, 0))
     end
