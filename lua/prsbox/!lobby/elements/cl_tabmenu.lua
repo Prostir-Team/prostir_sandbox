@@ -35,7 +35,7 @@ do
     end
 
     function PANEL:DoClick()
-        local parent = self:GetParent()
+        local parent = self:GetParent():GetParent()
         if not IsValid(parent) then return end
 
         parent:ResetActiveButtons()
@@ -91,11 +91,14 @@ do
 
     function PANEL:InitButtons()
         for k, buttonInfo in ipairs(self.Tabs) do
-            local button = vgui.Create("PRSBOX.Lobby.TabButton", self)
+            local button = vgui.Create("PRSBOX.Lobby.TabButton")
             if not IsValid(button) then continue end
+
+            self:AddItem(button)
 
             button:Text(buttonInfo["text"])
             button:SetMenuClassName(buttonInfo["className"])
+            button:Dock(TOP)
             button.callback = buttonInfo["callback"]
 
             table.insert(self.ButtonTabs, button)
@@ -109,15 +112,6 @@ do
         self:OpenMenu(firstButton.text, firstButton.MenuClassName, firstButton.callback)
     end
 
-    function PANEL:SetupButtonSize(w)
-        local buttonWide = w / #self.Tabs
-        
-        for k, button in ipairs(self.ButtonTabs) do
-            button:SetWide(buttonWide)
-            button:SetX((k - 1) * buttonWide)
-        end
-    end
-
     function PANEL:ResetActiveButtons()
         for k, button in ipairs(self.ButtonTabs) do
             button.Active = false 
@@ -125,10 +119,11 @@ do
     end
 
     function PANEL:PerformLayout(w, h)
-        local tall = ScreenScale(20)
+        -- local tall = ScreenScale(20)
 
-        self:SetTall(tall)
-        self:SetupButtonSize(w)
+        -- self:SetTall(tall)
+        local wide = ScreenScale(100)
+        self:SetWide(wide)
     end
 
     function PANEL:OnMenuOpen(buttonText, menu)
@@ -143,8 +138,6 @@ do
         local parent = self:GetParent()
         if not IsValid(parent) then return end
 
-        print(className)
-
         local menuPanel = vgui.Create(className, parent)
         if not IsValid(menuPanel) then return end
         self.CurrentMenu = menuPanel
@@ -157,11 +150,11 @@ do
     end
 
     function PANEL:Paint(w, h)
-        -- surface.SetDrawColor(COLOR_RED)
-        -- surface.DrawRect(0, 0, w, h)
+        surface.SetDrawColor(COLOR_BUTTON_BACKGROUND)
+        surface.DrawRect(0, 0, w, h)
     end
 
-    vgui.Register("PRSBOX.Lobby.TabMenu", PANEL, "EditablePanel")
+    vgui.Register("PRSBOX.Lobby.TabMenu", PANEL, "DScrollPanel")
 end
 
 ---

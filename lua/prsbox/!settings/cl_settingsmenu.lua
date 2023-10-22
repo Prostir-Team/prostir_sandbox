@@ -308,7 +308,7 @@ do
         if IsValid(tabMenu) then
             self.TabMenu = tabMenu
 
-            tabMenu:Dock(TOP)
+            tabMenu:Dock(LEFT)
             for k, v in ipairs(table.GetKeys(SETTINGS.Settings)) do
                 tabMenu:AddTab(v, "PRSBOX.Settings.Category", function (text, menu)
                     menu:SetCategory(text)
@@ -324,7 +324,7 @@ do
 end
 
 MENU:RegisterButton("Налаштування", 3, PLAYER_NONE, function (menu, button)
-    menu:OpenInfoMenu("PRSBOX.Settings")
+    menu:OpenWindow("PRSBOX.Settings", "Налаштування", true, 380, 300)
 end)
 
 SETTINGS:AddSetting("Позиція імені гравця X", "HUD", "prsbox_hud_x", SETTINGS_INT)

@@ -54,23 +54,21 @@ do
     local PANEL = {}
 
     function PANEL:Init()
-        self:MakePopup()
-
         self.InfoMenuOpened = false
+
+        self.Buttons = {}
 
         self:SetZPos(10)
 
         self:SetAlpha(0)
         self:AlphaTo(255, 0.1, 0)
+
         local buttonPanel = vgui.Create("EditablePanel", self)
         if IsValid(buttonPanel) then
             self.ButtonPanel = buttonPanel
 
             function buttonPanel:PerformLayout()
-                -- local scrW, scrH = ScrW(), ScrH()
-
                 local buttonWide = ScreenScale(150)
-                -- local marginTopBottom = ScreenScale(100)
                 local marginLeft = ScreenScale(25)
                 local buttonTall = ScreenScale(20)
 
@@ -80,99 +78,19 @@ do
                 self:CenterVertical()
             end
         end
-
-        local infoPanel = vgui.Create("EditablePanel", self)
-        if IsValid(infoPanel) then
-            self.InfoPanel = infoPanel
-
-            infoPanel.MainMenu = self
-
-            local backButton = vgui.Create("PRSBOX.Lobby.Button", infoPanel)
-
-            if IsValid(backButton) then
-                infoPanel.BackButton = backButton
-
-                backButton:Text("Назад")
-                backButton:Dock(BOTTOM)
-
-                function backButton:DoClick()
-                    local parent = self:GetParent()
-                    if not IsValid(parent) then return end
-
-                    local mainMenu = parent.MainMenu
-                    if not IsValid(mainMenu) then return end
-
-                    mainMenu:CloseInfoMenu()
-                end
-            end
-
-            function infoPanel:PerformLayout()
-                -- local buttonWide = ScreenScale(150)
-                local buttonMarginLeft = ScreenScale(25)
-                -- local marginLeft = ScreenScale(5)
-
-                local wide, tall = ScreenScale(380), ScreenScale(300)
-
-                self:SetSize(wide, tall)
-                self:CenterVertical()
-                self:SetX(buttonMarginLeft)
-            end
-
-            infoPanel:Hide()
-        end
     end
 
     function PANEL:SetPlayerState(playerState)
         self.PlayerState = playerState
     end
 
-    function PANEL:OpenInfoMenu(className, createBackButton)
-        local buttonPanel = self.ButtonPanel
-        local infoPanel = self.InfoPanel
+    function PANEL:OpenWindow(classname, windowname, closebutton, wide, tall)
+        local window = vgui.Create("PRSBOX.Lobby.Window", self)
 
-        if not IsValid(buttonPanel) then return end
-        if not IsValid(infoPanel) then return end
-
-        local backButton = infoPanel.BackButton
-        if IsValid(backButton) then
-            if createBackButton == true or createBackButton == nil then
-                backButton:Show()
-            else
-                backButton:Hide()
-            end
-        end
-
-        local currentMenu = infoPanel.CurrentMenu
-
-        if IsValid(currentMenu) then
-            currentMenu:Remove()
-        end
-
-        local infoMenu = vgui.Create(className, infoPanel)
-        if not IsValid(infoMenu) then return end
-
-        infoMenu.MainPanel = self
-        infoMenu:Dock(FILL)
-        infoPanel.CurrentMenu = infoMenu
-
-        buttonPanel:Hide()
-        infoPanel:Show()
-    end
-
-    function PANEL:CloseInfoMenu()
-        local buttonPanel = self.ButtonPanel
-        local infoPanel = self.InfoPanel
-
-        if not IsValid(buttonPanel) then return end
-        if not IsValid(infoPanel) then return end
-
-        local currentMenu = infoPanel.CurrentMenu
-        if IsValid(currentMenu) then
-            currentMenu:Remove()
-        end
-
-        buttonPanel:Show()
-        infoPanel:Hide()
+        window:SetCloseButton(closebutton)
+        window:SetInfoPanel(classname)
+        window:SetWindowSize(wide, tall)
+        window:SetWindowName(windowname)
     end
 
     function PANEL:InitButtons()
@@ -191,20 +109,43 @@ do
                 buttonInfo["init"](self, button)
             end
 
+            print(buttonInfo["text"])
+
             button:Text(buttonInfo["text"])
             button:Dock(TOP)
             button.MainMenu = self
             button.DoClick = function ()
                 buttonInfo["callback"](self, button)
             end
+
+            table.insert(self.Buttons, button)
         end
+    end
+
+    function PANEL:DeleteAllButtons()
+        for k, button in ipairs(self.Buttons) do
+            if not IsValid(button) then continue end
+
+            button:Remove()
+        end
+
+        self.Buttons = {}
+    end
+
+    function PANEL:OpenMenu()
+        self:AlphaTo(255, 0.1, 0)
+
+        self:Show()
+        self:MakePopup()
     end
 
     function PANEL:CloseMenu()
         self:AlphaTo(0, 0.1, 0, function ()
             hook.Run("OnMenuClose", self)
 
-            self:Remove()
+            PLAYER_STATE = PLAYER_NONE
+            self:DeleteAllButtons()
+            self:Hide()
         end)
     end
 
@@ -242,6 +183,7 @@ do
         surface.SetDrawColor(255, 255, 255, 255)
         surface.DrawTexturedRect(logoX + logoXMargin, buttonPanel:GetY() - logoYMargin - logoSize / 2 - logoBackTall / 2, logoSize, logoSize)
     end
+
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
@@ -311,7 +253,6 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     local completeRahist = ply:GetNWBool("PRSBOX.Net.CompleteRashist", false)
 
     if completeRahist then
-        PLAYER_STATE = PLAYER_NONE
         RunConsoleCommand("prsbox_lobby_start")
         menu:CloseMenu()
 
@@ -357,6 +298,10 @@ MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
     RunConsoleCommand("disconnect")
 end)
 
+MENU:RegisterButton("Test window", 2, PLAYER_NONE, function (menu)
+    menu:OpenWindow("DButton", "Test window", false, 380, 300)
+end)
+
 ---
 --- Open lobby
 ---
@@ -370,16 +315,25 @@ net.Receive("PRSBOX.Lobby.StartMenu", function (len)
 
     PLAYER_STATE = PLAYER_LOBBY
 
-    MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+    if not IsValid(MAIN_MENU) then
+        MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+    end
+
+    MAIN_MENU:OpenMenu()
     MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
     MAIN_MENU:InitButtons()
+
+    print(PLAYER_STATE)
+    print(PLAYER_VIEW)
 end)
 
 net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
+    if PLAYER_STATE == PLAYER_NONE  then return end
+    
     if IsValid(MAIN_MENU) then
         PLAYER_STATE = PLAYER_NONE
 
-        MAIN_MENU:Remove()
+        MAIN_MENU:CloseMenu()
     end
 end)
 
@@ -400,21 +354,24 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
             return
         end
 
-        if IsValid(MAIN_MENU) then
-            PLAYER_STATE = PLAYER_NONE
-
-            MAIN_MENU:CloseMenu()
-        else
+        if PLAYER_STATE == PLAYER_NONE then
             if PLAYER_VIEW then return end
 
             local plyAngles = ply:GetAngles()
 
             ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
+
+            if not IsValid(MAIN_MENU) then
+                MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+            end
+            
             PLAYER_STATE = PLAYER_PAUSE
 
-            MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+            MAIN_MENU:OpenMenu()
             MAIN_MENU:SetPlayerState(PLAYER_PAUSE)
             MAIN_MENU:InitButtons()
+        else
+            MAIN_MENU:CloseMenu()
         end
     end
 end)
@@ -426,6 +383,8 @@ hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
 end)
 
 hook.Add("OnMenuOpen", "PRSBOX.Lobby.ViewStart", function (menu, playerState)
+    print("Player aljhdas jlsd " .. playerState)
+    
     PLAYER_VIEW = true
 end)
 

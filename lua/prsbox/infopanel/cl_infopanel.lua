@@ -59,11 +59,6 @@ do
         print("Loading succeeded.")
     end
 
-    function PANEL:Paint(w, h)
-        surface.SetDrawColor(COLOR_BUTTON_BACKGROUND)
-        surface.DrawRect(0, 0, w, h)
-    end
-
     vgui.Register("PRSBOX.Infopanel.TabContent", PANEL, "DScrollPanel")
 end
 
@@ -95,7 +90,7 @@ do
         if IsValid(tabMenu) then
             self.TabMenu = tabMenu
 
-            tabMenu:Dock(TOP)
+            tabMenu:Dock(LEFT)
             tabMenu:AddTab("Головна", "PRSBOX.Infopanel.TabContent.Main")
             tabMenu:AddTab("Правила", "PRSBOX.Infopanel.TabContent.Rules")
 
@@ -107,5 +102,5 @@ do
 end
 
 MENU:RegisterButton("Інформація", 3, PLAYER_NONE, function(menu, btn)
-    menu:OpenInfoMenu("PRSBOX.Infopanel")
+    menu:OpenWindow("PRSBOX.Infopanel", "Інформація", true, 380, 300)
 end)

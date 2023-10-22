@@ -13,7 +13,6 @@ function getLocalPlayerMoney()
     return PLAYER_MONEY
 end
 
-
 hook.Add("HUDPaint", "TEST.Money.Hud", function ()
     draw.DrawText(PLAYER_MONEY, "DermaLarge", 0, 0, COLOR_WHITE, TEXT_ALIGN_LEFT)
 end)

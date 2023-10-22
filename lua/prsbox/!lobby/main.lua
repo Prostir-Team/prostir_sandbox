@@ -6,6 +6,7 @@ if SERVER then
     AddCSLuaFile("prsbox/!lobby/elements/cl_tabmenu.lua")
     AddCSLuaFile("prsbox/!lobby/elements/cl_button.lua")
     AddCSLuaFile("prsbox/!lobby/elements/cl_checkbox.lua")
+    AddCSLuaFile("prsbox/!lobby/elements/cl_window.lua")
 end
 
 if CLIENT then
@@ -14,4 +15,5 @@ if CLIENT then
     include("prsbox/!lobby/elements/cl_button.lua")
     include("prsbox/!lobby/elements/cl_tabmenu.lua")
     include("prsbox/!lobby/elements/cl_checkbox.lua")
+    include("prsbox/!lobby/elements/cl_window.lua")
 end

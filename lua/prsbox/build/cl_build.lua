@@ -7,7 +7,7 @@ net.Receive("PRSBOX.Net.BuildMode", function(len, ply)
 
     if state then
         hook.Add("PRSBOX.HUD.HealthString", "PRSBOX.Build.String", function ()
-            return "∞ "
+            return "РЕЖИМ БУДІВЕЛЬНИКА "
         end)
 
         hook.Add("PRSBOX.HUD.HealthColor", "PRSBOX.Build.Color", function ()
