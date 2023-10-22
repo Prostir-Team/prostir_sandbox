@@ -109,8 +109,6 @@ do
                 buttonInfo["init"](self, button)
             end
 
-            print(buttonInfo["text"])
-
             button:Text(buttonInfo["text"])
             button:Dock(TOP)
             button.MainMenu = self
@@ -322,9 +320,6 @@ net.Receive("PRSBOX.Lobby.StartMenu", function (len)
     MAIN_MENU:OpenMenu()
     MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
     MAIN_MENU:InitButtons()
-
-    print(PLAYER_STATE)
-    print(PLAYER_VIEW)
 end)
 
 net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
@@ -383,8 +378,6 @@ hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
 end)
 
 hook.Add("OnMenuOpen", "PRSBOX.Lobby.ViewStart", function (menu, playerState)
-    print("Player aljhdas jlsd " .. playerState)
-    
     PLAYER_VIEW = true
 end)
 
