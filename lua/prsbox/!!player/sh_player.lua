@@ -63,4 +63,15 @@ if SERVER then
 
 	    self:SwitchToDefaultWeapon()
     end
+
+    function PLAYER:GiveAllAmmos()
+        self:GiveAmmo( 256,	"Pistol", 		true )
+		self:GiveAmmo( 256,	"SMG1", 		true )
+		self:GiveAmmo( 5,	"grenade", 		true )
+		self:GiveAmmo( 64,	"Buckshot", 	true )
+		self:GiveAmmo( 32,	"357", 			true )
+		self:GiveAmmo( 32,	"XBowBolt", 	true )
+		self:GiveAmmo( 6,	"AR2AltFire", 	true )
+		self:GiveAmmo( 100,	"AR2", 			true )
+    end
 end

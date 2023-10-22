@@ -57,6 +57,7 @@ do
         self.InfoMenuOpened = false
 
         self.Buttons = {}
+        self.Windows = {}
 
         self:SetZPos(10)
 
@@ -84,13 +85,47 @@ do
         self.PlayerState = playerState
     end
 
-    function PANEL:OpenWindow(classname, windowname, closebutton, wide, tall)
-        local window = vgui.Create("PRSBOX.Lobby.Window", self)
+    function PANEL:WindowExists(classname)
+        for k, name in ipairs(table.GetKeys(self.Windows)) do
+            if name == classname then
+                return true
+            end
+        end
 
+        return false
+    end
+
+    function PANEL:OpenWindow(classname, windowname, closebutton, wide, tall)
+        if self:WindowExists(classname) then return end
+        
+        local window = vgui.Create("PRSBOX.Lobby.Window", self)
+        window:SetLobby(self)
         window:SetCloseButton(closebutton)
         window:SetInfoPanel(classname)
         window:SetWindowSize(wide, tall)
         window:SetWindowName(windowname)
+
+        self.Windows[classname] = {self.PlayerState, window}
+    end
+
+    function PANEL:OnWindowClose(classname)
+        if not self:WindowExists(classname) then return end
+        
+        self.Windows[classname] = nil
+    end
+
+    function PANEL:ChangeZPosWindow(classname)
+        for k, name in ipairs(table.GetKeys(self.Windows)) do
+            local window = self.Windows[name][2]
+
+            if name == classname then
+                window:SetZPos(11)
+
+                continue
+            end
+
+            window:SetZPos(10)
+        end
     end
 
     function PANEL:InitButtons()
@@ -297,7 +332,7 @@ MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
 end)
 
 MENU:RegisterButton("Test window", 2, PLAYER_NONE, function (menu)
-    menu:OpenWindow("DButton", "Test window", true, 380, 300)
+    menu:OpenWindow("DButton", "Test window", true, 150, 80)
 end)
 
 ---

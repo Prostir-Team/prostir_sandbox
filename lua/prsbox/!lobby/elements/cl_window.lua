@@ -1,3 +1,7 @@
+---
+--- Top bar buttons
+---
+
 do
     local PANEL = {}
 
@@ -63,6 +67,10 @@ do
 
                 if key ~= MOUSE_LEFT then return end
 
+                local lobby = parent.Lobby
+                -- if not IsValid(lobby) then return end
+                lobby:ChangeZPosWindow(parent.InfoClassName)
+
                 local cursorX, cursorY = input.GetCursorPos()
                 local x, y = parent:GetX(), parent:GetY()
 
@@ -97,7 +105,15 @@ do
     end
 
     function PANEL:CloseWindow()
+        local parent = self:GetParent()
+        if not IsValid(parent) then return end
+        
+        parent:OnWindowClose(self.InfoClassName)
         self:Remove()
+    end
+
+    function PANEL:SetLobby(lobby)
+        self.Lobby = lobby
     end
 
     function PANEL:SetCloseButton(closebutton)
@@ -146,17 +162,16 @@ do
                         infoPanel:SetVisible(false)
                     end
                 end)
-                -- self:PerformLayout()
             end
         end
-
-        -- self:PerformLayout()
     end
 
     function PANEL:SetInfoPanel(classname)
         local infoPanel = vgui.Create(classname, self)
         if not IsValid(infoPanel) then return end
 
+
+        self.InfoClassName = classname
         self.InfoPanel = infoPanel
         self:PerformLayout()
     end

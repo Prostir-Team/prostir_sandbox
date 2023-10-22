@@ -9,12 +9,9 @@ hook.Add("PlayerSpawn", "!!!PRSBOX.SetModel", function (ply, tr)
 
     ply:SetProstirModel(playerModel)
     ply:WeaponSetup()
-    -- ply:MovementSetup()
-    -- ply:ColorSetup()
+    ply:GiveAllAmmos()
     
     hook.Run("PlayerPostSpawn", ply, tr)
-
-    -- return false 
 end)
 
 concommand.Add("setup_hands", function (ply)
