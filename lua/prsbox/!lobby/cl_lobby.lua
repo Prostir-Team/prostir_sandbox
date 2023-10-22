@@ -299,7 +299,7 @@ MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
 end)
 
 MENU:RegisterButton("Test window", 2, PLAYER_NONE, function (menu)
-    menu:OpenWindow("DButton", "Test window", false, 380, 300)
+    menu:OpenWindow("DButton", "Test window", true, 380, 300)
 end)
 
 ---

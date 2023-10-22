@@ -1,3 +1,37 @@
+do
+    local PANEL = {}
+
+    function PANEL:Init()
+        self:SetText("")
+
+        self.CurrentColor = table.Copy(COLOR_BUTTON_TEXT)
+    end
+
+    function PANEL:SetWindowIcon(path)
+        self.IconMaterial = Material(path, "smooth")
+    end 
+
+    function PANEL:Paint(w, h)
+        if self:IsHovered() then
+            self.CurrentColor = LerpColor(FrameTime() * 10, self.CurrentColor, COLOR_WHITE)
+        else
+            self.CurrentColor = LerpColor(FrameTime() * 10, self.CurrentColor, COLOR_BUTTON_TEXT)
+        end
+        
+        surface.SetDrawColor(self.CurrentColor)
+
+        if self.IconMaterial then
+            local offset = ScreenScale(2)
+            local size = h - offset
+
+            surface.SetMaterial(self.IconMaterial)
+            surface.DrawTexturedRect(w/2 - size/2, offset / 2, size, size)
+        end
+    end
+
+    vgui.Register("PRSBOX.Window.Button", PANEL, "DButton")
+end
+
 ---
 --- Main window
 ---
@@ -62,34 +96,33 @@ do
         end
     end
 
+    function PANEL:CloseWindow()
+        self:Remove()
+    end
+
     function PANEL:SetCloseButton(closebutton)
         local topBar = self.TopBar
         if not IsValid(topBar) then return end
 
         if closebutton then
-            local closeButton = vgui.Create("DButton", topBar)
+            local closeButton = vgui.Create("PRSBOX.Window.Button", topBar)
             if IsValid(closeButton) then
                 self.CloseButton = closeButton
 
-                closeButton:SetText("X")
+                closeButton:SetWindowIcon("prostir/ui/CloseButton.png")
                 closeButton.DoClick = function ()
-                    self:Remove()
+                    self:CloseWindow()
                 end
             end
         end
 
-        local minimizeButton = vgui.Create("DButton", topBar)
+        local minimizeButton = vgui.Create("PRSBOX.Window.Button", topBar)
         if IsValid(minimizeButton) then
             self.MinimizeButton = minimizeButton
 
-            minimizeButton:SetText("-")
+            minimizeButton:SetWindowIcon("prostir/ui/MinimizeButton.png")
             minimizeButton.DoClick = function ()
                 self.Minimize = not self.Minimize
-
-                local infoPanel = self.InfoPanel
-                if IsValid(infoPanel) then
-                    infoPanel:SetVisible(not self.Minimize)
-                end
 
                 if self.Minimize then
                     local scrollTall = ScreenScale(10)
@@ -97,13 +130,27 @@ do
                     self.CustomHeight = scrollTall
                 else
                     self.CustomHeight = self.CurrentHeight
-                end
 
-                self:PerformLayout()
+                    local infoPanel = self.InfoPanel
+                    if IsValid(infoPanel) then
+                        infoPanel:SetVisible(true)
+                    end
+                end
+                local wide = self:GetWide()
+
+                self:SizeTo(wide, self.CustomHeight, 0.1, 0, -1, function ()
+                    if self.Minimize == false then return end
+
+                    local infoPanel = self.InfoPanel
+                    if IsValid(infoPanel) then
+                        infoPanel:SetVisible(false)
+                    end
+                end)
+                -- self:PerformLayout()
             end
         end
 
-        self:PerformLayout()
+        -- self:PerformLayout()
     end
 
     function PANEL:SetInfoPanel(classname)
@@ -123,10 +170,9 @@ do
         self.CustomHeight = ScreenScale(tall) + scrollTall
         self.CurrentHeight = self.CustomHeight
 
-        self:PerformLayout()
+        self:SetSize(self.CustomWidth, self.CustomHeight)
 
-        local h = self:GetTall()
-        self:SetPos(x, scrH / 2 - h / 2)
+        self:SetPos(x, scrH / 2 - self.CustomHeight / 2)
     end
 
     function PANEL:SetWindowName(name)
@@ -137,7 +183,7 @@ do
         local wide, tall = ScreenScale(380), ScreenScale(300)
         local scrollTall = ScreenScale(10)
 
-        self:SetSize(self.CustomWidth, self.CustomHeight)
+        -- self:SetSize(self.CustomWidth, self.CustomHeight)
 
         local topBar = self.TopBar
         if IsValid(topBar) then

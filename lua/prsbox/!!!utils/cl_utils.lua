@@ -3,6 +3,8 @@ local mat_white = Material("vgui/white")
 function LerpColor(t, col1, col2)
     if not istable(col1) or not istable(col2) or not isnumber(t) then
         print("Invalid parameters. Expected (number, Color/Vector, Color/Vector, number)")
+
+        return Color(255, 255, 255)
     end
 
     -- Convert Vector to Color if necessary
