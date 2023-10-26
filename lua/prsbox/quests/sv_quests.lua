@@ -5,6 +5,8 @@ local QuestsTable = {}
 local PlayersQuestsTable = {}
 local Quests_ID_Craft = {1}
 local Quests_ID_Kill = {2, 3, 4}
+local CONFIG_Amount = 3
+local CONFIG_MoneyMultiplier = 1
 
 -- Loads quests/linked entity names/etc. from daily_quests_list.json file
 local function updateQuestsTable()
@@ -24,20 +26,21 @@ updateQuestsTable()
 
 -- Generates quests table for the given player
 local function generateQuestsFor(ply)
-    local Task1ID, Task2ID, Task3ID = nil, nil, nil
+    local TaskIDArray = {} -- Array for storing existing IDs to prevent duplicates
 
     local BackupIterator = 0 -- To avoid crashing/infinite loops with syntax errors in JSON.
     local CurrentTask = 1
 
-    while (not Task1ID or not Task2ID or not Task3ID) and BackupIterator < 1000 do
+    while (CurrentTask <= CONFIG_Amount) and BackupIterator < 1000 do
         BackupIterator = BackupIterator + 1
 
         local TaskID = math.random(1, table.Count(QuestsTable.Tasks))
 
-        if TaskID == Task1ID or TaskID == Task2ID or TaskID == Task3ID then
+        if table.HasValue(TaskIDArray, TaskID) then -- If random ID is already present - skip to next iteration
             continue
         end
 
+        -- Else - fill info of selected task
         local TaskStr = "Task" .. tostring(CurrentTask)
         PlayersQuestsTable[ply:Name()] = PlayersQuestsTable[ply:Name()] or {}
         PlayersQuestsTable[ply:Name()][TaskStr .. "_id"] = QuestsTable.Tasks[TaskID].id
@@ -47,16 +50,12 @@ local function generateQuestsFor(ply)
         PlayersQuestsTable[ply:Name()][TaskStr .. "_quota"] = math.random( QuestsTable.Tasks[TaskID].quota.min, QuestsTable.Tasks[TaskID].quota.max )
 
         -- Store the generated task IDs to prevent duplicates
-        if CurrentTask == 1 then
-            Task1ID = TaskID
-        elseif CurrentTask == 2 then
-            Task2ID = TaskID
-        elseif CurrentTask == 3 then
-            Task3ID = TaskID
-        end
+        TaskIDArray[#TaskIDArray+1] = CurrentTask
 
         CurrentTask = CurrentTask + 1
     end
+
+    PrintTable(TaskIDArray)
 
     if BackupIterator == 1000 then
         print("generateQuestsFor ERROR: Couldn't generate tasks for " .. ply:Name())
@@ -83,12 +82,15 @@ function doesPlayerHaveQuests(ply)
     return PlayersQuestsTable[ply:Name()] ~= nil
 end
 
+-- Sends quests update to specified player
 local function sendQuestsTableUpdate(ply)
-    net.Start("PRSBOX_QUESTS_Update", false)
-
     local TempTable = getQuestsTableFor(ply)
 
-    for i = 1, 3 do
+    net.Start("PRSBOX_QUESTS_Update", false)
+
+    net.WriteUInt(CONFIG_Amount, 8)
+
+    for i = 1, CONFIG_Amount do
         local taskID = "Task"..i
 
         local TempStrArray = string.Explode("*", TempTable[taskID .. "_desc"])
@@ -114,7 +116,7 @@ hook.Add( "PlayerDeath", "GlobalDeathMessage", function( victim, inflictor, atta
     if ( victim == attacker or !attacker:IsPlayer()) then return end
 
     local TempTable = getQuestsTableFor( attacker )
-    for i = 1, 3 do
+    for i = 1, CONFIG_Amount do
         local taskID = "Task"..i
 
         if( TempTable[taskID .. "_isDone"] or not table.HasValue(Quests_ID_Kill, TempTable[taskID .. "_id"]) ) then continue end

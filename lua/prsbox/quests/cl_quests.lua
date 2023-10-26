@@ -1,187 +1,44 @@
-local ANIM_Time = 0.25 -- Defines at which delay is quest hud is fully hidden/shown (animation speed)
-local ANIM_StartTime = 0 -- Used internally
-local STATE_Closed, STATE_Closing, STATE_Opening, STATE_Opened = 1, 2, 3, 4
-local CurrentState = 4
-local ResW, ResH = ScrW(), ScrH()
-local PANEL_Width, PANEL_Height, PANEL_Elements_H_Gap = ResW*0.25, ResH*0.05, ResH*0.06
+local ResW, ResH
+local QUEST_TAB_Width, QUEST_TAB_Height, QUEST_TAB_QuestSize, QUEST_TAB_QuestGap, QUEST_TAB_VerticalColorBarHeight, QUEST_TAB_IconSize
+local color_white = Color(255,255,255, 255)
+-- Precaching functions lol
+local ScreenScale = ScreenScale
+local IsValid = IsValid
+local drawRoundedBoxEx = draw.RoundedBoxEx
 
-local Quest_1_String, Quest_2_String, Quest_3_String = "No quest! Use command \"prsbox_quests_update\" to reload quests!", "No quest! Use command \"prsbox_quests_update\" to reload quests!", "No quest! Use command \"prsbox_quests_update\" to reload quests!"
-local Quest_1_Finished, Quest_2_Finished, Quest_3_Finished = false, false, false
-local ColorUnfinished, ColorFinished, ColorUnfinishedPanel, ColorFinishedPanel = Color(255,255,255,255), Color(0,255,255,255), Color(255,255,255,50), Color(0,255,255,50)
+local Quests = {
+    ["Amount"] = 0,
+    ["DoneAmount"] = 0,
+    ["Color"] = {
+        ["Unfinished"] = Color(255,210,0, 255),
+        ["Finished"] = Color(0,255,85, 255),
+        ["UnfinishedPanel"] = Color(255,210,0, 40),
+        ["FinishedPanel"] = Color(0,255,85, 40)
+    },
+    ["DefaultText"] = "No quest! Use command \"prsbox_quests_update\" to reload quests!"
+}
+
+QUEST_TAB_COLOR_Background = Color(40,40,40, 180)
+QUEST_TAB_COLOR_Background_Hovered = Color(80,80,80, 180)
+QUEST_TAB_COLOR_Background_Idle = Color(120,150,150, 180)
+
 local Material_GradientLeft = Material("gui/gradient")
 
-surface.CreateFont( "PRSBOX_QUESTS_FONT_DEFAULT", {
-	font = "DermaDefault",
-	extended = true,
-	size = ResH*0.02,
-	weight = 900,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = false,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-} )
-
-surface.CreateFont( "PRSBOX_QUESTS_FONT_STRIKEOUT", {
-	font = "DermaDefault",
-	extended = true,
-	size = ResH*0.02,
-	weight = 900,
-	blursize = 0,
-	scanlines = 0,
-	antialias = true,
-	underline = false,
-	italic = false,
-	strikeout = true,
-	symbol = false,
-	rotary = false,
-	shadow = false,
-	additive = false,
-	outline = false,
-} )
-
-list.Set( "DesktopWindows", "QuestsPanelToggle", {
-	title = "Daily tasks",
-	icon = "Icon_Ammo_SLAM.png",
-	init = function( icon, window )
-		QuestsPanel_Toggle()
-	end
-} )
-
--- Draws quest panel
-function QuestsPanel_drawQuests(x, y)
-    local Real_X = 0 -- Used for animation offset
-    x = x or 0
-    y = y or ResH*0.25
-
-    local CurTimeVar = CurTime() -- Just for slight optimization
-
-    -- Stop animation block
-    if( ANIM_StartTime+ANIM_Time<CurTimeVar and (CurrentState==STATE_Closing or CurrentState==STATE_Opening) )then
-        if( CurrentState==STATE_Closing )then
-            CurrentState = STATE_Closed
-        else 
-            CurrentState = STATE_Opened
-        end
-    end
-
-    draw.NoTexture()
-    if( CurrentState==STATE_Opened ) then
-        Real_X = x
-    elseif( CurrentState==STATE_Closed ) then
-        Real_X = x-PANEL_Width
-    else
-        if( CurrentState==STATE_Opening )then -- Animating
-            Real_X = Lerp((CurTimeVar-ANIM_StartTime)/ANIM_Time, x-PANEL_Width, x)
-        else
-            Real_X = Lerp((CurTimeVar-ANIM_StartTime)/ANIM_Time, x, x-PANEL_Width)
-        end
-    end
-
-    surface.SetDrawColor(COLOR_WHITE)
-    surface.SetMaterial(Material("Icalth.png"))
-    surface.DrawTexturedRect(Real_X, y, PANEL_Width, PANEL_Height)
-
-    surface.SetMaterial(Material_GradientLeft)
-    surface.SetDrawColor(ColorUnfinishedPanel)
-
-    if(CurrentState != STATE_Closed) then
-        if( Quest_1_Finished )then
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_1_String, "PRSBOX_QUESTS_FONT_STRIKEOUT", Real_X, y+PANEL_Elements_H_Gap+ResW*0.005, ColorFinished, TEXT_ALIGN_LEFT)
-        else
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_1_String, "PRSBOX_QUESTS_FONT_DEFAULT", Real_X, y+PANEL_Elements_H_Gap+ResW*0.005, ColorUnfinished, TEXT_ALIGN_LEFT)
-        end
-        if( Quest_2_Finished )then
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap*2, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_2_String, "PRSBOX_QUESTS_FONT_STRIKEOUT", Real_X, y+PANEL_Elements_H_Gap*2+ResW*0.005, ColorFinished, TEXT_ALIGN_LEFT)
-        else
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap*2, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_2_String, "PRSBOX_QUESTS_FONT_DEFAULT", Real_X, y+PANEL_Elements_H_Gap*2+ResW*0.005, ColorUnfinished, TEXT_ALIGN_LEFT)
-        end
-        if( Quest_3_Finished )then
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap*3, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_3_String, "PRSBOX_QUESTS_FONT_STRIKEOUT", Real_X, y+PANEL_Elements_H_Gap*3+ResW*0.005, ColorFinished, TEXT_ALIGN_LEFT)
-        else
-            surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap*3, PANEL_Width, PANEL_Height*0.8)
-            draw.DrawText(Quest_3_String, "PRSBOX_QUESTS_FONT_DEFAULT", Real_X, y+PANEL_Elements_H_Gap*3+ResW*0.005, ColorUnfinished, TEXT_ALIGN_LEFT)
-        end
-    end
-
-    surface.SetDrawColor(COLOR_WHITE)
-    surface.SetMaterial(Material("lth.png"))
-    surface.DrawTexturedRect(Real_X, y+PANEL_Elements_H_Gap*4-PANEL_Height*0.2, PANEL_Width, PANEL_Height)
-
-end
-
-function QuestsPanel_IsOpened()
-    if( STATE_Opened )then return true
-    else return false end
-end
-
-function QuestsPanel_Open()
-    if( CurrentState==STATE_Opened or CurrentState==STATE_Opening )then return end
-    CurrentState = STATE_Opening
-    ANIM_StartTime = CurTime()
-end
-
-function QuestsPanel_Close()
-    if( CurrentState==STATE_Closed or CurrentState==STATE_Closing )then return end
-    CurrentState = STATE_Closing
-    ANIM_StartTime = CurTime()
-end
-
-function QuestsPanel_Toggle()
-    if( CurrentState==STATE_Opened or CurrentState==STATE_Opening )then 
-        CurrentState = STATE_Closing
-    elseif( CurrentState==STATE_Closed or CurrentState==STATE_Closing )then
-        CurrentState = STATE_Opening
-    end
-
-    ANIM_StartTime = CurTime()
-end
-
-local function updateQuests()
-    Quest_1_String = net.ReadString()
-    Quest_1_Finished = net.ReadBool()
-
-    Quest_2_String = net.ReadString()
-    Quest_2_Finished = net.ReadBool()
-
-    Quest_3_String = net.ReadString()
-    Quest_3_Finished = net.ReadBool()
-end
-
-local function requestUpdateQuests()
-    net.Start("PRSBOX_QUESTS_requestUpdate", true)
-    net.WriteEntity(LocalPlayer())
-    net.SendToServer()
-end
-
-
-concommand.Add( "prsbox_quests_update", requestUpdateQuests, nil, "Reloads list of your quests", 0 )
-concommand.Add( "prsbox_quests_open", QuestsPanel_Open, nil, "Opens list of your quests", 0 )
-concommand.Add( "prsbox_quests_close", QuestsPanel_Close, nil, "Closes list of your quests", 0 )
-
-
-hook.Add( "OnScreenSizeChanged", "Prsbox_Quests_OnScreenSizeChanged", function( oldWidth, oldHeight )
+local function updateScrVars()
 	ResW = ScrW()
 	ResH = ScrH()
 
-    PANEL_Width = ResW*0.25
-    PANEL_Height = ResH*0.05
+    QUEST_TAB_Width = ResW*0.2
+    QUEST_TAB_Height = ResH*0.05
+    QUEST_TAB_QuestSize = ResH*0.075
+    QUEST_TAB_QuestGap = ResH*0.01
+    QUEST_TAB_VerticalColorBarHeight = ResH*0.005
+    QUEST_TAB_IconSize = ResH*0.04
 
     surface.CreateFont( "PRSBOX_QUESTS_FONT_DEFAULT", {
         font = "DermaDefault",
         extended = true,
-        size = ResH*0.055,
+        size = ResH*0.0175,
         weight = 900,
         blursize = 0,
         scanlines = 0,
@@ -199,7 +56,7 @@ hook.Add( "OnScreenSizeChanged", "Prsbox_Quests_OnScreenSizeChanged", function( 
     surface.CreateFont( "PRSBOX_QUESTS_FONT_STRIKEOUT", {
         font = "DermaDefault",
         extended = true,
-        size = ResH*0.055,
+        size = ResH*0.0175,
         weight = 900,
         blursize = 0,
         scanlines = 0,
@@ -213,6 +70,160 @@ hook.Add( "OnScreenSizeChanged", "Prsbox_Quests_OnScreenSizeChanged", function( 
         additive = false,
         outline = false,
     } )
-end )
+end updateScrVars()
+
+-- Main Tab
+do
+    //print("CL_QUESTS DEBUG: TAB INIT")
+    local PANEL = {}
+    local up_padding = ScreenScale(20)
+
+    function PANEL:Init()
+        self.opened = false
+        self.color = QUEST_TAB_COLOR_Background_Hovered
+        self.segmentColor = Color(255,255,255, 255)
+        self.iconMaterial = Material("gui/html/forward")
+
+        self:MakePopup()
+
+        self:SetKeyboardInputEnabled( false )
+    end
+
+    function PANEL:Resize()
+        if self.opened then
+            self:SetSize(QUEST_TAB_Width, QUEST_TAB_Height+QUEST_TAB_QuestGap+(QUEST_TAB_QuestSize+QUEST_TAB_QuestGap)*Quests["Amount"])
+        else
+            self:SetSize(QUEST_TAB_Width, QUEST_TAB_Height)
+        end
+    end
+
+    function PANEL:PerformLayout()
+        self:SetY(ResH * .02)
+
+        self:Resize()
+
+        self:CenterHorizontal(0.885)
+    end
+
+    function PANEL:Think()
+        if self:IsHovered() then
+            self.color = QUEST_TAB_COLOR_Background_Idle
+        else
+            self.color = QUEST_TAB_COLOR_Background_Hovered
+        end
+    end
+
+    function PANEL:OnMousePressed( keyCode )
+        self.opened = not self.opened
+
+        self:Resize()
+    end
+
+    function PANEL:ShowQuests()
+        self:Show()
+
+        self:SetMouseInputEnabled( true )
+        self:SetKeyboardInputEnabled( false )
+        self:AlphaTo(255, FrameTime() * 2, 0)
+    end
+
+    function PANEL:HideQuests()
+        self:SetMouseInputEnabled( false )
+        self:AlphaTo(0, FrameTime() * 2, 0, function ()
+            self:Hide()
+        end)
+    end
+
+    function PANEL:Paint(w, h)
+        drawRoundedBoxEx(32, 0, 0, QUEST_TAB_Width, QUEST_TAB_VerticalColorBarHeight, self.segmentColor, true, true, false, false)
+        drawRoundedBoxEx(16, 0, QUEST_TAB_VerticalColorBarHeight, QUEST_TAB_Width, QUEST_TAB_Height-QUEST_TAB_VerticalColorBarHeight, self.color, false, false, not self.opened, not self.opened)
+
+        local TempString = "Завдання "..Quests["DoneAmount"].."/"..Quests["Amount"]
+        local TempHeight = QUEST_TAB_VerticalColorBarHeight+QUEST_TAB_Height*0.125
+        draw.DrawText(TempString, "PROSTIR.FontLittle", QUEST_TAB_Width*.5+ScreenScale(1), TempHeight+ScreenScale(1), color_black, TEXT_ALIGN_CENTER)
+        draw.DrawText(TempString, "PROSTIR.FontLittle", QUEST_TAB_Width*.5, TempHeight, color_white, TEXT_ALIGN_CENTER)
+        
+        surface.SetMaterial(self.iconMaterial) -- "Arrow" suggesting that quest tab can be minimized
+        surface.SetDrawColor(color_white)
+
+        if self.opened then -- Draws quests list itself
+            surface.DrawTexturedRectRotated(QUEST_TAB_Width*.93, QUEST_TAB_Height*.5+QUEST_TAB_VerticalColorBarHeight*.5, QUEST_TAB_IconSize, QUEST_TAB_IconSize, 90)
+            draw.NoTexture()
+            
+            drawRoundedBoxEx(16, 0, QUEST_TAB_Height, w, h-QUEST_TAB_Height, QUEST_TAB_COLOR_Background, false, false, true, true)
+
+            for i=0, Quests["Amount"]-1 do
+                local BarColor = Quests["Color"]["Unfinished"]
+                local BackgroundColor = Quests["Color"]["UnfinishedPanel"]
+
+                if Quests["Quest"..i+1]["IsDone"] then
+                    BarColor = Quests["Color"]["Finished"]
+                    BackgroundColor = Quests["Color"]["FinishedPanel"]
+                end
+                
+                local CurrentHeight = QUEST_TAB_Height+QUEST_TAB_QuestGap+(QUEST_TAB_QuestGap+QUEST_TAB_QuestSize)*i
+                
+                -- Background
+                drawRoundedBoxEx(32, QUEST_TAB_QuestGap, CurrentHeight, QUEST_TAB_VerticalColorBarHeight, QUEST_TAB_QuestSize, BarColor, true, false, true, false)
+                drawRoundedBoxEx(8, QUEST_TAB_QuestGap+QUEST_TAB_VerticalColorBarHeight, CurrentHeight, QUEST_TAB_Width-QUEST_TAB_QuestGap*2-QUEST_TAB_VerticalColorBarHeight, QUEST_TAB_QuestSize, BackgroundColor, false, true, false, true)
+            
+                CurrentHeight = CurrentHeight+ResH*0.005
+
+                -- Text
+                local TempString = Quests["Quest"..i+1]["Text"]
+                draw.DrawText(TempString, "PRSBOX_QUESTS_FONT_DEFAULT", QUEST_TAB_Width*.5+ScreenScale(1), CurrentHeight+ScreenScale(1), color_black, TEXT_ALIGN_CENTER)
+                draw.DrawText(TempString, "PRSBOX_QUESTS_FONT_DEFAULT", QUEST_TAB_Width*.5, CurrentHeight, color_white, TEXT_ALIGN_CENTER)
+            end
+        else
+            surface.DrawTexturedRectRotated(QUEST_TAB_Width*.93, QUEST_TAB_Height*.5+QUEST_TAB_VerticalColorBarHeight*.5, QUEST_TAB_IconSize, QUEST_TAB_IconSize, -90)
+        end
+
+    end
+
+    vgui.Register("Quest.Main", PANEL)
+end
+
+-- Loads text and status from server to the client
+local function updateQuests()
+    Quests["Amount"] = net.ReadUInt(8)
+    Quests["DoneAmount"] = 0
+
+    for i=1, Quests["Amount"]do
+        Quests["Quest"..i] = {}
+        Quests["Quest"..i]["Text"] = net.ReadString()
+        Quests["Quest"..i]["IsDone"] = net.ReadBool()
+        if Quests["Quest"..i]["IsDone"] then
+            Quests["DoneAmount"] = Quests["DoneAmount"]+1
+        end
+    end
+end
+
+-- Requests server to send Quests update.
+local function requestUpdateQuests()
+    net.Start("PRSBOX_QUESTS_requestUpdate", true)
+    net.WriteEntity(LocalPlayer())
+    net.SendToServer()
+end
+
+concommand.Add( "prsbox_quests_update", requestUpdateQuests, nil, "Reloads list of your quests", 0 )
+
+hook.Add( "OnScreenSizeChanged", "Prsbox_Quests_OnScreenSizeChanged", updateScrVars )
+hook.Add( "InitPostEntity", "Prsbox_Quets_RequestUpdateOnInitPostEntity", requestUpdateQuests )
+
+if IsValid( PRSBOXQUESTBOARD ) then PRSBOXQUESTBOARD:Remove() end
+
+hook.Add("Prsbox_ScoreboardShow", "Prsbox_Quest_ScoreboardShow1", function()
+    if ( not IsValid( PRSBOXQUESTBOARD ) ) then
+        PRSBOXQUESTBOARD = vgui.Create( "Quest.Main", GetHUDPanel() )
+    end
+
+    PRSBOXQUESTBOARD:ShowQuests()
+end)
+
+hook.Add("ScoreboardHide", "Prsbox_Quest_ScoreboardHide", function()
+    if IsValid( PRSBOXQUESTBOARD ) then
+        PRSBOXQUESTBOARD:HideQuests()
+    end
+end)
 
 net.Receive("PRSBOX_QUESTS_Update", updateQuests)

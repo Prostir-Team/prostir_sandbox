@@ -1,21 +1,21 @@
 local COMPASS_CachedAng = 0
 
 -- Draws compass if active
-function drawCompass()
+function PRSBOX_HUD_drawCompass()
 
 end
 
 -- Draws two types of Air indicators, depending if either prsbox hud is enabled or not.
-function AirIndicator()
+function PRSBOX_HUD_AirIndicator()
 
 end
 
-function drawDamageNotify()
+function PRSBOX_HUD_drawDamageNotify()
     local DamageType = net.ReadUInt( 8 )
     local DamageAmount = net.ReadUInt( 32 )
     local Attacker = net.ReadEntity()
 end
 
-PRSBOX_HUD_ServerAirNotificationHandler(){
+function PRSBOX_HUD_SuffocationNotificationHandler()
     
-}
+end

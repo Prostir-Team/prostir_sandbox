@@ -68,14 +68,16 @@ local ping_pos = ScreenScale(320)
 
 
 local user_groups = {
-    ["superadmin"] = Color(142, 255, 114),
-    ["admin"] = Color(255, 81, 81),
-    ["user"] = Color(0, 140, 255)
+    ["superadmin"] = Color(142, 255, 114), -- Команда
+    ["admin"] = Color(245, 193, 81), -- Головний модератор
+    ["operator"] = Color(255, 81, 81), -- Модератор
+    ["user"] = Color(0, 140, 255) -- Гравець
 }
 
 local user_names = {
     ["superadmin"] = "Команда",
-    ["admin"] = "Модератор",
+    ["admin"] = "Головний модератор",
+    ["operator"] = "Модератор",
     ["user"] = "Звичайний гравець"
 }
 
@@ -469,6 +471,7 @@ hook.Add("ScoreboardShow", "PROSTIR.ScoreboardShow", function()
     PRSBOXSCOREBOARD:Update()
     PRSBOXSCOREBOARD:ShowScoreboard()
 
+    hook.Run("Prsbox_ScoreboardShow")
     return true
 end)
 
