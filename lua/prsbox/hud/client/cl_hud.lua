@@ -213,10 +213,10 @@ local function UpdateHUD()
 
     -- Elements
     if( PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE:GetBool() )then
-        drawCompass()
+        PRSBOX_HUD_drawCompass()
     end
 
-    AirIndicator()
+    //AirIndicator()
 
     -- if QuestsPanel_drawQuests exists then call it.
     if(_G["QuestsPanel_drawQuests"]!=nil)then
@@ -261,6 +261,6 @@ end )
 hook.Add( "OnScreenSizeChanged", PRSBOX_HUD_HOOK_NAME.."OnScreenSizeChanged", updateStaticValues )
 
 -- Network receive hook for damage notifications
-net.Receive("PRSBOX_HUD_DamageNotify", drawDamageNotify)
+net.Receive("PRSBOX_HUD_DamageNotify", PRSBOX_HUD_drawDamageNotify)
 
-net.Receive("PlayerPreSuffocationMsg", PRSBOX_HUD_ServerAirNotificationHandler)
+net.Receive("PlayerPreSuffocationMsg", PRSBOX_HUD_SuffocationNotificationHandler)
