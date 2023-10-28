@@ -45,7 +45,7 @@
             "id": 1,
             "type": "Craft",
             "flag": "nil",
-            "description": "Створіть * вибухівки",
+            "description": "Створіть * од. вибухівки",
             "linked entities": "Explosives",
             "quota": {
                 "min": 5,
