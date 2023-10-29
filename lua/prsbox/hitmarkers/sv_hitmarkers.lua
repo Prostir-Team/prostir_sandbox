@@ -20,7 +20,6 @@ hook.Add("PostEntityTakeDamage", "PRSBOX.Hitmarkers.Server", function(ent, dmg, 
         hitmarkerType = 1
     end
     if ( attacker:IsPlayer() and took) then
-        print("Sending netcode with hitmarker type " .. hitmarkerType)
         net.Start("PRSBOX.Hitmarkers.Netcode")
         net.WriteUInt(hitmarkerType, 2)
         net.Send(attacker)
@@ -30,12 +29,11 @@ hook.Add("PostEntityTakeDamage", "PRSBOX.Hitmarkers.Server", function(ent, dmg, 
 end)
 
 hook.Add("PlayerDeath", "PRSBOX.Hitmarkers.Server", function(victim, inflictor, attacker)
+    if not ( attacker:IsPlayer() ) then return end
+    if ( attacker == victim ) then return end
     hitmarkerType = 2
-    print("Sending netcode with hitmarker type 2")
-    if ( attacker:IsPlayer() ) then
-        net.Start("PRSBOX.Hitmarkers.Netcode")
-        net.WriteUInt(hitmarkerType, 2)
-        net.Send(attacker)
-    end
+    net.Start("PRSBOX.Hitmarkers.Netcode")
+    net.WriteUInt(hitmarkerType, 2)
+    net.Send(attacker)
     hitmarkerType = 0
 end)
