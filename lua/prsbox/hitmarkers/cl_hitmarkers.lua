@@ -78,11 +78,15 @@ local HitMEnabled = cvarbl:GetBool()
 
 local function NetReceived()
     if !HitMEnabled then return end
-    local isHead = net.ReadBool()
+    local hitmarkerType = net.ReadUInt(2)
+    hitcolor.r = 255
     hitcolor.g = 255
     hitcolor.b = 255
-    if (isHead) then
+    if (hitmarkerType == 1) then
         hitcolor.g = 40
+        hitcolor.b = 40
+    elseif (hitmarkerType == 2) then
+        hitcolor.r = 40
         hitcolor.b = 40
     end
     hitcolor.a = 255
