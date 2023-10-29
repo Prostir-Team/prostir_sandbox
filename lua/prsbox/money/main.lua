@@ -8,6 +8,8 @@ if SERVER then
 
     include("prsbox/money/sv_spawnmenu.lua")
     AddCSLuaFile("prsbox/money/cl_spawnmenu.lua")
+
+    include("prsbox/money/sv_moneyforkills.lua")
 end
 
 if CLIENT then
