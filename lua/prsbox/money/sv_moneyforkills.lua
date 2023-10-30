@@ -1,5 +1,7 @@
 local cfg = {}
 
+cfg.defaultRewardMultiplier = 0.2
+
 cfg.simpleKill = {}
 cfg.simpleKill.minMoney = 60
 cfg.simpleKill.maxMoney = 80
@@ -29,7 +31,16 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
         maxMoneyValue = cfg.roadKill.maxMoney
     end
 
-    local reward = math.Round(math.Rand(minMoneyValue, maxMoneyValue))
+    local victim_kd = victim:Frags() / victim:Deaths()
+    print("Victim K/D:", victim_kd)
+    if victim_kd == 0 then -- якщо у жертви нема вбивств, то урізати нагороду
+        victim_kd = cfg.defaultRewardMultiplier
+    end
+    
+    local reward_value = math.Rand(minMoneyValue, maxMoneyValue)
+    print("Raw reward:", reward_value)
+
+    local reward = math.Round(reward_value * victim_kd)
     print("Reward:", reward)
     
     attacker:AddMoney(reward)
