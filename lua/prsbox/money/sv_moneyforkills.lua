@@ -1,6 +1,9 @@
 local cfg = {}
 
-cfg.defaultRewardMultiplier = 0.2
+-- мінімальне та максимальне значення к/д як множителя
+cfg.rewardMultiplier = {}
+cfg.rewardMultiplier.min = 0.5
+cfg.rewardMultiplier.max = 3.0
 
 cfg.simpleKill = {}
 cfg.simpleKill.minMoney = 60
@@ -13,6 +16,18 @@ cfg.headshotKill.maxMoney = 170
 cfg.roadKill = {}
 cfg.roadKill.minMoney = 60
 cfg.roadKill.maxMoney = 100
+
+local function calculateKD(kills, deaths)
+    if (kills <= 0) then
+        return cfg.rewardMultiplier.min
+    end
+
+    if (deaths <= 0) then -- якщо жертва ще не вмирала, ділити вбивства на 1
+        return math.Clamp(kills / 1, cfg.rewardMultiplier.min, cfg.rewardMultiplier.max)
+    end
+
+    return math.Clamp(kills / deaths, cfg.rewardMultiplier.min, cfg.rewardMultiplier.max)
+end
 
 hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attacker)
     if (attacker == victim) then return end
@@ -31,11 +46,8 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
         maxMoneyValue = cfg.roadKill.maxMoney
     end
 
-    local victim_kd = victim:Frags() / victim:Deaths()
+    local victim_kd = calculateKD(victim:Frags(), victim:Deaths())
     print("Victim K/D:", victim_kd)
-    if victim_kd == 0 then -- якщо у жертви нема вбивств, то урізати нагороду
-        victim_kd = cfg.defaultRewardMultiplier
-    end
     
     local reward_value = math.Rand(minMoneyValue, maxMoneyValue)
     print("Raw reward:", reward_value)
