@@ -283,7 +283,7 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
     local completeRahist = ply:GetNWBool("PRSBOX.Net.CompleteRashist", false)
 
     if completeRahist then
-        RunConsoleCommand("prsbox_lobby_start")
+        RunConsoleCommand("prsbox_lobby_spawn")
         menu:CloseMenu()
 
         return
