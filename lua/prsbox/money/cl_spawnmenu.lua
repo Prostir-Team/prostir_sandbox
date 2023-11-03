@@ -1,6 +1,6 @@
 LOCAL_PRICE = LOCAL_PRICE or {}
 
-surface.CreateFont("DermaMedium", {
+surface.CreateFont("prsboxMoneyHUDMedium", {
     font = "Roboto",
     size = 20
 })
@@ -18,11 +18,12 @@ hook.Add("PRSBOX.ContentIcon.Paint", "PRSBOX.ShowPrices", function (panel, w, h)
 
     local price = tostring(LOCAL_PRICE[classname])
 
+    surface.SetFont("prsboxMoneyHUDMedium")
     local pw, ph = surface.GetTextSize(price)
     
     draw.RoundedBox(4, 7, 7, 32 + pw, 28, Color(0,0,0,220))
     surface.SetDrawColor(255,255,255,255)
     surface.SetMaterial(mat_dollar_icon)
     surface.DrawTexturedRect(10, 10, 20, 20)
-    draw.DrawText(price, "DermaMedium", 30, 10, COLOR_WHITE, TEXT_ALIGN_LEFT)
+    draw.DrawText(price, "prsboxMoneyHUDMedium", 31, 11, COLOR_WHITE, TEXT_ALIGN_LEFT)
 end)
