@@ -33,4 +33,15 @@ if SERVER then
         self:Freeze(false)
         self:GodDisable()
     end
+
+    function PLAYER:OpenWindow(windowName, windowTitle, closeButton, wide, tall, open)
+        net.Start("PRSBOX.Lobby.OpenWindow")
+            net.WriteString(windowName)
+            net.WriteString(windowTitle)
+            net.WriteBool(closeButton)
+            net.WriteInt(wide, 11)
+            net.WriteInt(tall, 11)
+            net.WriteBool(open)
+        net.Broadcast()
+    end
 end
