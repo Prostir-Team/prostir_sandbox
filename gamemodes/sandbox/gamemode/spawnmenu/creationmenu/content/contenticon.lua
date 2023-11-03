@@ -52,7 +52,6 @@ function PANEL:Init()
 	self.Label:SetExpensiveShadow( 1, Color( 0, 0, 0, 200 ) )
 
 	self.Border = 0
-
 end
 
 function PANEL:SetName( name )
@@ -244,6 +243,8 @@ spawnmenu.AddContentType( "entity", function( container, obj )
 		container:Add( icon )
 	end
 
+	hook.Run("PRSBOX.ContentIcon.Init", icon )
+
 	return icon
 
 end )
@@ -273,6 +274,8 @@ spawnmenu.AddContentType( "vehicle", function( container, obj )
 	if ( IsValid( container ) ) then
 		container:Add( icon )
 	end
+
+	hook.Run("PRSBOX.ContentIcon.Init", icon )
 
 	return icon
 
@@ -401,6 +404,8 @@ spawnmenu.AddContentType( "weapon", function( container, obj )
 	if ( IsValid( container ) ) then
 		container:Add( icon )
 	end
+
+	hook.Run("PRSBOX.ContentIcon.Init", icon )
 
 	return icon
 

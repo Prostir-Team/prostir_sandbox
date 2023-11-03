@@ -1,20 +1,24 @@
-print("hi")
---[[
-local _CDown = {}
---[Player] = { ["Class"] = Curtime + 10 }
+--[[  			03.11.2023  			Isemenuk27
+	Категорії вписуєте першими, після термінатора записуєте класи
+]]--
 
-local _CD_VEHICLE = 1
-local _CD_WEAPON = 2
-local _CD_ENTITY = 3
-local _CD_PROPS = 4
+PRSBOX.Cooldowns = {
+	["JMod - EZ Misc."] = 60,
+	["[LVS]"] = 50,
+	["[LVS] - Helicopters"] = 10,
+	["[LVS] - Planes"] = 10,
+	["simfphys"] = 50, --Заправні станції
 
-local Cooldowns = {
-	[] = 
+	["lvs_vehicle_repair"] = 20
 }
 
-local function UpdateCooldown( ply, class, time )
-	
+PRSBOX.SharedCooldowns = { --Коли трігерять один з цих кулдаунів то трігеряться і інші
+	{ "[LVS]", "[LVS] - Helicopters", "[LVS] - Planes" }
+}
+
+if ( CLIENT ) then
+	include("prsbox/cooldowns/client.lua")
+else
+	AddCSLuaFile("prsbox/cooldowns/client.lua")
+	include("prsbox/cooldowns/server.lua")
 end
-
-
-]]--
