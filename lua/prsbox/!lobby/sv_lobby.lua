@@ -13,14 +13,10 @@ hook.Add("PlayerPostSpawn", "PRSBOX.Lobby.StartMenu", function (ply, tr)
 
     local inLobby = ply:GetNWBool("PRSBOX.InLobby")
 
-
     if inLobby then
-        ply:Freeze(true)
-        ply:SetActiveWeapon(NULL)
-        net.Start("PRSBOX.Lobby.StartMenu")
-        net.Send(ply)
+        ply:StartLobby()
     else
-        ply:Freeze(false)
+        ply:EndLobby()
     end
 end)
 
@@ -31,8 +27,10 @@ concommand.Add("prsbox_lobby_test", function (ply, cmd, args)
     ply:Spawn()
 end)
 
-concommand.Add("prsbox_lobby_start", function (ply, cmd, args)
+concommand.Add("prsbox_lobby_spawn", function (ply, cmd, args)
     if not IsValid(ply) then return end 
+    local inLobby = ply:GetNWBool("PRSBOX.InLobby")
+    if not inLobby then return end
 
     ply:SetNWBool("PRSBOX.InLobby", false)
     ply:Spawn()

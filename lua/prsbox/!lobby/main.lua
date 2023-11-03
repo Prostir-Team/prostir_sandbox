@@ -17,3 +17,20 @@ if CLIENT then
     include("prsbox/!lobby/elements/cl_checkbox.lua")
     include("prsbox/!lobby/elements/cl_window.lua")
 end
+
+local PLAYER = FindMetaTable("Player")
+
+if SERVER then
+    function PLAYER:StartLobby()
+        self:Freeze(true)
+        self:SetActiveWeapon(NULL)
+        self:GodEnable()
+        net.Start("PRSBOX.Lobby.StartMenu")
+        net.Send(self)
+    end
+
+    function PLAYER:EndLobby()
+        self:Freeze(false)
+        self:GodDisable()
+    end
+end

@@ -230,9 +230,6 @@ local camFov = 0
 
 hook.Add("CalcView", "PRSBOX.Lobby.Camera", function (ply, pos, angles, fov)
     if not IsValid(ply) then return end
-
-    -- In know, this part of code is fucking shit (by Swanchick)
-
     if ply:InVehicle() then return end
 
     local camSpeed = GetConVar("prsbox_lobby_camera_speed"):GetInt()
@@ -292,27 +289,7 @@ MENU:RegisterButton("Почати гру", 1, PLAYER_LOBBY, function (menu, butt
         return
     end
 
-    if IsValid(menu.CheckBox) then return end
-
-    local checkbox = vgui.Create("PRSBOX.Lobby.Checkbox", menu)
-    if not IsValid(checkbox) then return end
-    menu.CheckBox = checkbox
-
-    checkbox:SetTitle("Пройдіть рашист тест!")
-    checkbox:SetText("Вам необхідно пройти рашсит тест, щоб почати гру на сервері! Це було зроблено за для того, щоб русня не змогла завадити грі звичайним українцям, які мирно грають на \"Простір Sandbox!\".")
-    checkbox:SetYes("Пройти")
-    checkbox:SetState(CHECKBOX_BAD)
-
-    checkbox.OnYesClick = function ()
-        menu:OpenInfoMenu("PRSBOX.Rashist", false)
-
-        checkbox:CloseMenu()
-    end
-
-    function checkbox:OnNoClick()
-        self:CloseMenu()
-    end
-
+    menu:OpenWindow("PRSBOX.Rashist", "Rahist tester", false, 380, 300)
 end)
 
 hook.Add("PRSBOX.RahistTestEnd", "PRSBOX.SetPlayerNone", function ()
