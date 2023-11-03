@@ -7,11 +7,16 @@ function ulx.rtv(calling_ply)
     local steamid = calling_ply:SteamID()
 
     if table.HasValue(PLAYER_VOTES, steamid) then
-        print(calling_ply:Nick() .. " has already voted.")
+        print(calling_ply:Nick() .. " вже проголосував.")
         return
     end
 
-   table.insert(PLAYER_VOTES, steamid) 
+    table.insert(PLAYER_VOTES, steamid)
+
+    local playerCount = player.GetCount()
+    if #PLAYER_VOTES >= playerCount / 2 then
+        hook.Run("PRSBOX:StartVote")
+    end
 end
 
 local rtv = ulx.command("Sandbox", "ulx rtv", ulx.rtv, "!rtv")

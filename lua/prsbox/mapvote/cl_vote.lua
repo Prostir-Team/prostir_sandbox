@@ -134,6 +134,10 @@ do
         end
     end
 
+    function PANEL:ShowWinnerMap(map)
+        
+    end
+
     function PANEL:PerformLayout()
         local grid = self.Grid
         if IsValid(grid) then
@@ -167,9 +171,18 @@ local function addVote(mapName, prevMapName)
     end
 end
 
-net.Receive("PRSBOX.VoteUpdate", function (len, ply)
+net.Receive("PRSBOX.VoteUpdate", function (len)
     local map = net.ReadString()
     local prevMap = net.ReadString()
 
     addVote(map, prevMap)
+end)
+
+net.Receive("PRSBOX.ShowMapWinner", function (len)
+    local map = net.ReadString()
+    
+    local voteMenu = MAIN_MENU:GetWindow("PRSBOX.VoteMenu")
+    if not IsValid(voteMenu) then return end
+
+    voteMenu:ShowWinnerMap()
 end)
