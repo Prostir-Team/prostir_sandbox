@@ -220,6 +220,24 @@ do
     vgui.Register("PRSBOX.Lobby.Menu", PANEL, "EditablePanel")
 end
 
+local function openMainMenu(playerState)
+    if not IsValid(MAIN_MENU) then
+        MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
+    end
+
+    PLAYER_STATE = playerState
+
+    local ply = LocalPlayer()
+    if IsValid(ply) then
+        local plyAngles = ply:GetAngles()
+        ply:SetEyeAngles(Angle(0, plyAngles.y, 0)) 
+    end
+
+    MAIN_MENU:OpenMenu()
+    MAIN_MENU:SetPlayerState(playerState)
+    MAIN_MENU:InitButtons()
+end
+
 ---
 --- Player camera view
 ---
@@ -323,15 +341,7 @@ end
 net.Receive("PRSBOX.Lobby.StartMenu", function (len)
     if PLAYER_STATE == PLAYER_PAUSE then return end
 
-    PLAYER_STATE = PLAYER_LOBBY
-
-    if not IsValid(MAIN_MENU) then
-        MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
-    end
-
-    MAIN_MENU:OpenMenu()
-    MAIN_MENU:SetPlayerState(PLAYER_LOBBY)
-    MAIN_MENU:InitButtons()
+    openMainMenu(PLAYER_LOBBY)
 end)
 
 net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
@@ -342,6 +352,21 @@ net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
 
         MAIN_MENU:CloseMenu()
     end
+end)
+
+net.Receive("PRSBOX.Lobby.OpenWindow", function (len)
+    local windowName = net.ReadString()
+    local windowTitle = net.ReadString()
+    local closeButton = net.ReadBool()
+    local wide = net.ReadInt(11)
+    local tall = net.ReadInt(11)
+    local open = net.ReadBool()
+
+    if open and PLAYER_STATE == PLAYER_NONE then
+        openMainMenu(PLAYER_PAUSE)
+    end
+
+    MAIN_MENU:OpenWindow(windowName, windowTitle, closeButton, wide, tall)
 end)
 
 ---
@@ -364,19 +389,7 @@ hook.Add("PreRender", "PRSBOX.Lobby.Open", function ()
         if PLAYER_STATE == PLAYER_NONE then
             if PLAYER_VIEW then return end
 
-            local plyAngles = ply:GetAngles()
-
-            ply:SetEyeAngles(Angle(0, plyAngles.y, 0))
-
-            if not IsValid(MAIN_MENU) then
-                MAIN_MENU = vgui.Create("PRSBOX.Lobby.Menu")
-            end
-            
-            PLAYER_STATE = PLAYER_PAUSE
-
-            MAIN_MENU:OpenMenu()
-            MAIN_MENU:SetPlayerState(PLAYER_PAUSE)
-            MAIN_MENU:InitButtons()
+            openMainMenu(PLAYER_PAUSE)
         else
             MAIN_MENU:CloseMenu()
         end
