@@ -176,6 +176,17 @@ do
         self:PerformLayout()
     end
 
+    function PANEL:GiveData(data)
+        local infoPanel = self.InfoPanel
+        if not IsValid(infoPanel) then return end
+
+        infoPanel.Data = data
+
+        if infoPanel.FullInit then
+            infoPanel:FullInit()
+        end
+    end
+
     function PANEL:SetWindowSize(wide, tall)
         local scrollTall = ScreenScale(10)
         local x = ScreenScale(200)

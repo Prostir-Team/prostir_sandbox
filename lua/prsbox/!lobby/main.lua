@@ -34,14 +34,27 @@ if SERVER then
         self:GodDisable()
     end
 
-    function PLAYER:OpenWindow(windowName, windowTitle, closeButton, wide, tall, open)
+    function PLAYER:OpenWindow(windowName, windowTitle, closeButton, wide, tall, open, data)
         net.Start("PRSBOX.Lobby.OpenWindow")
             net.WriteString(windowName)
             net.WriteString(windowTitle)
-            net.WriteBool(closeButton)
-            net.WriteInt(wide, 11)
-            net.WriteInt(tall, 11)
-            net.WriteBool(open)
+            net.WriteBool(closeButton or true)
+            net.WriteInt(wide or 200, 11)
+            net.WriteInt(tall or 100, 11)
+            net.WriteBool(open or false)
+            net.WriteTable(data or {})
+        net.Send(self)
+    end
+    
+    function OpenWindow(windowName, windowTitle, closeButton, wide, tall, open, data)
+        net.Start("PRSBOX.Lobby.OpenWindow")
+            net.WriteString(windowName)
+            net.WriteString(windowTitle)
+            net.WriteBool(closeButton or true)
+            net.WriteInt(wide or 200, 11)
+            net.WriteInt(tall or 100, 11)
+            net.WriteBool(open or false)
+            net.WriteTable(data or {})
         net.Broadcast()
     end
 end

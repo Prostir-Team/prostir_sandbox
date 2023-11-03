@@ -95,7 +95,7 @@ do
         return false
     end
 
-    function PANEL:OpenWindow(classname, windowname, closebutton, wide, tall)
+    function PANEL:OpenWindow(classname, windowname, closebutton, wide, tall, data)
         if self:WindowExists(classname) then return end
         
         local window = vgui.Create("PRSBOX.Lobby.Window", self)
@@ -104,8 +104,16 @@ do
         window:SetInfoPanel(classname)
         window:SetWindowSize(wide, tall)
         window:SetWindowName(windowname)
+        window:GiveData(data)
 
         self.Windows[classname] = {self.PlayerState, window}
+    end
+
+    function PANEL:GetWindow(classname)
+        local window = self.Windows[classname][2]
+        if not IsValid(window) then return end
+
+        return window.InfoPanel
     end
 
     function PANEL:OnWindowClose(classname)
@@ -367,12 +375,13 @@ net.Receive("PRSBOX.Lobby.OpenWindow", function (len)
     local wide = net.ReadInt(11)
     local tall = net.ReadInt(11)
     local open = net.ReadBool()
+    local data = net.ReadTable()
 
     if open and PLAYER_STATE == PLAYER_NONE then
         openMainMenu(PLAYER_PAUSE)
     end
 
-    MAIN_MENU:OpenWindow(windowName, windowTitle, closeButton, wide, tall)
+    MAIN_MENU:OpenWindow(windowName, windowTitle, closeButton, wide, tall, data)
 end)
 
 ---
