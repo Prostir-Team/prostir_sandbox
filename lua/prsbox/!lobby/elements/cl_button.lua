@@ -41,17 +41,15 @@ do
         local marginLeft = ScreenScale(3)
 
         if self:IsHovered() then
-            -- self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
+            self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_BACKGROUND)
             self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, ButtonColors[self.ButtonState])
             self.MarkWide = Lerp(FrameTime() * self.Speed, self.MarkWide, self.MarkWideMax)
         else
             self.TextColor = LerpColor(FrameTime() * self.Speed, self.TextColor, COLOR_WHITE)
-            -- self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
+            self.BackgroundColor = LerpColor(FrameTime() * self.Speed, self.BackgroundColor, COLOR_BUTTON_NONE)
 
             self.MarkWide = Lerp(FrameTime() * self.Speed, self.MarkWide, 0)
         end
-
-        -- draw.Blur(4, self, 0, 0, w, h, 200)
 
         surface.SetDrawColor(self.BackgroundColor)
         surface.DrawRect(self.MarkWide, 0, w - self.MarkWide, h)
