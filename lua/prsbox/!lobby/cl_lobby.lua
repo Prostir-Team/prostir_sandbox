@@ -134,6 +134,8 @@ do
 
         hook.Run("OnMenuOpen", self, self.PlayerState)
 
+        PLAYER_VIEW = true
+
         for k, buttonInfo in SortedPairsByMemberValue(MENU.registeredButtons, "pos", false) do
             if buttonInfo["playerState"] ~= self.PlayerState and buttonInfo["playerState"] ~= PLAYER_NONE then continue end
 
@@ -175,6 +177,10 @@ do
     function PANEL:CloseMenu()
         self:AlphaTo(0, 0.1, 0, function ()
             hook.Run("OnMenuClose", self)
+
+            timer.Simple(0.9, function ()
+                PLAYER_VIEW = false
+            end)
 
             PLAYER_STATE = PLAYER_NONE
             self:DeleteAllButtons()
@@ -400,14 +406,4 @@ hook.Add("HUDShouldDraw", "PRSBOX.Lobby.HideCrosshair", function (name)
     if name == "CHudCrosshair" and PLAYER_STATE ~= PLAYER_NONE then
         return false
     end
-end)
-
-hook.Add("OnMenuOpen", "PRSBOX.Lobby.ViewStart", function (menu, playerState)
-    PLAYER_VIEW = true
-end)
-
-hook.Add("OnMenuClose", "PRSBOX.Lobby.ViewEnd", function (menu)
-    timer.Simple(0.9, function ()
-        PLAYER_VIEW = false
-    end)
 end)
