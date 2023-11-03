@@ -244,6 +244,14 @@ function notification.AddLegacy(text, type, length)
     notify:Start()
 end
 
+net.Receive("PRSBOX.NotifySend", function (len)
+    local text = net.ReadString()
+    local type = net.ReadInt(6)
+    local length = net.ReadInt(10)
+
+    notification.AddLegacy(text, type, length)
+end)
+
 concommand.Add("print_notify", function()
     printNotify()
 end)
