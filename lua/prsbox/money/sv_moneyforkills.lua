@@ -14,8 +14,8 @@ cfg.headshotKill.minMoney = 110
 cfg.headshotKill.maxMoney = 170
 
 cfg.roadKill = {}
-cfg.roadKill.minMoney = 60
-cfg.roadKill.maxMoney = 100
+cfg.roadKill.minMoney = 30
+cfg.roadKill.maxMoney = 60
 
 local function calculateKD(kills, deaths)
     if (kills <= 0) then

@@ -1,6 +1,11 @@
-print("Hello World")
-
 LOCAL_PRICE = LOCAL_PRICE or {}
+
+surface.CreateFont("prsboxMoneyHUDMedium", {
+    font = "Roboto",
+    size = 20
+})
+
+local mat_dollar_icon = Material("icon16/money_dollar.png")
 
 net.Receive("PRSBOX.Net.SendPrices", function (len)
     LOCAL_PRICE = net.ReadTable()
@@ -11,7 +16,14 @@ hook.Add("PRSBOX.ContentIcon.Paint", "PRSBOX.ShowPrices", function (panel, w, h)
 
     if not table.HasValue(table.GetKeys(LOCAL_PRICE), classname) then return end
 
-    local price = LOCAL_PRICE[classname]
+    local price = tostring(LOCAL_PRICE[classname])
 
-    draw.DrawText(price, "DermaLarge", 10, 10, COLOR_WHITE, TEXT_ALIGN_LEFT)
+    surface.SetFont("prsboxMoneyHUDMedium")
+    local pw, ph = surface.GetTextSize(price)
+    
+    draw.RoundedBox(4, 7, 7, 32 + pw, 28, Color(0,0,0,220))
+    surface.SetDrawColor(255,255,255,255)
+    surface.SetMaterial(mat_dollar_icon)
+    surface.DrawTexturedRect(10, 10, 20, 20)
+    draw.DrawText(price, "prsboxMoneyHUDMedium", 31, 11, COLOR_WHITE, TEXT_ALIGN_LEFT)
 end)
