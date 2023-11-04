@@ -15,27 +15,6 @@ local MESSAGE = {}
 MESSAGE[VOTE_START] = "Почати голосування неможливо, тому що сервер тільки що змінив карту!"
 MESSAGE[VOTE_CHANGING] = "Почати голосування неможливо, тому що сервер змінює карту!"
 
-local function getMaps()
-    local files = file.Find("maps/gm_*.bsp", "GAME")
-
-    return files
-end
-
-local function startVote()
-    if VOTE_STATE ~= VOTE_READY then
-        MakeNotify(MESSAGE[VOTE_STATE], NOTIFY_ERROR, 10)
-
-        return 
-    end
-    
-    local maps = getMaps()
-
-    OpenWindow("PRSBOX.VoteMenu", "Голосовуння", true, 380, 300, false, maps)
-    MakeNotify("Почалося голосування за зміну карти!", NOTIFY_HINT, 30)
-
-    timer.Simple(30, endVote)
-end
-
 local function getWinner()
     local voteKeys = table.GetKeys(votes)
 
@@ -51,7 +30,7 @@ local function getWinner()
     end
 
     if max == 0 then
-        return {}
+        return
     end
 
     local winnerMaps = {}
@@ -70,9 +49,56 @@ end
 
 local function endVote()
     local mapsWinner = getWinner(votes)
-    local mapWinner = table.Random(mapsWinner)
+    if not mapsWinner then
+        
+        
+        return
+    end
 
-    MakeNotify("Карта " .. mapsWinner .. " була обрана до зміни!", NOTIFY_HINT, 60)
+    local mapWinner = table.Random(mapsWinner)
+    local currentMap = game.GetMap()
+
+    if mapWinner == currentMap then
+        MakeNotify("Карта " .. mapWinner .. " залишається!", NOTIFY_HINT, 10)
+        
+        VOTE_STATE = VOTE_READY
+
+        return
+    end
+
+    MakeNotify("Карта " .. mapWinner .. " була обрана до зміни!", NOTIFY_HINT, 10)
+
+    timer.Simple(10, function ()
+        RunConsoleCommand("changelevel", mapWinner)
+    end)
+end
+
+local function getMaps()
+    local files = file.Find("maps/gm_*.bsp", "GAME")
+
+    return files
+end
+
+local function startVote()
+    if VOTE_STATE ~= VOTE_READY then
+        MakeNotify(MESSAGE[VOTE_STATE], NOTIFY_ERROR, 10)
+
+        return 
+    end
+
+    local maps = getMaps()
+    VOTE_STATE = VOTE_CHANGING
+
+    OpenWindow("PRSBOX.VoteMenu", "Голосовуння", true, 380, 300, false, maps)
+    MakeNotify("Почалося голосування за зміну карти!", NOTIFY_HINT, 30)
+
+    print("Vote has been started")
+
+    timer.Simple(30, function ()
+        print("Vote has been ended")
+        
+        endVote()
+    end)
 end
 
 net.Receive("PRSBOX.AddVote", function (len, ply)
@@ -108,4 +134,14 @@ end)
 
 hook.Add("PRSBOX:StartVote", "PRSBOX.StartVote", function ()
     startVote()
+end)
+
+hook.Add("Initialize", "PRSBOX.Vote.Prepare", function ()
+    VOTE_STATE = VOTE_START
+
+    timer.Simple(600, function ()
+        VOTE_STATE = VOTE_READY
+
+        MakeNotify("Тепер можна голосувати", NOTIFY_HINT, 5)
+    end)
 end)

@@ -16,6 +16,8 @@ function ulx.rtv(calling_ply)
     local playerCount = player.GetCount()
     if #PLAYER_VOTES >= playerCount / 2 then
         hook.Run("PRSBOX:StartVote")
+
+        PLAYER_VOTES = {}
     end
 end
 
