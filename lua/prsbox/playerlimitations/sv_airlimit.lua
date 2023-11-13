@@ -2,22 +2,21 @@
 local curTime = CurTime
 
 local cfg = {}
-cfg.maxUnderwaterTime = 10 -- (max: 30) скільки гравець може пожити під водою до того, як почне задихатись
+cfg.maxUnderwaterTime = 10 -- скільки гравець може пожити під водою до того, як почне задихатись
 cfg.damageInfoTime = 1 -- з яким інтервалом гравець отримує дамаг від задихання
 
 -- скільки гравець отримує дамагу від задихання
 cfg.minDamage = 2
 cfg.maxDamage = 10
 
+-- TODO: переписати даний булшіт
 -- службові змінні
 local dmgInfo = DamageInfo()
 local underwater_time = 0
 local was_underwater = false
 local nextdrowndmg_time = 0
 
-util.AddNetworkString("PlayerPreSuffocationMsg")
-
-hook.Add("PlayerTick", "PRSBOX.Underwater.AirLimit", function(ply, mv)
+hook.Add("PlayerTick", "PRSBOX.Playerlimits.AirLimit", function(ply, mv)
     if (ply:WaterLevel() != 3 or !ply:Alive()) then
         was_underwater = false
         underwater_time = 0
@@ -28,9 +27,6 @@ hook.Add("PlayerTick", "PRSBOX.Underwater.AirLimit", function(ply, mv)
 
     if not was_underwater then
         underwater_time = curTime() + cfg.maxUnderwaterTime
-        net.Start("PlayerPreSuffocationMsg")
-        net.WriteUInt(cfg.maxUnderwaterTime, 5)
-        net.Send(ply)
         was_underwater = true
     end
 
