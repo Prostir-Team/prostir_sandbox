@@ -1,1 +1,0 @@
-print("Hello from cl_stamina.lua")
