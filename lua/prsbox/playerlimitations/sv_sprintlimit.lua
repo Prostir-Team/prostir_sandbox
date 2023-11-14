@@ -9,6 +9,8 @@ cfg.slowdownLvl = 25 -- на якому рівні стаміни гравець
 cfg.regenValue = 1 -- скільки повинно відновлюватись стаміни за інтервал
 cfg.sprintPenalty = 2 -- скільки повинно знімати стаміни за інтервал.
 
+util.AddNetworkString("PRSBOX.Net.StaminaSend")
+
 do
     local ply_meta = FindMetaTable("Player")
 
@@ -18,6 +20,9 @@ do
 
     function ply_meta:SetStamina(newStamina)
         self.stamina = math.Clamp(newStamina, 0, cfg.maxStamina)
+        net.Start("PRSBOX.Net.StaminaSend", true)
+        net.WriteUInt(self.stamina, 8)
+        net.Send(self)
     end
     
     function ply_meta:GetStaminaTick()
@@ -43,8 +48,6 @@ do
     end
 end
 
--- util.AddNetworkString("PRSBOX.Net.StaminaRequest")
--- util.AddNetworkString("PRSBOX.Net.StaminaSend")
 
 hook.Add("PlayerSpawn", "PRSBOX.Playerlimits.Stamina", function(ply, tr)
     ply:SetupStaminaSystem()
@@ -54,13 +57,6 @@ hook.Add("PlayerTick", "PRSBOX.Playerlimits.Stamina", function(ply, mv)
     if !ply:Alive() then return end
 
     local ply_stamina = ply:GetStamina()
-
-    -- net.Receive("PRSBOX.Net.StaminaRequest", function(len, ply)
-    --     print("stamina request received")
-    --     net.Start("PRSBOX.Net.StaminaSend", true)
-    --     net.WriteUInt(ply:GetStamina(), 8)
-    --     net.Send(ply)
-    -- end)
 
     if not (ply:GetStaminaTick() <= curTime()) then return end
     ply:SetStaminaTick(cfg.drainTime)
