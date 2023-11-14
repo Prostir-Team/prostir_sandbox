@@ -1,7 +1,3 @@
-print("hello world")
-
-
-
 net.Receive("PRSBOX.Net.BuildMode", function(len, ply)
     local state = net.ReadBool()
 
