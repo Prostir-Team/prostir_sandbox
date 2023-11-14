@@ -12,7 +12,7 @@ cfg.regenValue = 4 -- скільки стаміни відновлюється �
 cfg.minDamage = 2
 cfg.maxDamage = 10
 
-util.AddNetworkString("PRSBOX.Net.AirlimitSend")
+-- util.AddNetworkString("PRSBOX.Net.AirlimitSend")
 
 do
     local ply_meta = FindMetaTable("Player")
@@ -23,9 +23,10 @@ do
 
     function ply_meta:SetBreathingAmount(newValue)
         self.breathingAmount = math.Clamp(newValue, 0, cfg.airLimitValue)
-        net.Start("PRSBOX.Net.AirlimitSend", true)
-        net.WriteUInt(self.breathingAmount, 8)
-        net.Send(self)
+        -- net.Start("PRSBOX.Net.AirlimitSend", true)
+        -- net.WriteUInt(self.breathingAmount, 8)
+        -- net.Send(self)
+        self:SetNWInt("prsbox.air_stamina", self.breathingAmount)
     end
     
     function ply_meta:GetBreathingTick()
@@ -39,6 +40,7 @@ do
     function ply_meta:SetupBreathingSystem()
         self:SetBreathingAmount(cfg.airLimitValue)
         self:SetBreathingTick(cfg.damageInfoTime)
+        self:SetNWInt("prsbox.air_stamina_max", cfg.airLimitValue)
     end
 end
 

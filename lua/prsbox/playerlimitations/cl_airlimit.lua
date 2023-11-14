@@ -1,6 +1,7 @@
+local ply = LocalPlayer()
 local airlimit = 1
 
-net.Receive("PRSBOX.Net.AirlimitSend", function()
-    airlimit = math.Clamp(net.ReadUInt(8) / 50, 0, 1)
-    --print(airlimit)
+hook.Add("Think", "PRSBOX.Playerlimits.hud", function()
+    airlimit = math.Clamp(ply:GetNWInt("prsbox.air_stamina") / ply:GetNWInt("prsbox.air_stamina_max"), 0, 1)
+    --print("current air percentage:", airlimit * 100)
 end)

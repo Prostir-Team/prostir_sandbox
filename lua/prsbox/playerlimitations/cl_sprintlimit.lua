@@ -1,6 +1,7 @@
+local ply = LocalPlayer()
 local stamina = 1
 
-net.Receive("PRSBOX.Net.StaminaSend", function()
-    stamina = math.Clamp(net.ReadUInt(8) / 150, 0, 1)
-    --print(stamina)
+hook.Add("Think", "PRSBOX.Playerlimits.hud", function()
+    stamina = math.Clamp(ply:GetNWInt("prsbox.sprint_stamina") / ply:GetNWInt("prsbox.sprint_stamina_max"), 0, 1)
+    --print("current sprint percentage:", stamina * 100)
 end)
