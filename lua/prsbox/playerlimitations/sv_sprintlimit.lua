@@ -75,7 +75,7 @@ hook.Add("PlayerTick", "PRSBOX.Playerlimits.Stamina", function(ply, mv)
         ply:SetRunSpeed(math.Clamp(ply:GetRunSpeed() + 5, ply:GetWalkSpeed(), ply:GetMaxRunSpeed()))
     end
     
-    if ply:IsSprinting() then
+    if (ply:IsSprinting() and (vel.x ~= 0 or vel.y ~= 0)) then
         ply:SetStamina(ply:GetStamina() - cfg.sprintPenalty)
     else
         ply:SetStamina(ply:GetStamina() + cfg.regenValue * regenMult)
