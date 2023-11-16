@@ -20,8 +20,14 @@ function getLocalPlayerMoney()
     return PLAYER_MONEY
 end
 
+local hudvar = GetConVar("cl_drawhud"):GetBool() --По хорошому треба окремий хук, який не викликається без цього квара
+
+cvars.AddChangeCallback( "cl_drawhud", function( name, old, new )
+    hudvar = tonumber( new ) > 0
+end )
+
 local function drawHud()
-    if not GetConVar("cl_drawhud"):GetBool() then return end
+    if ( not hudvar ) then return end
 
     surface.SetFont("prsboxMoneyHUDLarge")
     local pw, ph = surface.GetTextSize(PLAYER_MONEY)
