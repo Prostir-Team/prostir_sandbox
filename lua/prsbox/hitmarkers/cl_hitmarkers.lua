@@ -3,11 +3,11 @@ local hitcolor = Color(255, 255, 255, 0)
 local speed = 800
 
 -- cl convars
-local cvarbl = CreateConVar("prsbox_hitmarkers", "0", FCVAR_ARCHIVE)
-local scalecvar = CreateConVar("prsbox_hitmarkers_scale", "1", FCVAR_ARCHIVE)
-local farpointcvar = CreateConVar("prsbox_hitmarkers_farpoint", "8", FCVAR_ARCHIVE)
-local closepointcvar = CreateConVar("prsbox_hitmarkers_closepoint", "2", FCVAR_ARCHIVE)
-local thicknesscvar = CreateConVar("prsbox_hitmarkers_thickness", "2", FCVAR_ARCHIVE)
+local cvarbl = CreateConVar("prsbox_hitmarkers", "0", FCVAR_ARCHIVE, "Enable hitmarkers?", 0, 1)
+local scalecvar = CreateConVar("prsbox_hitmarkers_scale", "1", FCVAR_ARCHIVE, "Hitmarker scale", 1, 16)
+local farpointcvar = CreateConVar("prsbox_hitmarkers_farpoint", "8", FCVAR_ARCHIVE, "Element far point", 1, 64)
+local closepointcvar = CreateConVar("prsbox_hitmarkers_closepoint", "2", FCVAR_ARCHIVE, "Element close point", 1, 64)
+local thicknesscvar = CreateConVar("prsbox_hitmarkers_thickness", "2", FCVAR_ARCHIVE, "Element thickness", 1, 8)
 
 local cx, cy = ScrW() * .5, ScrH() * .5 -- center x, center y
 local scale = scalecvar:GetFloat()
