@@ -21,6 +21,8 @@ function getLocalPlayerMoney()
 end
 
 local function drawHud()
+    if not GetConVar():GetBool() then return end
+    
     surface.SetFont("prsboxMoneyHUDLarge")
     local pw, ph = surface.GetTextSize(PLAYER_MONEY)
 
@@ -30,13 +32,3 @@ local function drawHud()
     surface.DrawTexturedRect(ScrW() * 0.01 + 8, ScrH() * 0.02 + 8, 20, 20)
     draw.DrawText(PLAYER_MONEY, "prsboxMoneyHUDLarge", ScrW() * 0.01 + 32, ScrH() * 0.02 + 3, COLOR_WHITE, TEXT_ALIGN_LEFT)
 end
-
-hook.Add("HUDPaint", "TEST.Money.Hud", drawHud())
-
-cvars.AddChangeCallback("cl_drawhud", function(cvar, oldVal, newVal)
-    if newVal == 0 then
-        hook.Remove("HUDPaint", "TEST.Money.Hud")
-        return
-    end
-    hook.Add("HUDPaint", "TEST.Money.Hud", drawHud())
-end)
