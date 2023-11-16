@@ -46,6 +46,10 @@ if SERVER then
 
         self:SetWeaponColor(col)
     end 
+
+    function PLAYER:GetMaxJumpPower()
+        return 150
+    end
     
     function PLAYER:MovementSetup()
         -- HL2 Speeds

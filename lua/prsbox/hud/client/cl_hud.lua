@@ -10,13 +10,13 @@ local hide = {
 }
 
 local Ammo_Icons = {
-    ["Shotgun"] = Material("Icon_Ammo_Shotgun.png"),
-    ["SLAM"] = Material("Icon_Ammo_SLAM.png"),
-    ["Grenade"] = Material("Icon_Ammo_Grenade.png"),
-    ["Magnum"] = Material("Icon_Ammo_Magnum.png"),
-    ["Pistol"] = Material("Icon_Ammo_Pistol.png"),
-    ["RPG"] = Material("Icon_Ammo_RPG.png"),
-    ["SMG"] = Material("Icon_Ammo_SMG.png"),
+    ["Shotgun"] = Material("hud/Icon_Ammo_Shotgun.png"),
+    ["SLAM"] = Material("hud/Icon_Ammo_SLAM.png"),
+    ["Grenade"] = Material("hud/Icon_Ammo_Grenade.png"),
+    ["Magnum"] = Material("hud/Icon_Ammo_Magnum.png"),
+    ["Pistol"] = Material("hud/Icon_Ammo_Pistol.png"),
+    ["RPG"] = Material("hud/Icon_Ammo_RPG.png"),
+    ["SMG"] = Material("hud/Icon_Ammo_SMG.png"),
 }
 
 local WeaponIcons = {
@@ -46,8 +46,8 @@ local ChargesWeapons = {
 local PRSBOX_HUD_HOOK_NAME = "Prsbox_Hud_"
 local MAIN_COLOR = Color(PRSBOX_HUD_COLOR_R:GetInt(), PRSBOX_HUD_COLOR_G:GetInt(), PRSBOX_HUD_COLOR_B:GetInt(), PRSBOX_HUD_ALPHA:GetInt())
 local PANELS_COLOR = Color(0,0,0,105)
-local MATERIALS_Health = Material("Icon_Health.png")
-local MATERIALS_Shield = Material("Icon_Suit_Charge.png")
+local MATERIALS_Health = Material("hud/Icon_Health.png")
+local MATERIALS_Shield = Material("hud/Icon_Suit_Charge.png")
 
 local ANIM_Delay = 0.5 -- Delay of animation in seconds
 local ANIM_StartedTime_Health, ANIM_StartedTime_Suit = 0, 0
@@ -216,9 +216,7 @@ local function UpdateHUD()
         PRSBOX_HUD_drawCompass()
     end
 
-    //AirIndicator()
-
-    -- if QuestsPanel_drawQuests exists then call it.
+    -- If QuestsPanel_drawQuests exists then call it.
     if(_G["QuestsPanel_drawQuests"]!=nil)then
         QuestsPanel_drawQuests(0, PRSBOX_HUD_RES_H*0.175) 
     end
@@ -250,11 +248,14 @@ end )
 
 -- Hook for drawing the HUD
 hook.Add("HUDPaint", PRSBOX_HUD_HOOK_NAME.."HUDPaint", function()
-    if(not IsValid(LocalPlayer()) or not PRSBOX_HUD_ACTIVE:GetBool()) then
-        return
+    -- If Stamina is defined
+    if(_G["PRSBOX_PlayerLimitations_SprintPing"]!=nil)then
+        PRSBOX_HUD_StaminaIndicator()
     end
 
-    UpdateHUD()
+    if(IsValid(LocalPlayer()) and PRSBOX_HUD_ACTIVE:GetBool()) then
+        UpdateHUD()
+    end
 end )
 
 -- Hook for handling screen resolution changes
