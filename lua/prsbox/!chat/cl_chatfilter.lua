@@ -1,8 +1,0 @@
-net.Receive("PRSBOX.RusFilter", function()
-    -- chat.AddText(Color(255,255,255), "Ми виявили в вашому повідомленні російські букви, тому ваше повідомлення не було відправлене.")
-    -- chat.AddText(Color(255,45,45), "На сервері заборонена російська мова!")
-    notification.AddLegacy("Ми виявили в вашому повідомленні російські букви, тому ваше повідомлення не було відправлене.", NOTIFY_ERROR, 7)
-    timer.Simple(4, function()
-        notification.AddLegacy("На сервері заборонена російська мова!", NOTIFY_HINT, 5)
-    end)
-end)
