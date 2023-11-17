@@ -61,6 +61,21 @@ hook.Add("PlayerSpawnSWEP", "PRSBOX.BuyAmmo", function(ply, class, info)
     return false
 end)
 
+hook.Add("PlayerSpawnSENT", "PRSBOX.BuyEntity", function(ply, class)
+    if table.HasValue(table.GetKeys(PRICES), class) then
+        local money = ply:GetMoney()
+        local price = tonumber(PRICES[class])
+
+        if money < price then
+            return false
+        end
+
+        ply:SubtractMoney(price)
+    end
+
+    return true
+end)
+
 concommand.Add("send_prices", function (ply)
     if not IsValid(ply) then return end
 
