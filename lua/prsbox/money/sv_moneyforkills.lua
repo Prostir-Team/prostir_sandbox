@@ -37,7 +37,7 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
     print(victim:GetClass(), inflictor:GetClass(), attacker:GetClass())
     local minMoneyValue = cfg.simpleKill.minMoney
     local maxMoneyValue = cfg.simpleKill.maxMoney
-    
+
     if ( victim:LastHitGroup() == HITGROUP_HEAD ) then
         print(attacker:GetName(), "got a headshot reward!")
         minMoneyValue = cfg.headshotKill.minMoney
@@ -50,12 +50,12 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
 
     local victim_kd = calculateKD(victim:Frags(), victim:Deaths())
     print("Victim K/D:", victim_kd)
-    
+
     local reward_value = math.Rand(minMoneyValue, maxMoneyValue)
     print("Raw reward:", reward_value)
 
     local reward = math.Round(reward_value * victim_kd)
     print("Reward:", reward)
-    
+
     attacker:AddMoney(reward)
 end)
