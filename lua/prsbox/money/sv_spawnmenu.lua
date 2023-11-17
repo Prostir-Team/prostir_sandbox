@@ -28,12 +28,12 @@ hook.Add("PlayerInitialSpawn", "PRSBOX.Spawnmenu.Money.SendPrices", function (pl
 end)
 
 hook.Add("PlayerGiveSWEP", "PRSBOX.BuyWeapon", function(ply, class, info)
-	if table.HasValue(table.GetKeys(PRICES), class) then
+    if table.HasValue(table.GetKeys(PRICES), class) then
         local money = ply:GetMoney()
         local price = tonumber(PRICES[class])
 
         if money < price then
-            return false 
+            return false
         end
 
         ply:SubtractMoney(price)
@@ -42,10 +42,29 @@ hook.Add("PlayerGiveSWEP", "PRSBOX.BuyWeapon", function(ply, class, info)
     return true
 end)
 
+hook.Add("PlayerSpawnSWEP", "PRSBOX.BuyAmmo", function(ply, class, info)
+    local ply_sweps = ply:GetWeapons()
+
+
+    for _, i in ipairs(ply_sweps) do
+        if (i:GetClass() == class) then
+            print("Player has weapon, giving ammo...")
+            PrintTable(info)
+            local ammotype = i:GetPrimaryAmmoType()
+            local magsize = i:GetMaxClip1() -- these are MAGS, not CLIPS!
+
+            ply:GiveAmmo(magsize, ammotype)
+            break
+        end
+    end
+
+    return false
+end)
+
 concommand.Add("send_prices", function (ply)
     if not IsValid(ply) then return end
 
-    print("ajdljasldjk as")
+    --print("ajdljasldjk as")
 
     net.Start("PRSBOX.Net.SendPrices")
         net.WriteTable(PRICES)
