@@ -8,6 +8,6 @@ hook.Add("PlayerSay", "PRSBOX.RusFilter", function(sender, text)
     if not (res_start == nil or res_end == nil or res_str == nil) then return end
     net.Start("PRSBOX.RusFilter", true)
     net.Send(sender)
-    Msg(sender:GetName(), "used russian letters.\n")
+    MsgN(sender:GetName(), " used russian letters.")
     return false
 end)
