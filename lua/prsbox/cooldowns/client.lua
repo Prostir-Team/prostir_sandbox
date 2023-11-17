@@ -42,8 +42,10 @@ local function PaintIcon( panel, w, h )
 
 	TextTable.text = format("%02i", TimeLeft)
 	TextTable.pos[1] = w * 0.5
-	TextTable.pos[2] = h * 0.4
+	TextTable.pos[2] = h * 0.7
 	DrawText( TextTable )
+	surface.SetMaterial(Material("icon16/clock.png"))
+	surface.DrawTexturedRect(w * 0.375, h * 0.2, w * 0.25, h * 0.25)
 end
 
 hook.Add( "PRSBOX.ContentIcon.Paint", "PRSBOX.COOLDOWN", PaintIcon )
