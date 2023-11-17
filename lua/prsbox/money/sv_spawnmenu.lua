@@ -47,10 +47,8 @@ hook.Add("PlayerSpawnSWEP", "PRSBOX.BuyAmmo", function(ply, class, info)
 
     for _, i in ipairs(ply_sweps) do
         if (i:GetClass() == class) then
-            print("Player has weapon, giving ammo...")
             local ammotype = i:GetPrimaryAmmoType()
             local magsize = i:GetMaxClip1() -- these are MAGS, not CLIPS!
-
             ply:GiveAmmo(magsize, ammotype)
             break
         end
