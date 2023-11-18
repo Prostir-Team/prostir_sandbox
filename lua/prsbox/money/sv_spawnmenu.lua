@@ -38,8 +38,6 @@ hook.Add("PlayerGiveSWEP", "PRSBOX.BuyWeapon", function(ply, class, info)
 
         ply:SubtractMoney(price)
     end
-
-    return true
 end)
 
 hook.Add("PlayerSpawnSWEP", "PRSBOX.BuyAmmo", function(ply, class, info)
@@ -68,8 +66,6 @@ hook.Add("PlayerSpawnSENT", "PRSBOX.BuyEntity", function(ply, class)
 
         ply:SubtractMoney(price)
     end
-
-    return true
 end)
 
 concommand.Add("send_prices", function (ply)
