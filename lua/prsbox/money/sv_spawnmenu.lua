@@ -36,6 +36,14 @@ hook.Add("PlayerGiveSWEP", "PRSBOX.BuyWeapon", function(ply, class, info)
             return false
         end
 
+        local ply_sweps = ply:GetWeapons()
+
+        for _, i in ipairs(ply_sweps) do
+            if (i:GetClass() == class) then
+                return false
+            end
+        end
+
         ply:SubtractMoney(price)
     end
 end)
