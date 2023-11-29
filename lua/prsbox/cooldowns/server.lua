@@ -13,18 +13,18 @@ local function AddHook( id, func )
 	hookadd( id, HookName, func )
 end
 
-local function IsInCooldown( ply, id )
+function IsInCooldown( ply, id )
 	if ( !_CDown[ply] ) then return false end
 	if ( !_CDown[ply][id] ) then return false end
 	return _CDown[ply][id] > curtime()
 end
 
-local function IsCategoryInCooldown( ply, id )
+function IsCategoryInCooldown( ply, id )
 	if ( !_CDCaters[ id ] ) then return false end
 	return IsInCooldown( ply, id )
 end
 
-local function IsClassInCooldown( ply, id )
+function IsClassInCooldown( ply, id )
 	--if ( _CDCaters[ id ] ) then return false end
 	return IsInCooldown( ply, id )
 end
