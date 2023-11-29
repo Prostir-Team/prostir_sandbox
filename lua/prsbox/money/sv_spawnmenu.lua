@@ -68,7 +68,11 @@ hook.Add("PlayerSpawnSENT", "PRSBOX.BuyEntity", function(ply, class)
         local money = ply:GetMoney()
         local price = tonumber(PRICES[class])
 
-        if money < price then
+        if (money < price) then
+            return false
+        end
+
+        if IsClassInCooldown(ply, class) or IsCategoryInCooldown(ply, scripted_ents.GetStored( class ).t.Category) then
             return false
         end
 
