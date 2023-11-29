@@ -32,7 +32,9 @@ local function AddPlayerIcon(steamid, iconPath)
 
     if ExistPlayerIcon(steamid, iconPath) then return end
 
-    local iconMaterial = Material(iconPath)
+    local iconMaterialSettings = "smooth 0"
+
+    local iconMaterial = Material(iconPath, iconMaterialSettings)
     table.insert(PLAYERS_ICONS[steamid], iconMaterial)
 end 
 
