@@ -7,13 +7,15 @@ function ulx.rtv(calling_ply)
     local steamid = calling_ply:SteamID()
 
     if table.HasValue(PLAYER_VOTES, steamid) then
-        print(calling_ply:Nick() .. " вже проголосував.")
+        ulx.fancyLogAdmin(calling_ply, "#A вже проголосував.")
         return
     end
 
     table.insert(PLAYER_VOTES, steamid)
 
     local playerCount = player.GetCount()
+    ulx.fancyLogAdmin(calling_ply, "#A проголосував за зміну карти. (" .. #PLAYER_VOTES .. "/" .. math.ceil(playerCount / 2) .. ")")
+    
     if #PLAYER_VOTES >= playerCount / 2 then
         hook.Run("PRSBOX:StartVote")
 
