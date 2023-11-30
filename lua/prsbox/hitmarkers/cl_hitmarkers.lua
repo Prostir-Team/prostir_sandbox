@@ -145,11 +145,11 @@ cvars.AddChangeCallback("prsbox_hitmarkers_headshot_hit_color_r", function(conva
     headshothitcolor.r = tonumber(value_new)
 end)
 
-cvars.AddChangeCallback("prsbox_hitmarkers_headshot_hit_color_r", function(convar_name, value_old, value_new)
+cvars.AddChangeCallback("prsbox_hitmarkers_headshot_hit_color_g", function(convar_name, value_old, value_new)
     headshothitcolor.g = tonumber(value_new)
 end)
 
-cvars.AddChangeCallback("prsbox_hitmarkers_headshot_hit_color_r", function(convar_name, value_old, value_new)
+cvars.AddChangeCallback("prsbox_hitmarkers_headshot_hit_color_b", function(convar_name, value_old, value_new)
     headshothitcolor.b = tonumber(value_new)
 end)
 
@@ -157,11 +157,11 @@ cvars.AddChangeCallback("prsbox_hitmarkers_final_hit_color_r", function(convar_n
     finalhitcolor.r = tonumber(value_new)
 end)
 
-cvars.AddChangeCallback("prsbox_hitmarkers_final_hit_color_r", function(convar_name, value_old, value_new)
+cvars.AddChangeCallback("prsbox_hitmarkers_final_hit_color_g", function(convar_name, value_old, value_new)
     finalhitcolor.g = tonumber(value_new)
 end)
 
-cvars.AddChangeCallback("prsbox_hitmarkers_final_hit_color_r", function(convar_name, value_old, value_new)
+cvars.AddChangeCallback("prsbox_hitmarkers_final_hit_color_b", function(convar_name, value_old, value_new)
     finalhitcolor.b = tonumber(value_new)
 end)
 
