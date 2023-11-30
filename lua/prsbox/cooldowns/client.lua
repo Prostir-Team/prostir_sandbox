@@ -1,14 +1,19 @@
 --  			03.11.2023  			Isemenuk27
 local Cooldowns = PRSBOX.Cooldowns
 local SharedCooldowns = PRSBOX.SharedCooldowns
-local DrawRect = nil--surface.DrawRect(number x, number y, number width, number height)
+--local DrawRect = nil--surface.DrawRect(number x, number y, number width, number height)
 local DrawText = draw.Text
 local _CDowns, _CDShared, _CDCaters = {}, {}, {}
 local curtime, format = CurTime, string.format
 
+surface.CreateFont("CooldownFont", {
+	font = "Roboto",
+	size = 20
+})
+
 local TextTable = {
 	text = "",
-	font = "DermaDefault",
+	font = "CooldownFont",
 	pos = { 0, 0 },
 	xalign = TEXT_ALIGN_CENTER,
 	yalign = TEXT_ALIGN_CENTER,
@@ -43,9 +48,12 @@ local function PaintIcon( panel, w, h )
 	TextTable.text = format("%02i", TimeLeft)
 	TextTable.pos[1] = w * 0.5
 	TextTable.pos[2] = h * 0.7
+	surface.SetDrawColor(255, 255, 255)
+	surface.SetMaterial(Material("cooldown/fade.png", "smooth 1"))
+	surface.DrawTexturedRect(0, 0, w, h)
 	DrawText( TextTable )
-	surface.SetMaterial(Material("icon16/clock.png"))
-	surface.DrawTexturedRect(w * 0.375, h * 0.375, w * 0.25, h * 0.25)
+	surface.SetMaterial(Material("cooldown/clock.png", "smooth 1"))
+	surface.DrawTexturedRect(w * 0.35, h * 0.25, w * 0.325, h * 0.325)
 end
 
 hook.Add( "PRSBOX.ContentIcon.Paint", "PRSBOX.COOLDOWN", PaintIcon )
