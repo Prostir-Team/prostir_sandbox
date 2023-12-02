@@ -1,10 +1,23 @@
 util.AddNetworkString("PRSBOX.Net.BuildMode")
 
+local IsValid = IsValid
 local PLAYERS_IN_BUILDMODE = {}
+
+local PLAYER = FindMetaTable("Player")
+local ENTITY = FindMetaTable("Entity")
+
+local GetCreator = ENTITY.GetCreator
+local GetClass = ENTITY.GetClass
 
 ---
 --- Local functions
 ---
+local player_class = "player"
+
+local function IsPlayer( ent )
+    if ( not IsValid( ent ) ) then return false end
+    return GetClass( ent ) == player_class
+end
 
 local function playerInBuildmode(ply)
     if not IsValid(ply) then return false end
@@ -12,12 +25,14 @@ local function playerInBuildmode(ply)
 
     local steamid = ply:SteamID()
 
+    -- TODO: викоритовувати хеш таблицю з обєктами гравців
+
     return table.HasValue(PLAYERS_IN_BUILDMODE, steamid)
 end
 
 local function enterBuildMode(ply)
-    if not IsValid(ply) then return end
-    if not ply:IsValid() then return end
+    if ( not IsValid(ply) ) then return end
+    --if not ply:IsValid() then return end --Викликає Entity:IsValid(), корисно лише при перевірці чи ця ентіті не worldspawn
     
     local steamid = ply:SteamID()
 
@@ -44,12 +59,12 @@ local function enterPvpMode(ply)
     ply:RemoveIcon("icon16/wrench.png")
     ply:GodDisable()
 
-    table.RemoveByValue(PLAYERS_IN_BUILDMODE, steamid)
+    table.RemoveByValue(PLAYERS_IN_BUILDMODE, steamid) -- TODO: це робить цикл через всю таблицю, використовуйте хеш таблицю
 
     ply:KillSilent()
     ply:Spawn()
 
-    net.Start("PRSBOX.Net.BuildMode")
+    net.Start("PRSBOX.Net.BuildMode") -- TODO: використовуйте біт операцї для передачі модів гравці ( афк, білд, тд )
         net.WriteBool(false) -- State of build mode
     net.Send(ply)
 end
@@ -58,10 +73,20 @@ end
 --- Player meta
 ---
 
-local PLAYER = FindMetaTable("Player")
-
 function PLAYER:BuildMode()
     return playerInBuildmode(self)
+end
+
+function ENTITY:GetBuildMode()
+    local r
+
+    if IsPlayer( self ) then
+        r = playerInBuildmode( self )
+    else
+        r = playerInBuildmode( GetCreator( self ) )
+    end
+
+    return r
 end
 
 ---
@@ -71,11 +96,11 @@ end
 hook.Add("EntityTakeDamage", "PRSBOX.Build.Damage", function (target, dmg)
     local attacker = dmg:GetAttacker()
     
-    if (IsValid(attacker) and attacker:IsPlayer() and attacker:BuildMode()) then
+    if ( IsValid( attacker ) and IsPlayer( attacker ) and attacker:BuildMode() ) then
         return true
-    end
+    end -- TODO: що буде якщо демаг буде на проп/ентіті білдера
 
-    if (IsValid(target) and target:IsPlayer() and target:BuildMode()) then
+    if ( IsValid( target ) and IsPlayer( target ) and target:BuildMode() ) then
         return true
     end
 end)

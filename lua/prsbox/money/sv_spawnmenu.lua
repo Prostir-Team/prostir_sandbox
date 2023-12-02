@@ -85,7 +85,7 @@ concommand.Add("send_prices", function (ply)
 
     --print("ajdljasldjk as")
 
-    net.Start("PRSBOX.Net.SendPrices")
+    net.Start("PRSBOX.Net.SendPrices") -- TODO: зжимання зробіть нубикі
         net.WriteTable(PRICES)
     net.Send(ply)
 end)
