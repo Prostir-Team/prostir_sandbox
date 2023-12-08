@@ -79,13 +79,3 @@ hook.Add("PlayerSpawnSENT", "PRSBOX.BuyEntity", function(ply, class)
         ply:SubtractMoney(price)
     end
 end)
-
-concommand.Add("send_prices", function (ply)
-    if not IsValid(ply) then return end
-
-    --print("ajdljasldjk as")
-
-    net.Start("PRSBOX.Net.SendPrices") -- TODO: зжимання зробіть нубикі
-        net.WriteTable(PRICES)
-    net.Send(ply)
-end)

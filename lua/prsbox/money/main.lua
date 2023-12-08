@@ -49,12 +49,4 @@ if SERVER then
 
         self:SetMoney(money - quantity)
     end
-
-    concommand.Add("money_add", function (ply, cmd, args)
-        if not IsValid(ply) then return end
-
-        local money = args[1]
-
-        ply:AddMoney(money)
-    end)
 end
