@@ -302,11 +302,12 @@ do
             function startButton:DoClick()
                 local ply = LocalPlayer()
                 if not IsValid(ply) then return end
+                if not IsValid(MAIN_MENU) then return end
                 
-                PLAYER_STATE = PLAYER_NONE
-                
-                RunConsoleCommand("prsbox_lobby_start")
-                MAIN_MENU:Remove()
+                ply:Freeze(false)
+
+
+                MAIN_MENU:CloseMenu()
             end
         end
 
