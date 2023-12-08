@@ -166,10 +166,10 @@ function SPropProtection.PlayerCanTouch(ply, ent)
 	end
 
 	if ent:GetNWString("Owner") == "World" then
-		if ply:IsAdmin() and tonumber(SPropProtection.Config["awp"]) == 1 and tonumber(SPropProtection.Config["admin"]) == 1 then
+		if (ply:IsAdmin() or ply:IsUserGroup("operator")) and tonumber(SPropProtection.Config["awp"]) == 1 and tonumber(SPropProtection.Config["admin"]) == 1 then
 			return true
 		end
-	elseif ply:IsAdmin() and tonumber(SPropProtection.Config["admin"]) == 1 then
+	elseif (ply:IsAdmin() or ply:IsUserGroup("operator")) and tonumber(SPropProtection.Config["admin"]) == 1 then
 		return true
 	end
 
@@ -205,7 +205,7 @@ hook.Add("PlayerInitialSpawn", "SPropProtection.PlayerInitialSpawn", SPropProtec
 
 function SPropProtection.Disconnect(ply)
 	if tonumber(SPropProtection.Config["dpd"]) == 1 then
-		if ply:IsAdmin() and tonumber(SPropProtection.Config["dae"]) == 0 then
+		if (ply:IsAdmin() or ply:IsUserGroup("operator")) and tonumber(SPropProtection.Config["dae"]) == 0 then
 			return
 		end
 
@@ -227,10 +227,10 @@ function SPropProtection.PhysGravGunPickup(ply, ent)
 	if SPropProtection.KVcantouch[ent:EntIndex()] == 0 then
 		return false
 	end
-	if SPropProtection.KVcantouch[ent:EntIndex()] == 2 or (SPropProtection.KVcantouch[ent:EntIndex()] == 1 and ply:IsAdmin()) then
+	if SPropProtection.KVcantouch[ent:EntIndex()] == 2 or (SPropProtection.KVcantouch[ent:EntIndex()] == 1 and (ply:IsAdmin() or ply:IsUserGroup("operator"))) then
 		return
 	end
-	if ent:IsPlayer() and ply:IsAdmin() and tonumber(SPropProtection.Config["admin"]) == 1 then
+	if ent:IsPlayer() and (ply:IsAdmin() or ply:IsUserGroup("operator")) and tonumber(SPropProtection.Config["admin"]) == 1 then
 		return
 	end
 	if not SPropProtection.PlayerCanTouch(ply, ent) then
@@ -252,7 +252,7 @@ function SPropProtection.CanTool(ply, tr, mode)
 
 	if not SPropProtection.KVcanuse[ent:EntIndex()] then SPropProtection.KVcanuse[ent:EntIndex()] = -1 end
 
-	if not SPropProtection.PlayerCanTouch(ply, ent) or SPropProtection.KVcantool[ent:EntIndex()] == 0 or (SPropProtection.KVcantool[ent:EntIndex()] == 1 and not ply:IsAdmin()) then
+	if not SPropProtection.PlayerCanTouch(ply, ent) or SPropProtection.KVcantool[ent:EntIndex()] == 0 or (SPropProtection.KVcantool[ent:EntIndex()] == 1 and not (ply:IsAdmin() or ply:IsUserGroup("operator"))) then
 		return false
 	elseif mode == "remover" then
 		if ply:KeyDown(IN_ATTACK2) or ply:KeyDownLast(IN_ATTACK2) then
@@ -293,7 +293,7 @@ hook.Add("EntityTakeDamage", "SPropProtection.EntityTakeDamage", SPropProtection
 
 function SPropProtection.PlayerUse(ply, ent)
 	if not SPropProtection.KVcanuse[ent:EntIndex()] then SPropProtection.KVcanuse[ent:EntIndex()] = -1 end
-	if SPropProtection.KVcanuse[ent:EntIndex()] == 0 or (SPropProtection.KVcantouch[ent:EntIndex()] == 1 and not ply:IsAdmin()) then
+	if SPropProtection.KVcanuse[ent:EntIndex()] == 0 or (SPropProtection.KVcantouch[ent:EntIndex()] == 1 and not (ply:IsAdmin() or ply:IsUserGroup("operator"))) then
 		return false
 	end
 	if SPropProtection.KVcanuse[ent:EntIndex()] == 2 then
@@ -354,7 +354,7 @@ end
 hook.Add("OnNPCKilled","SPropProtection.NPCDeath",SPropProtection.NPCDeath)
 
 function SPropProtection.CDP(ply, cmd, args)
-	if IsValid(ply) and not ply:IsAdmin() then
+	if IsValid(ply) and not (ply:IsAdmin() or ply:IsUserGroup("operator"))  then
 		ply:PrintMessage( HUD_PRINTCONSOLE, "You are not an admin!" )
 		return
 	end
@@ -398,7 +398,7 @@ function SPropProtection.CleanupProps(ply, cmd, args)
 		end
 		SPropProtection.CleanupPlayerProps(ply)
 		SPropProtection.Notify(ply, "Your props have been cleaned up")
-	elseif not IsValid(ply) or ply:IsAdmin() then
+	elseif not IsValid(ply) or (ply:IsAdmin() or ply:IsUserGroup("operator")) then
 		for k,v in pairs(player.GetAll()) do
 			if tonumber(EntIndex) == v:EntIndex() then
 				SPropProtection.CleanupPlayerProps(v)
@@ -497,7 +497,7 @@ function SPropProtection.ApplySettings(ply, cmd, args)
 		MsgN("This command can only be run in-game!")
 		return
 	end
-	if not ply:IsAdmin() then
+	if not (ply:IsAdmin() or ply:IsUserGroup("operator")) then
 		return
 	end
 
