@@ -10,13 +10,13 @@ local hide = {
 }
 
 local Ammo_Icons = {
-    ["Shotgun"] = Material("hud/Icon_Ammo_Shotgun.png"),
-    ["SLAM"] = Material("hud/Icon_Ammo_SLAM.png"),
-    ["Grenade"] = Material("hud/Icon_Ammo_Grenade.png"),
-    ["Magnum"] = Material("hud/Icon_Ammo_Magnum.png"),
-    ["Pistol"] = Material("hud/Icon_Ammo_Pistol.png"),
-    ["RPG"] = Material("hud/Icon_Ammo_RPG.png"),
-    ["SMG"] = Material("hud/Icon_Ammo_SMG.png"),
+    ["Shotgun"] = Material("hud/icon_ammo_Shotgun.png"),
+    ["SLAM"] = Material("hud/icon_ammo_SLAM.png"),
+    ["Grenade"] = Material("hud/icon_ammo_Grenade.png"),
+    ["Magnum"] = Material("hud/icon_ammo_Magnum.png"),
+    ["Pistol"] = Material("hud/icon_ammo_Pistol.png"),
+    ["RPG"] = Material("hud/icon_ammo_RPG.png"),
+    ["SMG"] = Material("hud/icon_ammo_SMG.png"),
 }
 
 local WeaponIcons = {
@@ -46,8 +46,8 @@ local ChargesWeapons = {
 local PRSBOX_HUD_HOOK_NAME = "Prsbox_Hud_"
 local MAIN_COLOR = Color(PRSBOX_HUD_COLOR_R:GetInt(), PRSBOX_HUD_COLOR_G:GetInt(), PRSBOX_HUD_COLOR_B:GetInt(), PRSBOX_HUD_ALPHA:GetInt())
 local PANELS_COLOR = Color(0,0,0,105)
-local MATERIALS_Health = Material("hud/Icon_Health.png")
-local MATERIALS_Shield = Material("hud/Icon_Suit_Charge.png")
+local MATERIALS_Health = Material("hud/icon_health.png")
+local MATERIALS_Shield = Material("hud/icon_suit_charge.png")
 
 local ANIM_Delay = 0.5 -- Delay of animation in seconds
 local ANIM_StartedTime_Health, ANIM_StartedTime_Suit = 0, 0

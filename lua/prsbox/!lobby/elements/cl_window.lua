@@ -125,7 +125,7 @@ do
             if IsValid(closeButton) then
                 self.CloseButton = closeButton
 
-                closeButton:SetWindowIcon("prostir/ui/CloseButton.png")
+                closeButton:SetWindowIcon("prostir/ui/close_button.png")
                 closeButton.DoClick = function ()
                     self:CloseWindow()
                 end
@@ -136,7 +136,7 @@ do
         if IsValid(minimizeButton) then
             self.MinimizeButton = minimizeButton
 
-            minimizeButton:SetWindowIcon("prostir/ui/MinimizeButton.png")
+            minimizeButton:SetWindowIcon("prostir/ui/minimize_button.png")
             minimizeButton.DoClick = function ()
                 self.Minimize = not self.Minimize
 
