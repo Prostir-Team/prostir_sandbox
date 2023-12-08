@@ -35,9 +35,10 @@ local chat_gray = Color(126, 126, 126)
 local ChatEnabled = false
 
 local user_groups = {
-    ["superadmin"] = Color(142, 255, 114),
-    ["admin"] = Color(255, 81, 81),
-    ["user"] = Color(0, 140, 255)
+    ["superadmin"] = Color(142, 255, 114), -- Команда
+    ["admin"] = Color(245, 193, 81), -- Головний модератор
+    ["operator"] = Color(255, 81, 81), -- Модератор
+    ["user"] = Color(0, 140, 255) -- Гравець
 }
 
 --[[
@@ -175,6 +176,10 @@ do
 
 				local user = ply:GetUserGroup()
 				local color = user_groups[user]
+
+				if not color then
+					color = user_groups["user"]
+				end
 
 				if not self.ColorChanged then
 					self.Color = color
