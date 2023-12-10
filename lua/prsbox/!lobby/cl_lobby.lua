@@ -332,7 +332,6 @@ MENU:RegisterButton("Продовжити гру", 1, PLAYER_PAUSE, function (me
     local ply = LocalPlayer()
     if not IsValid(ply) then return end
 
-    PLAYER_STATE = PLAYER_NONE
     menu:CloseMenu()
 end)
 

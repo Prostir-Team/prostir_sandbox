@@ -300,14 +300,18 @@ do
             end
 
             function startButton:DoClick()
-                local ply = LocalPlayer()
-                if not IsValid(ply) then return end
                 if not IsValid(MAIN_MENU) then return end
-                
-                ply:Freeze(false)
 
-
+                RunConsoleCommand("prsbox_lobby_spawn")
                 MAIN_MENU:CloseMenu()
+
+                local window = MAIN_MENU:GetWindow("PRSBOX.Rashist")
+                if not IsValid(window) then return end
+
+                local parent = window:GetParent()
+                if not IsValid(parent) then return end
+
+                parent:CloseWindow()
             end
         end
 
