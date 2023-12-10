@@ -90,6 +90,7 @@ do
         self.Type = type
         self.Icon = Icons[type]
         self.Length = length or 5
+        self.Time = CurTime()
 
         local message = self.Message
         if IsValid(message) then
@@ -97,6 +98,8 @@ do
             message:SetAutoStretchVertical(true)
             message:SetWrap(true)
         end
+
+        self:PerformLayout()
     end
 
     function PANEL:SetVerticalPos(pos)
@@ -112,7 +115,7 @@ do
     function PANEL:Start()
         timer.Simple(self.Length, function ()
             deleteNotify(self.VerticalPos)
-
+            
             self.RemoveState = true
         end)
     end
@@ -190,9 +193,15 @@ do
 
         message:SetPos(mTall * 1.3, halfMessageMargin)
 
+        local barSize = 0
+
+        if self.Length >= 10 then
+            barSize = ScreenScale(7)
+        end 
+
         if messageWide >= notifyWideMax then
             self:SetWide(notifyWideMax)
-            self:SetTall(message:GetTall() + messageMarginTall)
+            self:SetTall(message:GetTall() + messageMarginTall + barSize)
             message:SetWide(notifyWideMax - mTall * 2)
         else
             self:SetSize(messageWide, messageTall)
@@ -209,12 +218,19 @@ do
         local round = ScreenScale(2)
         local offset = ScreenScale(1)
         
-        draw.RoundedBox(round, 0, 0, tall, h, Colors[self.Type], true, false, true, false)
-        draw.RoundedBox(round, tall + offset, 0, w - tall - offset, h, COLOR_BUTTON_BACKGROUND, false, true, false, true)
+        draw.RoundedBox(round, 0, 0, tall, h, Colors[self.Type])
+        draw.RoundedBox(round, tall + offset, 0, w - tall - offset, h, COLOR_BUTTON_BACKGROUND)
 
         surface.SetDrawColor(COLOR_WHITE)
         surface.SetMaterial(self.Icon)
         surface.DrawTexturedRect(offset / 2, h / 2 - size / 2, size, size)
+
+        local barX = tall + offset * 2
+        local barY = h - offset * 3
+        local barWide = w - barX - offset
+        local currentBar = math.Clamp((CurTime() - self.Time), 0, self.Length) / self.Length
+
+        draw.RoundedBox(3, barX, barY, barWide * currentBar, offset * 2, Colors[self.Type])
     end
 
     vgui.Register("PRSBOX.Notify", PANEL, "EditablePanel")
@@ -253,9 +269,9 @@ net.Receive("PRSBOX.NotifySend", function (len)
 end)
 
 concommand.Add("print_notify", function()
-    printNotify()
+    -- printNotify()
 end)
 
 concommand.Add("test_notify", function (ply, cmd, args)
-    notification.AddLegacy("Test jadhs klhakdjhasjkh djklashjkd hasjhdasj dhjnotification", NOTIFY_ERROR, 10)
+    notification.AddLegacy("Hello World", NOTIFY_ERROR, 30)
 end)
