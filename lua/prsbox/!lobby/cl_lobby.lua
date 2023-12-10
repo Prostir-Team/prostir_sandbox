@@ -340,10 +340,6 @@ MENU:RegisterButton("Покинути сервер", 5, PLAYER_NONE, function ()
     RunConsoleCommand("disconnect")
 end)
 
-MENU:RegisterButton("Test window", 2, PLAYER_NONE, function (menu)
-    menu:OpenWindow("DButton", "Test window", true, 150, 80)
-end)
-
 ---
 --- Open lobby
 ---
