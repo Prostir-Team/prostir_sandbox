@@ -2,7 +2,7 @@ util.AddNetworkString("PRSBOX.Icons")
 
 local PLAYER = FindMetaTable("Player")
 
-function PLAYER:AddIcon(iconPath)
+function PLAYER:AddIcon(iconPath)    
     net.Start("PRSBOX.Icons")
         net.WriteString(self:SteamID()) -- Steam id
         net.WriteString(iconPath) -- icon

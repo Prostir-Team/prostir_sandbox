@@ -32,9 +32,7 @@ local function AddPlayerIcon(steamid, iconPath)
 
     if ExistPlayerIcon(steamid, iconPath) then return end
 
-    local iconMaterialSettings = "smooth 0"
-
-    local iconMaterial = Material(iconPath, iconMaterialSettings)
+    local iconMaterial = Material(iconPath)
     table.insert(PLAYERS_ICONS[steamid], iconMaterial)
 end 
 
@@ -62,7 +60,7 @@ hook.Add("PostDrawOpaqueRenderables", "PRSBOX.Icon.Draw", function ()
 
     for _, ply in ipairs(players) do
         if not IsValid(ply) then continue end
-        if LocalPlayer() == ply then return end
+        -- if LocalPlayer() == ply then return end
         if not ply:Alive() then continue end
 
         local steamid = ply:SteamID()
