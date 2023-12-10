@@ -66,7 +66,7 @@ local function endVote()
         return
     end
 
-    MakeNotify("Карта " .. mapWinner .. " була обрана до зміни!", NOTIFY_HINT, 10)
+    MakeNotify("Карта " .. mapWinner .. " була обрана до зміни!", NOTIFY_HINT, 30)
 
     timer.Simple(10, function ()
         RunConsoleCommand("changelevel", mapWinner)
@@ -89,10 +89,8 @@ local function startVote()
     local maps = getMaps()
     VOTE_STATE = VOTE_CHANGING
 
-    OpenWindow("PRSBOX.VoteMenu", "Голосовуння", true, 380, 300, false, maps)
+    OpenWindow("PRSBOX.VoteMenu", "Голосовуння", false, 380, 300, true, maps)
     MakeNotify("Почалося голосування за зміну карти!", NOTIFY_HINT, 30)
-
-    print("Vote has been started")
 
     timer.Simple(30, function ()
         print("Vote has been ended")
