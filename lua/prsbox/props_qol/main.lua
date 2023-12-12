@@ -174,7 +174,7 @@ do --Проп флай
 			if ( GetObserverMode( ply ) > 0 ) then continue end
 
 			tracehull.start = GetPos( ply )
-			VecSet( tracehull.endpos, start )
+			VecSet( tracehull.endpos, tracehull.start )
 			tracehull.endpos.z = tracehull.endpos.z - 72
 
 			tracehull.filter = ply
