@@ -212,9 +212,9 @@ local function UpdateHUD()
     end
 
     -- Elements
-    if( PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE:GetBool() )then
+    /*if( PRSBOX_HUD_ELEMENTS_COMPASS_ACTIVE:GetBool() )then
         PRSBOX_HUD_drawCompass()
-    end
+    end*/
 
     -- If QuestsPanel_drawQuests exists then call it.
     if(_G["QuestsPanel_drawQuests"]!=nil)then
