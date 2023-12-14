@@ -71,6 +71,16 @@ do
     local PANEL = {}
 
     function PANEL:Init()
+        self:LoadDocument("main")
+    end
+
+    vgui.Register("PRSBOX.Infopanel.TabContent.Main", PANEL, "PRSBOX.Infopanel.TabContent")
+end
+
+do
+    local PANEL = {}
+
+    function PANEL:Init()
         self:LoadDocument("rules")
     end
 
@@ -86,6 +96,7 @@ do
             self.TabMenu = tabMenu
 
             tabMenu:Dock(LEFT)
+            tabMenu:AddTab("Головна", "PRSBOX.Infopanel.TabContent.Main")
             tabMenu:AddTab("Правила", "PRSBOX.Infopanel.TabContent.Rules")
 
             tabMenu:InitButtons()
