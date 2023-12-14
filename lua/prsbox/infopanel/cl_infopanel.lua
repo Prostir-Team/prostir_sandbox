@@ -24,39 +24,44 @@ do
     end
 
     function PANEL:LoadDocument(docName) -- md parser code lmao
-        local filename = docName .. ".md"
-        print("Loading document: " .. filename)
-        local f = file.Read("data/infopanel_docs/" .. filename, "GAME")
-        if f == nil then
-            local errmsg = self:Add(PRMARKDOWN_HEADING1)
-            errmsg:SetText("На жаль, документ не вдалось завантажити :(")
-            errmsg:Dock(TOP)
-            print("Loading failed.")
-            return
-        end
-        local data_arr = string.Explode("\n", f)
-        for _, line in ipairs(data_arr) do
-            local str = string.Explode(" ", line)
-            local str_type
-            local elm = string.sub(str[1], 1, 2) -- first symbol of the first string element
-            if tonumber(elm) != nil then -- need to check if the string is an ordered list
-                str_type = PRMARKDOWN_ORDERED
-            else
-                str_type = PrMarkdown_Symbols[str[1]]
-                if str_type == nil then -- if it's not a special element, we should make it a plain text
-                    str_type = PRMARKDOWN_PLAIN
+        net.Start("PRSBOX.ReceiveDocs")
+        net.WriteString(docName)
+        net.SendToServer()
+        net.Receive("PRSBOX.SendDocs", function(len)
+            MsgN("[INFOPANEL] Receiving contents from server.")
+            local f = net.ReadString()
+            if f == "" then
+                local errmsg = self:Add(PRMARKDOWN_HEADING1)
+                errmsg:SetText("На жаль, документ не вдалось завантажити :(")
+                errmsg:Dock(TOP)
+                MsgN("[INFOPANEL] Loading failed.")
+                MsgN("[INFOPANEL] Contents of \"f\": ", f)
+                return
+            end
+            local data_arr = string.Explode("\n", f)
+            for _, line in ipairs(data_arr) do
+                local str = string.Explode(" ", line)
+                local str_type
+                local elm = string.sub(str[1], 1, 2) -- first symbol of the first string element
+                if tonumber(elm) != nil then -- need to check if the string is an ordered list
+                    str_type = PRMARKDOWN_ORDERED
+                else
+                    str_type = PrMarkdown_Symbols[str[1]]
+                    if str_type == nil then -- if it's not a special element, we should make it a plain text
+                        str_type = PRMARKDOWN_PLAIN
+                    end
                 end
-            end
 
-            if (str_type != PRMARKDOWN_PLAIN) and (str_type != PRMARKDOWN_ORDERED) then
-                line = table.concat(str, " ", 2)
-            end
+                if (str_type != PRMARKDOWN_PLAIN) and (str_type != PRMARKDOWN_ORDERED) then
+                    line = table.concat(str, " ", 2)
+                end
 
-            local element = self:Add(str_type)
-            element:SetText(line)
-            element:Dock(TOP)
-        end
-        print("Loading succeeded.")
+                local element = self:Add(str_type)
+                element:SetText(line)
+                element:Dock(TOP)
+            end
+            MsgN("[INFOPANEL] Loading succeeded.")
+        end)
     end
 
     vgui.Register("PRSBOX.Infopanel.TabContent", PANEL, "DScrollPanel")
