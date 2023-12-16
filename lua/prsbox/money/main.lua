@@ -4,6 +4,8 @@ if SERVER then
     include("prsbox/money/sv_money.lua")
     AddCSLuaFile("prsbox/money/cl_money.lua")
 
+    AddCSLuaFile("prsbox/money/cl_money_menu.lua")
+
     -- Connect money to spawn menu
 
     include("prsbox/money/sv_spawnmenu.lua")
@@ -14,7 +16,6 @@ end
 
 if CLIENT then
     include("prsbox/money/cl_money.lua")
-    
     include("prsbox/money/cl_spawnmenu.lua")
 end
 
@@ -49,4 +50,8 @@ if SERVER then
 
         self:SetMoney(money - quantity)
     end
+end
+
+if CLIENT then
+    include("prsbox/money/cl_money_menu.lua")
 end

@@ -225,12 +225,15 @@ do
         surface.SetMaterial(self.Icon)
         surface.DrawTexturedRect(offset / 2, h / 2 - size / 2, size, size)
 
-        local barX = tall + offset * 2
-        local barY = h - offset * 3
-        local barWide = w - barX - offset
-        local currentBar = math.Clamp((CurTime() - self.Time), 0, self.Length) / self.Length
+        if self.Length >= 10 then
+            local barX = tall + offset * 2
+            local barY = h - offset * 3
+            local barWide = w - barX - offset
+            local currentBar = math.Clamp((CurTime() - self.Time), 0, self.Length) / self.Length
 
-        draw.RoundedBox(3, barX, barY, barWide * currentBar, offset * 2, Colors[self.Type])
+            draw.RoundedBox(3, barX, barY, barWide * currentBar, offset * 2, Colors[self.Type])
+        end
+        
     end
 
     vgui.Register("PRSBOX.Notify", PANEL, "EditablePanel")

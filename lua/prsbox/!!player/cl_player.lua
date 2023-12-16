@@ -233,3 +233,27 @@ hook.Add("HUDShouldDraw", "PRSBOX.Hud.DisableHL2Crosshair", function (name)
         return false 
     end
 end)
+
+---
+--- PLAYER MESSAGES
+---
+
+local plycol = Color(255,255,25)
+local idtbl = {
+    [1] = { s = " покинув гру.",         c = Color(202,58,58) },
+    [2] = { s = " приєднується до гри.", c = Color(245,205,73) },
+    [3] = { s = " приєднався до гри.",   c = Color(88,231,112) }
+}
+
+hook.Add( "ChatText", "PRSBOX.PlayerMessages.Hide", function( index, name, text, type )
+    if ( type == "joinleave" ) then
+        return true
+    end
+end )
+
+net.Receive("PRSBOX.PlayerMessages", function(len)
+    local name = net.ReadString()
+    local id = net.ReadUInt(2)
+    local t = idtbl[id]
+    chat.AddText( plycol, name, t.c, t.s )
+end)
