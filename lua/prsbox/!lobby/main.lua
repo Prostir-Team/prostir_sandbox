@@ -46,11 +46,23 @@ if SERVER then
         net.Send(self)
     end
     
+    function PLAYER:CloseWindow(windowName)
+        net.Start("PRSBOX.Lobby.CloseWindow")
+            net.WriteString(windowName)
+        net.Send(self)
+    end
+
+    function CloseWindow(windowName)
+        net.Start("PRSBOX.Lobby.CloseWindow")
+            net.WriteString(windowName)
+        net.Broadcast()
+    end
+
     function OpenWindow(windowName, windowTitle, closeButton, wide, tall, open, data)
         net.Start("PRSBOX.Lobby.OpenWindow")
             net.WriteString(windowName)
             net.WriteString(windowTitle)
-            net.WriteBool(closeButton or true)
+            net.WriteBool(closeButton)
             net.WriteInt(wide or 200, 11)
             net.WriteInt(tall or 100, 11)
             net.WriteBool(open or false)

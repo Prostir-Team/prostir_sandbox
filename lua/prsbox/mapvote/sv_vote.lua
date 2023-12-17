@@ -51,7 +51,7 @@ local function endVote()
     local mapsWinner = getWinner(votes)
     if not mapsWinner then
         
-        
+
         return
     end
 
@@ -61,7 +61,15 @@ local function endVote()
     if mapWinner == currentMap then
         MakeNotify("Карта " .. mapWinner .. " залишається!", NOTIFY_HINT, 10)
         
-        VOTE_STATE = VOTE_READY
+        CloseWindow("PRSBOX.VoteMenu")
+
+        print("Hello World adasld ashjda s")
+
+        timer.Simple(600, function ()
+            VOTE_STATE = VOTE_READY
+    
+            MakeNotify("Тепер можна голосувати", NOTIFY_HINT, 5)
+        end)
 
         return
     end
@@ -89,6 +97,7 @@ local function startVote()
     local maps = getMaps()
     VOTE_STATE = VOTE_CHANGING
 
+    print("AJHdkjashjd")
     OpenWindow("PRSBOX.VoteMenu", "Голосовуння", false, 380, 300, true, maps)
     MakeNotify("Почалося голосування за зміну карти!", NOTIFY_HINT, 30)
 
@@ -128,6 +137,10 @@ net.Receive("PRSBOX.AddVote", function (len, ply)
         net.WriteString(map)
         net.WriteString(prevMap)
     net.Broadcast()
+end)
+
+concommand.Add("start_vote", function (ply)
+    startVote()
 end)
 
 hook.Add("PRSBOX:StartVote", "PRSBOX.StartVote", function ()

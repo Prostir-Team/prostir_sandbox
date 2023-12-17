@@ -116,6 +116,16 @@ do
         return window.InfoPanel
     end
 
+    function PANEL:CloseWindow(classname)
+        local window = self:GetWindow(classname)
+        if not IsValid(window) then return end
+
+        local parent = window:GetParent()
+        if not IsValid(parent) then return end
+
+        parent:CloseWindow()
+    end
+
     function PANEL:OnWindowClose(classname)
         if not self:WindowExists(classname) then return end
         
@@ -364,6 +374,8 @@ net.Receive("PRSBOX.Lobby.CheckDeath", function (len, ply)
 end)
 
 net.Receive("PRSBOX.Lobby.OpenWindow", function (len)
+    if not IsValid(MAIN_MENU) then return end
+    
     local windowName = net.ReadString()
     local windowTitle = net.ReadString()
     local closeButton = net.ReadBool()
@@ -377,6 +389,13 @@ net.Receive("PRSBOX.Lobby.OpenWindow", function (len)
     end
 
     MAIN_MENU:OpenWindow(windowName, windowTitle, closeButton, wide, tall, data)
+end)
+
+net.Receive("PRSBOX.Lobby.CloseWindow", function (len)
+    if not IsValid(MAIN_MENU) then return end
+    
+    local windowName = net.ReadString()
+    MAIN_MENU:CloseWindow(windowName)
 end)
 
 ---

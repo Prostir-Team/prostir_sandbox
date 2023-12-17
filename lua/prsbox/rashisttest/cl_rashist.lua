@@ -305,13 +305,7 @@ do
                 RunConsoleCommand("prsbox_lobby_spawn")
                 MAIN_MENU:CloseMenu()
 
-                local window = MAIN_MENU:GetWindow("PRSBOX.Rashist")
-                if not IsValid(window) then return end
-
-                local parent = window:GetParent()
-                if not IsValid(parent) then return end
-
-                parent:CloseWindow()
+                MAIN_MENU:CloseWindow("PRSBOX.Rashist")
             end
         end
 

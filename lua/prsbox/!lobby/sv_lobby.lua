@@ -1,6 +1,7 @@
 util.AddNetworkString("PRSBOX.Lobby.StartMenu")
 util.AddNetworkString("PRSBOX.Lobby.CheckDeath")
 util.AddNetworkString("PRSBOX.Lobby.OpenWindow")
+util.AddNetworkString("PRSBOX.Lobby.CloseWindow")
 
 local PLAYER_LAST_WEAPON = NULL 
 
