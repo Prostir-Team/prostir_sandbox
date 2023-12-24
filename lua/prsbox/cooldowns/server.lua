@@ -72,10 +72,12 @@ end
 
 local function SentSpawn( ply, class )
 	local entTable = scripted_ents.GetStored( class )
-	local t = entTable.t
-	local Category = t.Category
+	if( not entTable )then return nil end
 
-	--PrintTable( t )
+	local t = entTable.t
+	if( not t )then return nil end
+
+	local Category = t.Category
 
 	return DoCooldown( ply, class, Category )
 end
