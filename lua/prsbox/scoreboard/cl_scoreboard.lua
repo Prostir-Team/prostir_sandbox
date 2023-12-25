@@ -71,21 +71,15 @@ local user_groups = {
     ["superadmin"] = Color(142, 255, 114), -- Команда
     ["admin"] = Color(245, 193, 81), -- Головний модератор
     ["operator"] = Color(255, 81, 81), -- Модератор
-    ["ACE"] = Color(0, 200, 255), -- Гравець + ACE
     ["user"] = Color(0, 140, 255) -- Гравець
 }
-
-local DefaultGroupColor = Color(0,140,255)
 
 local user_names = {
     ["superadmin"] = "Команда",
     ["admin"] = "Головний модератор",
     ["operator"] = "Модератор",
-    ["ACE"] = "Звичайний гравець + ACE",
     ["user"] = "Звичайний гравець"
 }
-
-local DefaultGroupName = "Звичайний гравець"
 
 -- Scoreboard player button
 
@@ -336,7 +330,7 @@ do
 
     function PANEL:Paint(w, h)
         -- drawRoundedBox(0, 0, 0, w, h, Color(255, 0, 0))
-        local group_color = user_groups[ self.group ] or DefaultGroupColor
+        local group_color = user_groups[ self.group ]
 
         drawRoundedBoxEx(corner_round, 0, 0, corner_round, h, group_color, true, false, true, false)
 
@@ -344,8 +338,7 @@ do
         drawDrawText(self.name, "PROSTIR.FontMiddle", name_pos_x, ScreenScale(.5), color_white, TEXT_ALIGN_LEFT)
         
         local us_color = Color(group_color.r, group_color.g, group_color.b, self._alpha)
-        local group_name = user_names[self.group] or DefaultGroupName
-        drawDrawText(group_name, "PROSTIR.FontMiddle", name_pos_x + surface.GetTextSize(self.name) + ScreenScale(5), ScreenScale(.5), us_color, TEXT_ALIGN_LEFT)
+        drawDrawText(user_names[self.group], "PROSTIR.FontMiddle", name_pos_x + surface.GetTextSize(self.name) + ScreenScale(5), ScreenScale(.5), us_color, TEXT_ALIGN_LEFT)
 
         drawDrawText(self.frags, "PROSTIR.FontLittle", frags_pos, ScreenScale(2.5), color_white, TEXT_ALIGN_CENTER)
         drawDrawText(self.deaths, "PROSTIR.FontLittle", death_pos, ScreenScale(2.5), color_white, TEXT_ALIGN_CENTER)
@@ -489,7 +482,7 @@ hook.Add("ScoreboardHide", "PROSTIR.ScoreboardHide", function()
 end)
 
 concommand.Add( "scoreboard_reload", function( ply, cmd, args ) 
-    if IsValid( PRSBOXSCOREBOARD ) then
-        PRSBOXSCOREBOARD:Remove()
-    end
+    if IsValid( PRSBOXSCOREBOARD ) then 
+        PRSBOXSCOREBOARD:Remove() 
+    end 
 end)
