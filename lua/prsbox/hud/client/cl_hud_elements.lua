@@ -2,7 +2,7 @@ local COMPASS_CachedAng = 0
 local ply = LocalPlayer()
 local MaterialStamina = Material("hud/stamina_bolt.png")
 
-local LIMITATIONS = {
+/*local LIMITATIONS = {
     ["FadeTime"] = 1, -- "Popping in/out" time
     ["RemainingTime"] = 2.5, -- For how many seconds should display be remained after it was changed last time?
     ["COLOR_Background"] = Color(0,0,0,105),
@@ -31,7 +31,7 @@ local LIMITATIONS = {
         ["AnimPlaying"] = 0,
         ["AnimProgress"] = 0,
     },
-}
+}*/
 
 -- Draws compass if active
 function PRSBOX_HUD_drawCompass()
@@ -40,7 +40,7 @@ end
 
 -- Draws two types of Stamina indicators, depending if either prsbox hud is enabled or not.
 function PRSBOX_HUD_StaminaIndicator()
-    local RemainingStamina = ply:GetNWInt("prsbox.sprint_stamina")/LIMITATIONS["STAMINA"]["MaxStamina"]
+    /*local RemainingStamina = ply:GetNWInt("prsbox.sprint_stamina")/LIMITATIONS["STAMINA"]["MaxStamina"]
 
     -- Anim starters
     if( LIMITATIONS["STAMINA"]["CachedValue"]!=ply:GetNWInt("prsbox.sprint_stamina") )then -- If value changed and it isn't displaying - start displaying
@@ -90,6 +90,7 @@ function PRSBOX_HUD_StaminaIndicator()
     end
 
     LIMITATIONS["STAMINA"]["CachedValue"] = RemainingStamina*LIMITATIONS["STAMINA"]["MaxStamina"]
+    */
 end
 
 -- Draws two types of Air indicators, depending if either prsbox hud is enabled or not.
