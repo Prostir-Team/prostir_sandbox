@@ -1,4 +1,4 @@
-// Once again, this code was written by Expression 2
+-- Once again, this code was written by Expression 2
 
 CreateConVar(   "advsp_enabled", "1", { FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Controls spawn protection, if it's enabled or not")
 CreateConVar(   "advsp_time", "10", { FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Controls spawn protection, if it's enabled or not")

@@ -1,12 +1,10 @@
-// This is Advanced Spawn Protection for Prostir 2.0 (idi nahuy)
-// Which means that icons are replaced with the default one, and no halo around players to keep this code 'optimized' as Isemenuk requested
-// My first commit here btw
+-- This is Advanced Spawn Protection for Prostir 2.0 (idi nahuy)
+-- Which means that icons are replaced with the default one, and no halo around players to keep this code 'optimized' as Isemenuk requested
+-- My first commit here btw
 
 
 local alpha = 255
 CreateConVar(   "advsp_draw_overlay", "0", { FCVAR_ARCHIVE }, "Enables small overlay over your screen when protection is on")
-// CreateConVar(   "advsp_draw_halo", "1", { FCVAR_ARCHIVE }, "Draws green outline")
-// CreateConVar(   "advsp_draw_custom_icons", "0", { FCVAR_ARCHIVE }, "Uses more 'modern' variant for icons instead of the 'icon16' icons")
 
 concommand.Add( "advsp_version", function( ply )
     print("Version - Prostir 1.4 ")
@@ -88,19 +86,3 @@ hook.Add("HUDPaint", "ADVSP.CreateSigmaHud", function()
         
     end
 end)
-
-
-// hook.Add( "PreDrawHalos", "ADVSP.Protecthalo", function()
-
-//     if GetConVar("advsp_enabled"):GetBool() then // and GetConVar("advsp_enabled"):GetBool() 
-// 	    local staff = {}
-    
-// 	    for _, ply in ipairs( player.GetAll() ) do
-// 		    if ply:GetPos():Distance( LocalPlayer():GetPos() ) < 1000 and ply:GetNWBool("SpawnProtected", true) and GetConVar("advsp_draw_halo"):GetBool() then
-// 			    staff[ #staff + 1 ] = ply
-// 		    end
-// 	    end
-
-// 	    halo.Add( staff, Color(100,255,100), 0, 0, 1, true, false )
-//     end
-// end )
