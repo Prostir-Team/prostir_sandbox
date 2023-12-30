@@ -111,3 +111,7 @@ end)
 
 hook.Add("PRSBOX.EnterBuildMode", "PRSBOX.Override.EnterBuildMode", enterBuildMode)
 hook.Add("PRSBOX.EnterPvpMode", "PRSBOX.Override.EnterPvpMode", enterPvpMode)
+
+hook.Add("PlayerInitialSpawn", "PRSBOX.Build.DisableIfConnected", function (ply)
+    if playerInBuildmode(ply) then enterPvpMode(ply) end
+end )
