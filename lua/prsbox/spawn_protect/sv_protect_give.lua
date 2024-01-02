@@ -37,7 +37,7 @@ hook.Add("PlayerSwitchWeapon", "ADVSP.ShieldRemoveWeapon", function(ply, prevWep
         end
     end
 
-    if Revoke and not ply:GetNWBool( "SpawnProtected" ) and GetConVar("advsp_revoke_on_weapon"):GetBool() then
+    if Revoke and ply:GetNWBool( "SpawnProtected" ) and GetConVar("advsp_revoke_on_weapon"):GetBool() then
         ply:SetNWBool( "SpawnProtected", false )
         ply:EmitSound( "buttons/combine_button7.wav" )
         ply:SetNWFloat("SpawnProtectionEndTime", 0)
