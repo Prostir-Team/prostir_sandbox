@@ -69,8 +69,9 @@ local ping_pos = ScreenScale(320)
 
 local user_groups = {
     ["superadmin"] = Color(142, 255, 114), -- Команда
-    ["admin"] = Color(245, 193, 81), -- Головний модератор
-    ["operator"] = Color(255, 81, 81), -- Модератор
+    ["admin"] = Color(255, 81, 81), -- Модератор
+    --["admin"] = Color(245, 193, 81), -- Головний модератор
+    ["operator"] = Color(255, 81, 81), -- Модератор(неактуальний)
     ["ACE"] = Color(0, 200, 255), -- Гравець + ACE
     ["user"] = Color(0, 140, 255) -- Гравець
 }
@@ -79,7 +80,7 @@ local DefaultGroupColor = Color(0,140,255)
 
 local user_names = {
     ["superadmin"] = "Команда",
-    ["admin"] = "Головний модератор",
+    ["admin"] = "Модератор",
     ["operator"] = "Модератор",
     ["ACE"] = "Звичайний гравець + ACE",
     ["user"] = "Звичайний гравець"
