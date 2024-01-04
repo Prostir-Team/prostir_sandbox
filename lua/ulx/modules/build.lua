@@ -3,6 +3,7 @@ do
         if not IsValid(calling_ply) then return end
         if not calling_ply:IsPlayer() then return end
         if calling_ply:BuildMode() then return end
+        if calling_ply:GetBanBuild() then return end
 
         ulx.fancyLogAdmin( calling_ply, "#A has enabled the build mode!")
 

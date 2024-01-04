@@ -2,6 +2,7 @@ util.AddNetworkString("PRSBOX.Net.BuildMode")
 
 local IsValid = IsValid
 local PLAYERS_IN_BUILDMODE = {}
+local BUILDBANS = {}
 
 local PLAYER = FindMetaTable("Player")
 local ENTITY = FindMetaTable("Entity")
@@ -30,6 +31,12 @@ local function playerInBuildmode(ply)
     return table.HasValue(PLAYERS_IN_BUILDMODE, steamid)
 end
 
+
+local function IsBannedBuild( ply )
+    return BUILDBANS[ ply ] and ( BUILDBANS[ ply ] == 0 or BUILDBANS[ ply ] > CurTime() )
+end
+
+
 local function enterBuildMode(ply)
     if ( not IsValid(ply) ) then return end
     --if not ply:IsValid() then return end --Викликає Entity:IsValid(), корисно лише при перевірці чи ця ентіті не worldspawn
@@ -37,6 +44,16 @@ local function enterBuildMode(ply)
     local steamid = ply:SteamID()
 
     if playerInBuildmode(ply) then return end
+
+    if ( IsBannedBuild( ply ) ) then 
+        timeleft = BUILDBANS[ ply ] - CurTime()
+        if ( timeleft <= 0 ) then
+            ply:PrintMessage( HUD_PRINTCENTER, "Перехід в білд заборонено." )
+            return
+        end
+        ply:PrintMessage( HUD_PRINTCENTER, "Перехід в білд заборонено на " .. math.floor( timeleft ) .. " сек." )
+        return 
+    end
 
     ply:AddIcon("icon16/wrench.png")
     ply:GodEnable()
@@ -69,6 +86,26 @@ local function enterPvpMode(ply)
     net.Send(ply)
 end
 
+
+local function setPvpMode(ply)  -- Сетає пвп мод не вбиваючи гравця, потрібно для ulx функції
+    if not IsValid(ply) then return end
+    if not ply:IsValid() then return end
+    
+    local steamid = ply:SteamID()
+
+    if not playerInBuildmode(ply) then return end
+
+    ply:RemoveIcon("icon16/wrench.png")
+    ply:GodDisable()
+
+    table.RemoveByValue(PLAYERS_IN_BUILDMODE, steamid) -- TODO: це робить цикл через всю таблицю, використовуйте хеш таблицю
+
+    net.Start("PRSBOX.Net.BuildMode") -- TODO: використовуйте біт операцї для передачі модів гравці ( афк, білд, тд )
+        net.WriteBool(false) -- State of build mode
+    net.Send(ply)
+end
+
+
 ---
 --- Player meta
 ---
@@ -88,6 +125,38 @@ function ENTITY:GetBuildMode()
 
     return r
 end
+
+
+function PLAYER:SetPvpMode()
+    setPvpMode( self )
+end
+
+function PLAYER:SetBuildMode()
+    enterBuildMode( self )
+end
+
+
+function PLAYER:BanBuildMode( time )
+    if playerInBuildmode( self ) then
+        setPvpMode( self )
+    end
+
+    if ( not time ) then
+        BUILDBANS[ self ] = 0
+        return
+    end
+
+    BUILDBANS[ self ] = CurTime() + time
+end
+
+function PLAYER:UnbanBuildMode()
+    BUILDBANS[ self ] = nil
+end
+
+function PLAYER:GetBanBuild()
+    return BUILDBANS[ self ] and ( BUILDBANS[ self ] == 0 or BUILDBANS[ self ] > CurTime() )
+end
+
 
 ---
 --- hooks
@@ -115,3 +184,10 @@ hook.Add("PRSBOX.EnterPvpMode", "PRSBOX.Override.EnterPvpMode", enterPvpMode)
 hook.Add("PlayerInitialSpawn", "PRSBOX.Build.DisableIfConnected", function (ply)
     if playerInBuildmode(ply) then enterPvpMode(ply) end
 end )
+
+hook.Add( "PlayerDisconnected", "PRSBOX.Build.UnbanBuildMode", function( ply )
+    ply:UnbanBuildMode()
+end )
+
+
+
