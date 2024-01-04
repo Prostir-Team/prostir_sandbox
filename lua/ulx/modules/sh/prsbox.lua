@@ -25,6 +25,7 @@ function ulx.setpvp( calling_ply, target_plys, amount )
 	for i = 1, #target_plys do
 		local v = target_plys[ i ]
 		if !v:GetBuildMode() then continue end
+		v:SetMoveType(MOVETYPE_WALK)
 		v:SetPvpMode()
 		table.insert( affected_plys, v )
 	end
