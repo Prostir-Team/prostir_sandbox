@@ -12,7 +12,7 @@ ENT.DisableDuplicator = true
 
 ENT.Model = "models/props_lab/reciever01b.mdl"
 ENT.Text = "Модуль\nПокращення"
-ENT.TextScale = .08
+ENT.TextScale = .2
 
 ENT.NoSit = true
 ENT.NoCleanup = true
@@ -61,6 +61,6 @@ function ENT:Draw()
 	local CamPos = Pos + (Up * maxz) 
 
 	cam.Start3D2D( CamPos, Ang, self.TextScale )
-		draw.DrawText( self.Text, "40px", 0, -50, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.DrawText( self.Text, "Default", 0, -20, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	cam.End3D2D()
 end
