@@ -32,6 +32,7 @@ function PLAYER:GetMoney()
     end
 end
 
+
 if SERVER then
     function PLAYER:SetMoney(quantity)
         local steamid = self:SteamID64()
@@ -47,8 +48,12 @@ if SERVER then
 
     function PLAYER:SubtractMoney(quantity)
         local money = self:GetMoney()
+        local result = ( money - quantity )
 
-        self:SetMoney(money - quantity)
+        if result >= 0 then
+            self:SetMoney(money - quantity)
+        else self:SetMoney(0)
+        end
     end
 end
 
