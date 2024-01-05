@@ -33,7 +33,7 @@ ENT.NoSit = true
 ENT.NoCleanup = true
 
 --ENT.Model = "models/props_prsbox/karbowanecfarm.mdl"
-ENT.Model = "addons/prostir_content/models/karbowanecfarm.mdl"
+ENT.Model = "models/karbowanecfarm.mdl"
 ENT.ImpactSound = "Computer.ImpactHard"
 ENT.DamageSound = "Computer.BulletImpact"
 ENT.BreakSound = "Canals.d1_canals_01a_metal_box_break2"

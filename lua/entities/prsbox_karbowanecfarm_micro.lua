@@ -11,7 +11,7 @@ ENT.AdminOnly = true
 ENT.DisableDuplicator = true
 
 --ENT.Model = "models/props_prsbox/karbowanec_micro.mdl"
-ENT.Model = "addons/prostir_content/models/karbowanec_micro.mdl"
+ENT.Model = "models/karbowanec_micro.mdl"
 ENT.ConsumeKoef = 1.5
 ENT.MoneyKoef = 1
 ENT.MineTimeKoef = 2.68
