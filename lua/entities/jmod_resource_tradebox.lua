@@ -174,7 +174,8 @@ if SERVER then
 			local ply = dmginfo:GetAttacker()
 
 			if ( IsValid(ply) and ply:IsPlayer() ) then
-				ply:SendKillNotf( 200, "отримано" )
+				--ply:SendKillNotf( 200, "отримано" )
+				ply:AddMoney(200)
 			end
 
 			self:Remove()
