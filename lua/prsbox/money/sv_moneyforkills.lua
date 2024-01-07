@@ -60,7 +60,7 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
     local minMoneyValue = cfg.simpleKill.minMoney
     local maxMoneyValue = cfg.simpleKill.maxMoney
 
-    print( checkWeapon(victim) )
+   -- print( checkWeapon(victim) )
     if checkWeapon(victim) then
 
         if ( victim:LastHitGroup() == HITGROUP_HEAD ) then
@@ -84,7 +84,7 @@ hook.Add("PlayerDeath", "PRSBOX.MoneyForKill", function(victim, inflictor, attac
 
         attacker:AddMoney(reward)
 
-    else attacker:SubtractMoney(40)
+    else print( attacker:Name().." kill unarmed player!" )
     
     end
     
