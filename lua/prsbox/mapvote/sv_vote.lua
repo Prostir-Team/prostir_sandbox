@@ -63,8 +63,6 @@ local function endVote()
         
         CloseWindow("PRSBOX.VoteMenu")
 
-        print("Hello World adasld ashjda s")
-
         timer.Simple(600, function ()
             VOTE_STATE = VOTE_READY
     
@@ -82,7 +80,10 @@ local function endVote()
 end
 
 local function getMaps()
-    local files = file.Find("maps/gm_*.bsp", "GAME")
+    local files = {}
+    table.Add(files, file.Find("maps/gm_*.bsp", "GAME"))
+    table.Add(files, file.Find("maps/rp_*.bsp", "GAME"))
+    table.Add(files, file.Find("maps/zm_*.bsp", "GAME"))
 
     return files
 end
