@@ -29,7 +29,7 @@ do
 
     function PANEL:SetMap(mapName)
         self.MapName = mapName
-        self.MapIcon = Material("../maps/thumb/" .. mapName .. ".png", "smooth")
+        self.MapIcon = Material("maps/thumb/" .. mapName .. ".png", "smooth")
     end
 
     function PANEL:PerformLayout()
