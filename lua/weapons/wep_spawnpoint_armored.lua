@@ -2,6 +2,8 @@ AddCSLuaFile() -- за всратий код нехай плачте ще біл
 
 SWEP.Author = "Findya"
 SWEP.Instructions = "Не маленькі, розберетеся."
+SWEP.PrintName	= "Броньована Точка Відродження"		
+SWEP.Category = "Prostir Sandbox"		
 
 SWEP.UseHands = true
 SWEP.Spawnable = true
@@ -24,7 +26,6 @@ SWEP.Secondary.Ammo = "none"
 
 SWEP.AutoSwitchTo = false
 SWEP.AutoSwitchFrom	= false
-SWEP.PrintName	= "Armored Spawn Point"			
 SWEP.Slot = 5
 SWEP.SlotPos = 15
 SWEP.DrawAmmo = false
@@ -43,7 +44,11 @@ function SWEP:Initialize()
 end
 
 function SWEP:PreDrawViewModel( vm, weapon, ply )
-	render.MaterialOverride( self.IMAT )
+	if Reload < 6 then
+		render.MaterialOverride( Material("Models/effects/comball_tape") )
+	else
+		render.MaterialOverride( self.IMAT )
+	end
 end
 
 function SWEP:ViewModelDrawn( vm, weapon, ply )
@@ -70,7 +75,7 @@ function SWEP:TrackProblems()
 		return "Ви повинні стояти на місці"
 	end
 
-	if Reload <= 2.99 then
+	if Reload < 2 or CLIENT and Reload < 6  then
 		return "Перезарядка"
 	end
 
@@ -96,7 +101,7 @@ end
 function SWEP:PrimaryAttack()
 	if CLIENT then return end
 
-	self:SetNextPrimaryFire(CurTime() + 0.5)
+	self:SetNextPrimaryFire(CurTime() + 0.2)
 
 	local Owner = self:GetOwner()
 	
@@ -156,15 +161,14 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Think()
-	if Reload < 2.99 then
-		Reload = math.Clamp(Reload + 0.010, 0, 3) 
+	if Reload < 6 then
+		Reload = math.Clamp(Reload + 0.005, 0, 6) 
 		self:SetHoldType("empty")
 	else
 		self:SetHoldType("slam")
 	end
 
 	local Owner = self:GetOwner()
-	Reload = Reload - Owner:GetVelocity():Length() / 7500
 
 	if Owner:GetNWBool("SpawnProtected") then
 		Reload = 0
@@ -199,8 +203,9 @@ function SWEP:DrawHUD()
 		
 	
 		surface.SetMaterial( Material("icon16/flag_green.png") )
-		surface.DrawRect( Xbox-185+4, Ybox-120+4, Reload * 13.6 , Ybox/150 ) //Ybox/45 + 25 - 2
+		surface.DrawRect( Xbox-185+4, Ybox-120+4, Reload * 13.6/1.8 , Ybox/150 ) //Ybox/45 + 25 - 2
 	
+		draw.SimpleText(math.floor(Reload*16.7) .."%"  , "Trebuchet24", Xbox-185+27, Ybox-120-25, Colored, TEXT_ALIGN_CENTER)
 
 
 	draw.SimpleText(self.PrintName, "Trebuchet24", Xbox, Ybox-140, Colored, TEXT_ALIGN_CENTER)
